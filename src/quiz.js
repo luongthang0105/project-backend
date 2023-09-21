@@ -15,3 +15,4 @@ function adminQuizList (authUserId) {
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {}
 } 
+

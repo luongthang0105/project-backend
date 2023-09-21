@@ -10,3 +10,8 @@ function adminQuizList (authUserId) {
     ]
   }
 }
+
+// This function updates the description of the relevant quiz.
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+  return {}
+}

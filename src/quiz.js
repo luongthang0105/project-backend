@@ -26,3 +26,8 @@ function adminQuizInfo(authUserId, quizId) {
     description: 'This is my quiz',
   }
 }
+
+// This function updates the name of the relevant quiz.
+function adminQuizNameUpdate(authUserId, quizId, name) {
+  return {}
+}

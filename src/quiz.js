@@ -16,6 +16,13 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {}
 } 
 
+// This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
+function adminQuizCreate(authUserId, name, description) {
+  return {
+    quizId: 2
+  }
+}
+
 // This function is responsible for permanently removing a particular quiz.
 function adminQuizRemove(authUserId, quizId) {
   return {}

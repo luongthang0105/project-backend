@@ -23,6 +23,11 @@ function adminQuizCreate(authUserId, name, description) {
   }
 }
 
+// This function is responsible for permanently removing a particular quiz.
+function adminQuizRemove(authUserId, quizId) {
+  return {}
+}
+
 // This function gets all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
   return {
@@ -32,9 +37,4 @@ function adminQuizInfo(authUserId, quizId) {
     timeLastEdited: 1683125871,
     description: 'This is my quiz',
   }
-}
-
-// This function updates the name of the relevant quiz.
-function adminQuizNameUpdate(authUserId, quizId, name) {
-  return {}
 }

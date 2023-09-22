@@ -16,6 +16,11 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {}
 } 
 
+// This function is responsible for permanently removing a particular quiz.
+function adminQuizRemove(authUserId, quizId) {
+  return {}
+}
+
 // This function gets all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
   return {

@@ -111,12 +111,12 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     password: password,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
-    quizzesOwned: []
   }
+
   data.users.push(user)
   data.nextUserId += 1
 
-  return { authUserId: user.authUserId}
+  return { authUserId: user.authUserId }
 }
 
 //Given a registered user's email and password returns their authUserId value.

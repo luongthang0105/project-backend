@@ -40,13 +40,17 @@ function securedPassword(password) {
     if (character.toLowerCase() != character.toUpperCase()) {
       hasLetter = true
     }
+
+    // if character is a number
+    if (!character.isNan()) {
+      hasNumber = true``
+    }
   }
-  return hasLetter 
+
+  return hasLetter && hasNumber
 }
 //Register a user with an email, password, and names, then returns their authUserId value.
 function adminAuthRegister(email, password, nameFirst, nameLast) {
-  data = getData()
-
   // email address used by another user
   if (emailUsed(email, data) === true) {
     return {
@@ -97,7 +101,22 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
   }
 
+  data = getData()
 
+  let user = {
+    authUserId: data.nextUserId,
+    nameFirst: nameFirst,
+    nameLast: nameLast,
+    email: email,
+    password: password,
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+    quizzesOwned: []
+  }
+  data.users.push(user)
+  data.nextUserId += 1
+
+  return { authUserId: user.authUserId}
 }
 
 //Given a registered user's email and password returns their authUserId value.
@@ -119,3 +138,5 @@ function adminUserDetails(authUserId) {
     }
   }
 }
+
+export {adminAuthRegister}

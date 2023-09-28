@@ -44,12 +44,12 @@ function adminQuizCreate(authUserId, name, description) {
   
   // Name contains invalid characters: alphanumeric
   if (hasNumbers(name)) {
-    return { error: "AuthUserId is not a valid user" }
+    return { error: "Name contains invalid characters: alphanumeric" }
   }
 
   // Name contains invalid characters: spaces
   if (hasWhitespace(name)) {
-    return { error: "AuthUserId is not a valid user" }
+    return { error: "Name contains invalid characters: spaces" }
   }
   // Name is less than 3 characters long
   if (name.length < 3) {
@@ -63,8 +63,10 @@ function adminQuizCreate(authUserId, name, description) {
 
   // Name is already used by the current logged in user for another quiz
   for (const quiz of currData.quizzes) {
-    if (quiz.name === name) {
-      return { error: "Name is already used by the current logged in user for another quiz" }
+    if (quiz.quizAuthorId === authUserId) {
+      if (quiz.name === name) {
+        return { error: "Name is already used by the current logged in user for another quiz" }
+      }
     }
   }
 

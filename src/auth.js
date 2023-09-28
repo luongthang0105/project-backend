@@ -1,51 +1,10 @@
-// Return true if newEmail has already been used by another user in data
-function emailUsed(newEmail, data) {
-  for (let user of data.users) {
-    if (user.email === newEmail) {
-      return true
-    }
-  }
-  return false
-}
+import { getData } from "./dataStore"
+import validator from "validator"
+import { emailUsed, validName, securedPassword } from "./authHelper"
 
-// Return true if given name is valid 
-// Name should not contain characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
-function validName(name) {
-  for (let character of name) {
-    // character is an alphabetic character 
-    if (character.toLowerCase() != character.toUpperCase()) continue
-
-    // character is spaces
-    if (character === " ") continue
-
-    // character is hyphen
-    if (character === '-') continue
-
-    // character is apostrophe
-    if (character === "'") continue
-
-    return false
-  }
-
-  return true
-}
-
-// Return true if password has at least one letter and at least one number 
-function securedPassword(password) {
-  let hasLetter = false
-  let hasNumber = false
-
-  for (let character of password) {
-    // if character is letter
-    if (character.toLowerCase() != character.toUpperCase()) {
-      hasLetter = true
-    }
-  }
-  return hasLetter 
-}
 //Register a user with an email, password, and names, then returns their authUserId value.
 function adminAuthRegister(email, password, nameFirst, nameLast) {
-  data = getData()
+  let data = getData()
 
   // email address used by another user
   if (emailUsed(email, data) === true) {
@@ -97,7 +56,20 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
   }
 
+  let user = {
+    authUserId: data.nextUserId,
+    nameFirst: nameFirst,
+    nameLast: nameLast,
+    email: email,
+    password: password,
+    numSuccessfulLogins: 1,
+    numFailedPasswordsSinceLastLogin: 0,
+  }
 
+  data.users.push(user)
+  data.nextUserId += 1
+
+  return { authUserId: user.authUserId }
 }
 
 //Given a registered user's email and password returns their authUserId value.
@@ -119,3 +91,5 @@ function adminUserDetails(authUserId) {
     }
   }
 }
+
+export {adminAuthRegister}

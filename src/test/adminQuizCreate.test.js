@@ -49,7 +49,7 @@ describe("adminQuizCreate", () => {
     })
     
     test('Success: return { quizId }', () => {
-        const user = adminAuthRegister('han-mail', '2705', 'Han', 'Hanh');
+        const user = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh');
         expect(adminQuizCreate(user.authUserId, 'Han', 'This is my quiz').toStrictEqual({
             quizId: expect.any(Number) 
         }))

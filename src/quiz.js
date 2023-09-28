@@ -18,12 +18,12 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
 // Helper function to check if a string contains any number
 function hasNumbers(str) {
-  return /\d/.test(str);
+  return /\d/.test(str)
 }
 
 // Helper function to check if a string contains any space
 function hasWhitespace(str) {
-  return /\s/.test(str);
+  return /\s/.test(str)
 }
 
 // Helper function to get the current timestamp
@@ -35,7 +35,6 @@ function getCurrentTimestamp () {
 function adminQuizCreate(authUserId, name, description) {
   // AuthUserId is not a valid user
   const currData = getData()
-  console.log(currData)
   const id = authUserId
   const validUserId = currData.users.find(({ authUserId }) => authUserId === id)
   if (!validUserId) {
@@ -83,7 +82,6 @@ function adminQuizCreate(authUserId, name, description) {
   }
   currData.nextQuizId++
   currData.quizzes.push(newQuiz)
-  console.log(newQuiz);
   return { quizId: newQuiz.quizId }
 }
 

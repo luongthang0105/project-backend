@@ -5,7 +5,8 @@ function clear() {
   setData({
     users: [],
     quizzes: [],
-    nextUserId: 0
+    nextUserId: 0,
+    nextQuizId: 0
   })
   return {}
 }

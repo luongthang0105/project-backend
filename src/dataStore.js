@@ -2,7 +2,8 @@
 let data = {
   users: [],
   quizzes: [],
-  nextUserId: 0
+  nextUserId: 0,
+  nextQuizId: 0
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

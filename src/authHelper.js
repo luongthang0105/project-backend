@@ -41,8 +41,8 @@ export function securedPassword(password) {
       hasLetter = true
     }
 
-    // if character is a number
-    if (!isNaN(character)) {
+    // if character is a number (note that isNaN returns false when character is a space so we need to exclude this case)
+    if (!isNaN(character) && character !== ' ') {
       hasNumber = true
     }
   }

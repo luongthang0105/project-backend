@@ -1,13 +1,16 @@
 // This function is responsible for providing a list of all the quizzes owned by the logged in user 
 
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
-      }
-    ]
+
+  const data = getData()
+  const id = authUserId
+
+  // Checks if authUserId is valid
+  const validId = data.users.find((authUserId) => authUserId === id)
+
+  // If authUserId is invalid it returns error
+  if (validId === undefined) {
+    return { error: "AuthUserId is not a valid user" }
   }
 }
 

@@ -62,7 +62,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     nameLast: nameLast,
     email: email,
     password: password,
-    numSuccessfulLogins: 1,
+    numSuccessfulLogins: 0,
     numFailedPasswordsSinceLastLogin: 0,
   }
 
@@ -74,8 +74,19 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
+  const data = getData();
+  const validEmail = data.users.find(user => user.email === email)
+  if (!validEmail) {
+    return { error: "Email adress does not exist" }
+  }
+  if (validEmail.password != password) {
+    validEmail.numFailedPasswordsSinceLastLogin += 1;
+    return { error: "Password is not correct for the given email" }
+  }
+    validEmail.numFailedPasswordsSinceLastLogin = 0
+    validEmail.numSuccessfulLogins += 1;
   return {
-    authUserId: 1
+    authUserId: validEmail.authUserId
   }
 }
 
@@ -92,4 +103,4 @@ function adminUserDetails(authUserId) {
   }
 }
 
-export {adminAuthRegister}
+export {adminAuthRegister, adminAuthLogin}

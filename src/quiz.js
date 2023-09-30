@@ -44,5 +44,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-function adminQuizRemove(authUserId, quizId) {
-  export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizInfo, adminQuizNameUpdate}
+export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizRemove, adminQuizInfo, adminQuizNameUpdate}

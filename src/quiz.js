@@ -17,19 +17,9 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   return {}
 } 
 
-// Helper function to check if a string contains any number
-function hasNumbers(str) {
-  return /\d/.test(str)
-}
-
-// Helper function to check if a string contains any space
-function hasWhitespace(str) {
-  return /\s/.test(str)
-}
-
-// Helper function to get the current timestamp
-function getCurrentTimestamp () {
-  return Date.now()
+// Helper function to check if a string contains alphanumeric characters or spaces
+function alphanumericAndSpaceCheck(str) {
+  return /^[A-Za-z\s\d]*$/.test(str);
 }
 
 // This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
@@ -42,15 +32,11 @@ function adminQuizCreate(authUserId, name, description) {
     return { error: "AuthUserId is not a valid user" }
   }
   
-  // Name contains invalid characters: alphanumeric
-  if (hasNumbers(name)) {
-    return { error: "Name contains invalid characters: alphanumeric" }
+  // Name contains invalid characters
+  if (!alphanumericAndSpaceCheck(str)) {
+    return { error: "Name contains invalid characters" }
   }
 
-  // Name contains invalid characters: spaces
-  if (hasWhitespace(name)) {
-    return { error: "Name contains invalid characters: spaces" }
-  }
   // Name is less than 3 characters long
   if (name.length < 3) {
     return { error: "Name is less than 3 characters long" }

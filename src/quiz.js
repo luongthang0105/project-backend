@@ -19,7 +19,11 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
 // Helper function to check if a string contains alphanumeric characters or spaces
 function alphanumericAndSpaceCheck(str) {
-  return /^[A-Za-z\s\d]*$/.test(str);
+  return /^[A-Za-z\s\d]*$/.test(str)
+}
+
+function getCurrentTimestamp () {
+  return Date.now()
 }
 
 // This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
@@ -33,7 +37,7 @@ function adminQuizCreate(authUserId, name, description) {
   }
   
   // Name contains invalid characters
-  if (!alphanumericAndSpaceCheck(str)) {
+  if (!alphanumericAndSpaceCheck(name)) {
     return { error: "Name contains invalid characters" }
   }
 

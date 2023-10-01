@@ -22,6 +22,7 @@ function alphanumericAndSpaceCheck(str) {
   return /^[A-Za-z\s\d]*$/.test(str)
 }
 
+// Helper function to get the current timestamp
 function getCurrentTimestamp () {
   return Date.now()
 }

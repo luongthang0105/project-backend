@@ -4,25 +4,25 @@ import {clear} from "../other"
 
 describe('adminQuizDescriptionUpdate', () => {
   test ('AuthUserID is not valid', () => {
-    const result = adminQuizDescriptionUpdate('invalidUserId%', 1, 'Description')
+    const result = adminQuizDescriptionUpdate(1, 999, 'Description')
     expect(result).toStrictEqual({
       error: 'AuthUserID is not a valid user',
     })
   })
   test ('QuizID is not owned by this user', () => {
-    const result2 = adminQuizDescriptionUpdate('userId', 999, 'Description')
+    const result2 = adminQuizDescriptionUpdate(1, 999, 'Description')
     expect(result2).toStrictEqual({
       error: 'Quiz ID does not refer to a quiz that this user owns',
     })
   })
   test ('QuizId is invalid', () => {
-    const result3 = adminQuizDescriptionUpdate('userID', 'invalidQuizID', 'Description')
+    const result3 = adminQuizDescriptionUpdate(1, -1, 'Description')
     expect(result3).toStrictEqual({
       error: "QuizID is invalid"
     })
   })
   test ('Description is more than 100 characters', () => {
-    const authUserId = 'ThisismyPass34@'
+    const authUserId = 1
     const quizID = 999;
     const descriptionCharacters = 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the very lazy dog.'
     const result = adminQuizDescriptionUpdate(authUserId, quizId, descriptionCharacters)
@@ -31,6 +31,11 @@ describe('adminQuizDescriptionUpdate', () => {
     })
   })
   test ('Success case', () => {
+    let newUserId = adminAuthRegister('nuha@gmail.com', 'nuha@c$1', 'Nuha', 'Ennec')
+    let newquizID = adminQuizCreate(newUserId, 'Nuha', 'Description')
+    expect(adminQuizDescriptionUpdate(1, 1, 'description')).toStrictEqual({})
+    expect(adminQuizInfo(1, 1).description).toStrictEqual('New des')
+
     expect(adminQuizDescriptionUpdate(1)).toStrictEqual({
     })
   })

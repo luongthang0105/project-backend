@@ -2,8 +2,9 @@
 let data = {
   users: [],
   quizzes: [],
-  nextUserId: 0
-};
+  nextUserId: 0,
+  nextQuizId: 0
+}
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -23,12 +24,12 @@ Example usage
 
 // Use get() to access the data
 function getData() {
-  return data;
+  return data
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData) {
-  data = newData;
+  data = newData
 }
 
-export { getData, setData };
+export { getData, setData }

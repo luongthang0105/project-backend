@@ -74,8 +74,19 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
+  const data = getData();
+  const userInfo = data.users.find(user => user.email === email)
+  if (!userInfo) {
+    return { error: "Email adress does not exist" }
+  }
+  if (userInfo.password !== password) {
+    userInfo.numFailedPasswordsSinceLastLogin += 1
+    return { error: "Password is not correct for the given email" }
+  }
+  userInfo.numFailedPasswordsSinceLastLogin = 0
+  userInfo.numSuccessfulLogins += 1
   return {
-    authUserId: 1
+    authUserId: userInfo.authUserId
   }
 }
 
@@ -92,4 +103,4 @@ function adminUserDetails(authUserId) {
   }
 }
 
-export {adminAuthRegister}
+export {adminAuthRegister, adminAuthLogin}

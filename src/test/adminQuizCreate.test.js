@@ -143,6 +143,15 @@ describe("adminQuizCreate", () => {
             quizId: 1
         })
     })
+
+    test('Success: case07: 2 users, 1 quiz for each (with the same name, same description)', () => {
+        const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
+        const user02 = adminAuthRegister('hanh@gmai.com', '2705uwuwuwuwuwuwu', 'Hanh', 'Han')
+        adminQuizCreate(user01.authUserId, 'Han', '')
+        expect(adminQuizCreate(user02.authUserId, 'Han', '')).toStrictEqual({
+            quizId: 1
+        })
+    })
 })
 
 

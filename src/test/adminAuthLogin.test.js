@@ -34,4 +34,4 @@ describe ('adminAuthLogin', () => {
     const success = adminAuthLogin('java@gmail.com', 'gdnkgeg4')
     expect(success).toEqual(userId2)
   })
-})
+});

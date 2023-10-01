@@ -5,19 +5,22 @@ import { adminAuthRegister } from "../auth"
 
 describe ('adminQuizInfo', () =>  {
   test ('AuthUserID is not valid', () => {
-    expect(adminQuizInfo(1)).toStrictEqual({
-        error: "AuthUserID is an invalid user"
-      })
-  })
-  test ('QuizID is not owned by this user', () => {
-    expect(adminQuizInfo(1)).toStrictEqual ({
-        error: "QuizID is not owned by this user"
-      })
+    const result = adminQuizInfo('invalidUserId%', 1)
+    expect(result).toStrictEqual({
+      error: 'AuthUserID is not a valid user',
     })
-  test ('QuizId is invalid', () => {
-    expect(adminQuizCreate(1)).toStrictEqual({
-        error: "QuizID is invalid"
       })
+  test ('QuizID is not owned by this user', () => {
+    const result2 = adminQuizInfo('userId', 999)
+    expect(result2).toStrictEqual({
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+        });
+      })
+  test ('QuizId is invalid', () => {
+    const result3 = adminQuizInfo('userID', 'invalidQuizID')
+    expect(result3).toStrictEqual({
+      error: "QuizID is invalid"
+    })
   })
   test ('Success: Quiz Information Retrieved:', () => {
     expect(adminQuizInfo(1)).toStrictEqual({
@@ -30,3 +33,5 @@ describe ('adminQuizInfo', () =>  {
       })
     })
 })
+
+

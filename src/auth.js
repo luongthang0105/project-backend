@@ -83,8 +83,8 @@ function adminAuthLogin(email, password) {
     userInfo.numFailedPasswordsSinceLastLogin += 1
     return { error: "Password is not correct for the given email" }
   }
-    userInfo.numFailedPasswordsSinceLastLogin = 0
-    userInfo.numSuccessfulLogins += 1
+  userInfo.numFailedPasswordsSinceLastLogin = 0
+  userInfo.numSuccessfulLogins += 1
   return {
     authUserId: userInfo.authUserId
   }

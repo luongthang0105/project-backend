@@ -1,4 +1,5 @@
 import {adminQuizNameUpdate} from "../quiz"
+import { adminAuthRegister } from "../auth"
 import {clear} from "../other"
 
 beforeEach(() => {
@@ -45,6 +46,12 @@ describe('adminQuizNameUpdate', () => {
   test('ERROR: Name is already used for another quiz', () => {
     expect(adminQuizNameUpdate(1, 1, 'name')).toStrictEqual({
       error: 'Name is already used for another quiz'
+    })
+  })
+
+  test('Success: Returns {} if no error', () => {
+    expect(adminQuizNameUpdate(1, 1, 'name')).toStrictEqual({
+      Success: {}
     })
   })
 

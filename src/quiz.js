@@ -12,6 +12,19 @@ function adminQuizList(authUserId) {
   if (validId === undefined) {
     return { error: "AuthUserId is not a valid user" }
   }
+
+  let quizList = []
+
+
+  // Loops through dataStore and pushes quizzes with the matching userId into list
+  for (let index of data.quizzes) {
+    if (data.quizzes.quizAuthordId === authUserId) {
+      quizList.push(data.quizzes.quizId)
+      quizList.push(data.quizzes.name)
+    }
+  }
+
+  return quizList
 }
 
 // This function updates the description of the relevant quiz.

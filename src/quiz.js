@@ -101,4 +101,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export { adminQuizCreate }
+export { adminQuizCreate, adminQuizInfo }

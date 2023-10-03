@@ -26,6 +26,7 @@ function getCurrentTimestamp () {
 // This function updates the description of the relevant quiz.
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   const data = getData()
+  const id = authUserId
   const validUserId = data.users.find(({ authUserId }) => authUserId === id);
 
   if (!validUserId) {
@@ -93,6 +94,7 @@ function adminQuizCreate(authUserId, name, description) {
     return { error: "Description is more than 100 characters in length" }
   }
   const timestamp = getCurrentTimestamp()
+
   const newQuiz = {
     quizId: currData.nextQuizId,
     quizAuthorId: authUserId,
@@ -116,20 +118,23 @@ function adminQuizRemove(authUserId, quizId) {
 function adminQuizInfo(authUserId, quizId) {
   //checking for authUserId validity
   const data = getData()
-  //const userID = authUserId
-  const validUserId = data.users.find(({ authUserId }) => authUserId === id);
+  const userID = authUserId
+  const validUserId = data.users.find(({ authUserId }) => authUserId === userID);
 
   if (!validUserId) {
-    return { error: "AuthUserId is not a valid user" }
+    return { error: "AuthUserID is not a valid user" }
   }
   
   // finding the quizId and checking to see if it exists
  const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
 
+
  //error message if it does not exist
  if (!existingQuiz) {
   return { error: "Quiz ID does not refer to a valid quiz" };
 }
+const timeCreated = existingQuiz.timeCreated
+
 
 // error message if the quizId is not what the user owns
 if (existingQuiz.quizId !== authUserId) {
@@ -138,10 +143,11 @@ if (existingQuiz.quizId !== authUserId) {
 
 // show QuizInfo
 const timestamp = getCurrentTimestamp()
+//const createdQuiz = adminQuizCreate(authUserId, name, description);
   return {
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,
-    timeCreated: existingQuiz.timestamp,
+    timeCreated: timeCreated,
     timeLastEdited: timestamp, 
     description: existingQuiz.description,
   }
@@ -152,12 +158,5 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizRemove, adminQuizInfo, adminQuizNameUpdate}
-=======
-export { adminQuizCreate }
->>>>>>> 0b4d48992909f704e9622041420d989b05006ab2
-=======
-export { adminQuizCreate, adminQuizInfo }
->>>>>>> 2f18bc1ec3111bcccce134dccf205d3ef7a9f221
+

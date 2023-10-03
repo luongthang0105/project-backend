@@ -1,21 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-function adminAuthRegister (email, password, nameFirst, nameLast) {
-=======
-//Register a user with an email, password, and names, then returns their authUserId value.
-function adminAuthRegister(email, password, nameFirst, nameLast) {
->>>>>>> 9d01c4e16b87dedca401d11b4c535cc4a138a6a0
-  return {
-    authUserId: 1
-=======
-import { getData } from "./dataStore"
-=======
 import { getData, setData } from "./dataStore"
->>>>>>> 4ba09117bf3bced5c04aeb0d35fe22e33d3f1e57
 import validator from "validator"
 import { emailUsed, validName, securedPassword } from "./authHelper"
+
 
 //Register a user with an email, password, and names, then returns their authUserId value.
 function adminAuthRegister(email, password, nameFirst, nameLast) {
@@ -63,7 +49,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     return {
       error: "Password must have at least 8 characters"
     }
->>>>>>> 65f588ee30704e62400d30335a8b68c45bac12fc
+
   }
 
   if (securedPassword(password) === false) {
@@ -91,7 +77,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   
 // This function is responsible for returning user details when the ID is given
 
-<<<<<<< HEAD
+/*
 function adminUserDetails (authUserId) {
   return {
     user:
@@ -104,7 +90,8 @@ function adminUserDetails (authUserId) {
       }
     }
 }
-=======
+*/
+
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
   const data = getData()
@@ -141,17 +128,6 @@ function adminUserDetails(authUserId) {
     }
   }
 }
-<<<<<<< HEAD
->>>>>>> 9d01c4e16b87dedca401d11b4c535cc4a138a6a0
-=======
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-export {adminAuthRegister}
->>>>>>> 65f588ee30704e62400d30335a8b68c45bac12fc
-=======
-export {adminAuthRegister, adminAuthLogin}
->>>>>>> 0b4d48992909f704e9622041420d989b05006ab2
-=======
 export {adminAuthRegister, adminAuthLogin, adminUserDetails}
->>>>>>> 4ba09117bf3bced5c04aeb0d35fe22e33d3f1e57
+

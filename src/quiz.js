@@ -153,7 +153,11 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizRemove, adminQuizInfo, adminQuizNameUpdate}
 =======
 export { adminQuizCreate }
 >>>>>>> 0b4d48992909f704e9622041420d989b05006ab2
+=======
+export { adminQuizCreate, adminQuizInfo }
+>>>>>>> 2f18bc1ec3111bcccce134dccf205d3ef7a9f221

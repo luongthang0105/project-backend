@@ -1,4 +1,4 @@
-import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz.js"
+import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz"
 import {clear} from "../other"
 import { adminAuthRegister } from "../auth"
 describe ('adminQuizInfo', () =>  {

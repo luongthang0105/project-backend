@@ -144,7 +144,7 @@ if (existingQuiz.quizAuthorId !== authUserId) {
 }
 
 // show QuizInfo
-const timestamp = getCurrentTimestamp()
+
   return {
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,

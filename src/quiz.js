@@ -135,6 +135,7 @@ function adminQuizInfo(authUserId, quizId) {
   return { error: "Quiz ID does not refer to a valid quiz" };
 }
 const timeCreated = existingQuiz.timeCreated
+const timeLastEdited = existingQuiz.timeLastEdited
 
 
 // error message if the quizId is not what the user owns
@@ -148,7 +149,7 @@ const timestamp = getCurrentTimestamp()
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,
     timeCreated: timeCreated,
-    timeLastEdited: timestamp, 
+    timeLastEdited: timeLastEdited, 
     description: existingQuiz.description,
   }
 }

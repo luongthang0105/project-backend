@@ -1,4 +1,4 @@
-import { getData } from "./dataStore"
+import { getData, setData } from "./dataStore"
 import validator from "validator"
 import { emailUsed, validName, securedPassword } from "./authHelper"
 
@@ -69,27 +69,45 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   data.users.push(user)
   data.nextUserId += 1
 
+
   return { authUserId: user.authUserId }
 }
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
+  const data = getData()
+  const userInfo = data.users.find(user => user.email === email)
+  if (!userInfo) {
+    return { error: "Email adress does not exist" }
+  }
+  if (userInfo.password !== password) {
+    userInfo.numFailedPasswordsSinceLastLogin += 1
+    return { error: "Password is not correct for the given email" }
+  }
+  userInfo.numFailedPasswordsSinceLastLogin = 0
+  userInfo.numSuccessfulLogins += 1
   return {
-    authUserId: 1
+    authUserId: userInfo.authUserId
   }
 }
 
 //Given an admin user's authUserId, return details about the user.
 function adminUserDetails(authUserId) {
+  const data = getData()
+  const userInfo = data.users.find(user => user.authUserId === authUserId)
+  if (!userInfo) {
+    return { error: "AuthUserId is not a valid user" }
+  }
+  const fullname = userInfo.nameFirst.concat(" ", userInfo.nameLast)
   return {
     user: {
-      userId: 1,
-      name: 'Hayden Smith',
-      email: 'hayden.smith@unsw.edu.au',
-      numSuccessfulLogins: 3,
-      numFailedPasswordsSinceLastLogin: 1,
+      userId: authUserId,
+      name: fullname,
+      email: userInfo.email,
+      numSuccessfulLogins: userInfo.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: userInfo.numFailedPasswordsSinceLastLogin
     }
   }
 }
 
-export {adminAuthRegister}
+export {adminAuthRegister, adminAuthLogin, adminUserDetails}

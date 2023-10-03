@@ -2,12 +2,12 @@ import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz"
 import {clear} from "../other"
 import { adminAuthRegister } from "../auth"
 describe ('adminQuizInfo', () =>  {
-	let user, quiz
-	beforeEach(() => {
-		clear()
-		user = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
-		quiz = adminQuizCreate(user.authUserId, 'New Quiz', 'description')
-	})
+  let user, quiz
+  beforeEach(() => {
+    clear()
+    user = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
+    quiz = adminQuizCreate(user.authUserId, 'New Quiz', 'description')
+  })
 
   test ('AuthUserID is not valid', () => {
     let result = adminQuizInfo(user.authUserId, quiz.quizId)
@@ -46,10 +46,10 @@ describe ('adminQuizInfo', () =>  {
     })
 
   test ('Success: More Quiz Retrieved:', () => {
-		let user2 = adminAuthRegister('thang@gmail.com', '0105uwuwuw', 'Thomas', 'Nguyen')
+    let user2 = adminAuthRegister('thang@gmail.com', '0105uwuwuw', 'Thomas', 'Nguyen')
     let quiz2 = adminQuizCreate(user2.authUserId, 'New Quiz 2', 'long description')
 
-		expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual(
+    expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual(
       {
         quizId: quiz2.quizId,
         name: expect.any(String),

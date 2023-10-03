@@ -27,7 +27,7 @@ describe ('adminQuizInfo', () =>  {
     let user2 = adminAuthRegister('thang@gmail.com', '0105uwuwuw', 'Thomas', 'Nguyen')
     let quiz2 = adminQuizCreate(user2.authUserId, 'New Quiz 2', 'long description')
 
-		const result = adminQuizInfo(user.authUserId, quiz2.quizId)
+    const result = adminQuizInfo(user.authUserId, quiz2.quizId)
 
     expect(result).toStrictEqual ({
       error: 'Quiz ID does not refer to a quiz that this user owns'
@@ -35,7 +35,7 @@ describe ('adminQuizInfo', () =>  {
   })
 
   test ('Success: Quiz Information Retrieved:', () => {
-		expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual(
+    expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual(
       {
         quizId: quiz.quizId,
         name: expect.any(String),

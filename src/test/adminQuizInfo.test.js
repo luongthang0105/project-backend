@@ -10,7 +10,7 @@ describe ('adminQuizInfo', () =>  {
   })
 
   test ('AuthUserID is not valid', () => {
-    let result = adminQuizInfo(user.authUserId, quiz.quizId)
+    let result = adminQuizInfo(user.authUserId + 1, quiz.quizId)
     expect(result).toStrictEqual({
       error: 'AuthUserID is not a valid user',
     })

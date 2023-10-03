@@ -30,7 +30,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   const validUserId = data.users.find(({ authUserId }) => authUserId === id);
 
   if (!validUserId) {
-    return { error: "AuthUserId is not a valid user" }
+    return { error: "AuthUserID is not a valid user" }
   }
   
   // finding the quizId and checking to see if it exists
@@ -137,13 +137,12 @@ const timeCreated = existingQuiz.timeCreated
 
 
 // error message if the quizId is not what the user owns
-if (existingQuiz.quizId !== authUserId) {
+if (existingQuiz.quizAuthorId !== authUserId) {
   return { error: "Quiz ID does not refer to a quiz that this user owns" };
 }
 
 // show QuizInfo
 const timestamp = getCurrentTimestamp()
-//const createdQuiz = adminQuizCreate(authUserId, name, description);
   return {
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,

@@ -24,6 +24,7 @@ function getCurrentTimestamp () {
 }
 
 // This function updates the description of the relevant quiz.
+// this function is yet to be tested. fn testing has been done, but needs to be further modified. 
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   const data = getData()
   const id = authUserId

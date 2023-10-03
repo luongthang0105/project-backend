@@ -75,7 +75,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
-  const data = getData();
+  const data = getData()
   const userInfo = data.users.find(user => user.email === email)
   if (!userInfo) {
     return { error: "Email adress does not exist" }
@@ -93,7 +93,7 @@ function adminAuthLogin(email, password) {
 
 //Given an admin user's authUserId, return details about the user.
 function adminUserDetails(authUserId) {
-  const data = getData();
+  const data = getData()
   const userInfo = data.users.find(user => user.authUserId === authUserId)
   if (!userInfo) {
     return { error: "AuthUserId is not a valid user" }

@@ -62,4 +62,4 @@ describe ('adminUserDetails', () => {
     const success = adminUserDetails(user1.authUserId)
     expect(success).toStrictEqual({user: {userId: user1.authUserId, name: 'Java Script', email: 'javascript@gmail.com', numSuccessfulLogins: 1, numFailedPasswordsSinceLastLogin: 2}})
   })
-});
+})

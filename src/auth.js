@@ -2,6 +2,7 @@ import { getData, setData } from "./dataStore"
 import validator from "validator"
 import { emailUsed, validName, securedPassword } from "./authHelper"
 
+
 //Register a user with an email, password, and names, then returns their authUserId value.
 function adminAuthRegister(email, password, nameFirst, nameLast) {
   let data = getData()
@@ -48,6 +49,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     return {
       error: "Password must have at least 8 characters"
     }
+
   }
 
   if (securedPassword(password) === false) {
@@ -72,6 +74,23 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
 
   return { authUserId: user.authUserId }
 }
+  
+// This function is responsible for returning user details when the ID is given
+
+/*
+function adminUserDetails (authUserId) {
+  return {
+    user:
+      {
+        userId: 1,
+        name: 'Hayden Smith',
+        email: 'hayden.smith@unsw.edu.au',
+        numSuccessfulLogins: 3,
+        numFailedPasswordsSinceLastLogin: 1,
+      }
+    }
+}
+*/
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
@@ -111,3 +130,4 @@ function adminUserDetails(authUserId) {
 }
 
 export {adminAuthRegister, adminAuthLogin, adminUserDetails}
+

@@ -205,29 +205,24 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   const userid = authUserId
   const quizid = quizId
 
-
   // Checks if authUserId is valid
-  const validUserId = data.users.find(({ authUserId }) => authUserId === userid)
+  const validUser = data.users.find(({ authUserId }) => authUserId === userid)
 
   // If authUserId is invalid it returns error
-  if (!validUserId) {
+  if (!validUser) {
     return { error: 'AuthUserId is not a valid user' }
   }
 
   // Checks if authUserId is valid
-  const validQuizId = data.quizzes.find(( { quizId }) => quizId === quizid)
+  const validQuiz = data.quizzes.find(( { quizId }) => quizId === quizid)
 
   // If authUserId is invalid it returns error
-  if (!validQuizId) {
+  if (!validQuiz) {
     return { error: 'Quiz ID does not refer to a valid quiz' }
   }
 
-  for (const quiz of data.quizzes) {
-    if (quiz.quizId === quizId) {
-      if (quiz.quizAuthorId !== authUserId) {
-        return { error: "Quiz ID does not refer to a quiz that this user owns" }
-      }
-    }
+  if (validQuiz.quizAuthorId !== authUserId) {
+    return { error: "Quiz ID does not refer to a quiz that this user owns" }
   }
 
   // Checks if name contains invalid characters
@@ -245,23 +240,21 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     return { error: 'Name is greater than 30 characters long' }
   }
 
-  for (const quiz of data.quizzes) {
-    if (quiz.quizAuthorId === authUserId) {
-      if (quiz.name === name) {
-        return { error: "Name is already used by the current logged in user for another quiz" }
+  // If the given name is the same as the current name of the quiz, we just need to update the timestamp
+  if (validQuiz.name === name) {
+    validQuiz.timeLastEdited = getCurrentTimestamp()
+  } else {
+    for (const quiz of data.quizzes) {
+      if (quiz.quizAuthorId === authUserId) {
+        if (quiz.name === name) {
+          return { error: "Name is already used by the current logged in user for another quiz" }
+        }
       }
     }
+    validQuiz.name = name
+    validQuiz.timeLastEdited = getCurrentTimestamp()
   }
-
-  for (const quiz of data.quizzes) {
-    if (quiz.quizId === quizId && quiz.quizAuthorId === authUserId) {
-      quiz.name = name
-      quiz.timeLastEdited = getCurrentTimestamp()
-      break
-    }
-  }
-  
   return {}
 }
 
-export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList }
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate }

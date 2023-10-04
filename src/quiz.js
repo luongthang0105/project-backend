@@ -60,8 +60,8 @@ existingQuiz.timeLastEdited = timestamp
 function adminQuizCreate(authUserId, name, description) {
   // AuthUserId is not a valid user
   const currData = getData()
-  const id = authUserId
-  const validUserId = currData.users.find(({ authUserId }) => authUserId === id)
+  const uid = authUserId
+  const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
   if (!validUserId) {
     return { error: "AuthUserId is not a valid user" }
   }

@@ -2,14 +2,27 @@ import { getData } from "./dataStore"
 // This function is responsible for providing a list of all the quizzes owned by the logged in user 
 
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
-      }
-    ]
+
+  const data = getData()
+
+  // Checks if authUserId is valid
+  const validId = data.users.find(user => user.authUserId === authUserId)
+
+  // If authUserId is invalid it returns error
+  if (!validId) {
+    return { error: "AuthUserId is not a valid user" }
   }
+
+  let quizList = []
+
+  const ownedQuizzes = data.quizzes.filter((quiz) => quiz.quizAuthorId === authUserId);
+  quizList = ownedQuizzes.map((quiz) => ({
+    quizId: quiz.quizId,
+    name: quiz.name,
+  }));
+
+
+  return {quizzes: quizList}
 }
 
 
@@ -190,5 +203,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizRemove, adminQuizInfo, adminQuizNameUpdate}
-
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList }

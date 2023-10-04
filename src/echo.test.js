@@ -3,9 +3,9 @@ import { echo } from './echo.js';
 
 test('Test successful echo', () => {
   let result = echo('1');
-  expect(result).toBe('1');
+  expect(result).toStrictEqual('1');
   result = echo('abc');
-  expect(result).toBe('abc');
+  expect(result).toStrictEqual('abc');
 });
 
 test('Test invalid echo', () => {

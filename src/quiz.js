@@ -4,28 +4,25 @@ import { getData } from "./dataStore"
 function adminQuizList(authUserId) {
 
   const data = getData()
-  const id = authUserId
 
   // Checks if authUserId is valid
-  const validId = data.users.find((authUserId) => authUserId === id)
+  const validId = data.users.find(user => user.authUserId === authUserId)
 
   // If authUserId is invalid it returns error
-  if (validId === undefined) {
+  if (!validId) {
     return { error: "AuthUserId is not a valid user" }
   }
 
   let quizList = []
 
+  const ownedQuizzes = data.quizzes.filter((quiz) => quiz.quizAuthorId === authUserId);
+  quizList = ownedQuizzes.map((quiz) => ({
+    quizId: quiz.quizId,
+    name: quiz.name,
+  }));
 
-  // Loops through dataStore and pushes quizzes with the matching userId into list
-  for (let index of data.quizzes) {
-    if (data.quizzes.quizAuthordId === authUserId) {
-      quizList.push(data.quizzes.quizId)
-      quizList.push(data.quizzes.name)
-    }
-  }
 
-  return quizList
+  return {quizzes: quizList}
 }
 
 // This function updates the description of the relevant quiz.
@@ -98,6 +95,37 @@ function adminQuizCreate(authUserId, name, description) {
 
 // This function is responsible for permanently removing a particular quiz.
 function adminQuizRemove(authUserId, quizId) {
+
+  const currData = getData()
+  const uid = authUserId
+  const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
+  if (!validUserId) {
+    return { error: "AuthUserId is not a valid user" }
+  }
+
+  // Quiz ID does not refer to a valid quiz
+  const qid = quizId
+  const validQuizId = currData.quizzes.find(({ quizId }) => quizId === qid)
+  if (!validQuizId) {
+    return { error: "Quiz ID does not refer to a valid quiz" }
+  }
+
+  // Quiz ID does not refer to a quiz that this user owns
+  for (const quiz of currData.quizzes) {
+    if (quiz.quizId === quizId) {
+      if (quiz.quizAuthorId !== authUserId) {
+        return { error: "Quiz ID does not refer to a quiz that this user owns" }
+      }
+    }
+  }
+  
+  for (let i = 0; i < currData.quizzes.length; i++) {
+    if (currData.quizzes[i].quizId === quizId) {
+      currData.quizzes.splice(i, 1);
+    }
+  }
+  
+  return { }
   return {}
 }
 
@@ -117,4 +145,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export { adminQuizCreate, adminQuizInfo }
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList }

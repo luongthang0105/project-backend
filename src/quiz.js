@@ -105,27 +105,27 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
 
   // Checks if authUserId is valid
-  const validUserId = data.users.find((authUserId) => authUserId === userid)
+  const validUserId = data.users.find(({ authUserId }) => authUserId === userid)
 
   // If authUserId is invalid it returns error
-  if (validUserId === undefined) {
+  if (!validUserId) {
     return { error: 'AuthUserId is not a valid user' }
   }
 
   // Checks if authUserId is valid
-  const validQuizId = data.quizzes.find((quizId) => quizId === quizid)
+  const validQuizId = data.quizzes.find(( { quizId }) => quizId === quizid)
 
   // If authUserId is invalid it returns error
-  if (validQuizId === undefined) {
+  if (!validQuizId) {
     return { error: 'Quiz ID does not refer to a valid quiz' }
   }
 
-  // Checks if user owns the quiz
-  const UserOwnsQuiz = data.quizzes.find((quizAuthorId) => quizAuthorId === userid)
-
-  // If user does not own the quiz, return error
-  if (UserOwnsQuiz === undefined) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns'}
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId) {
+      if (quiz.quizAuthorId !== authUserId) {
+        return { error: "Quiz ID does not refer to a quiz that this user owns" }
+      }
+    }
   }
 
   // Checks if name contains invalid characters
@@ -143,14 +143,23 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     return { error: 'Name is greater than 30 characters long' }
   }
 
-  for (let index of data.quizzes) {
-    if (data.quizzes.quizAuthorId === authUserId &&
-      data.quizzes.name === name) {
-        return { error: 'Name is already used for another quiz' }
+  for (const quiz of data.quizzes) {
+    if (quiz.quizAuthorId === authUserId) {
+      if (quiz.name === name) {
+        return { error: "Name is already used by the current logged in user for another quiz" }
       }
+    }
   }
 
+  for (const quiz of data.quizzes) {
+    if (quiz.quizId === quizId && quiz.authUserId === authUserId) {
+      quiz.name = name
+      console.log(quiz)
+      break
+    }
+  }
+  
   return {}
 }
 
-export { adminQuizCreate }
+export { adminQuizCreate, adminQuizNameUpdate }

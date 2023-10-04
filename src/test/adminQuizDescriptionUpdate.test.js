@@ -34,14 +34,17 @@ describe('adminQuizDescriptionUpdate', () => {
   })
 
   test ('Description is more than 100 characters in length', () => {
+    const oldDescription = adminQuizInfo(user.authUserId, quiz.quizId).description
     // 105 characters
     const newDescription = 'okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki.'
 
     const result = adminQuizDescriptionUpdate(user.authUserId, quiz.quizId, newDescription)
-
     expect(result).toEqual({
-      error: 'Description is more than 100 characters in length (note: empty strings are OK)'
+      error: 'Description is more than 100 characters in length'
     })
+    
+    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
+    expect(quizInfo.description).toStrictEqual(oldDescription)
   })
 
   test ('Success case: check different timestamps', () => {

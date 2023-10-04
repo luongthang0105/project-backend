@@ -2,14 +2,27 @@ import { getData } from "./dataStore"
 // This function is responsible for providing a list of all the quizzes owned by the logged in user 
 
 function adminQuizList(authUserId) {
-  return {
-    quizzes: [
-      {
-        quizId: 1,
-        name: 'My Quiz',
-      }
-    ]
+
+  const data = getData()
+
+  // Checks if authUserId is valid
+  const validId = data.users.find(user => user.authUserId === authUserId)
+
+  // If authUserId is invalid it returns error
+  if (!validId) {
+    return { error: "AuthUserId is not a valid user" }
   }
+
+  let quizList = []
+
+  const ownedQuizzes = data.quizzes.filter((quiz) => quiz.quizAuthorId === authUserId);
+  quizList = ownedQuizzes.map((quiz) => ({
+    quizId: quiz.quizId,
+    name: quiz.name,
+  }));
+
+
+  return {quizzes: quizList}
 }
 
 
@@ -113,7 +126,37 @@ function adminQuizCreate(authUserId, name, description) {
 
 // This function is responsible for permanently removing a particular quiz.
 function adminQuizRemove(authUserId, quizId) {
-  return {}
+  // AuthUserId is not a valid user
+  const currData = getData()
+  const uid = authUserId
+  const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
+  if (!validUserId) {
+    return { error: "AuthUserId is not a valid user" }
+  }
+
+  // Quiz ID does not refer to a valid quiz
+  const qid = quizId
+  const validQuizId = currData.quizzes.find(({ quizId }) => quizId === qid)
+  if (!validQuizId) {
+    return { error: "Quiz ID does not refer to a valid quiz" }
+  }
+
+  // Quiz ID does not refer to a quiz that this user owns
+  for (const quiz of currData.quizzes) {
+    if (quiz.quizId === quizId) {
+      if (quiz.quizAuthorId !== authUserId) {
+        return { error: "Quiz ID does not refer to a quiz that this user owns" }
+      }
+    }
+  }
+  
+  for (let i = 0; i < currData.quizzes.length; i++) {
+    if (currData.quizzes[i].quizId === quizId) {
+      currData.quizzes.splice(i, 1);
+    }
+  }
+  
+  return { }
 }
 
 // This function gets all of the relevant information about the current quiz.
@@ -221,5 +264,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export {adminQuizList, adminQuizDescriptionUpdate, adminQuizCreate, adminQuizRemove, adminQuizInfo, adminQuizNameUpdate}
-
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList }

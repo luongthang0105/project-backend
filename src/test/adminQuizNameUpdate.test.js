@@ -2,11 +2,13 @@ import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from "../quiz"
 import { adminAuthRegister } from "../auth"
 import {clear} from "../other"
 
-beforeEach(() => {
-  clear()
-})
+
 
 describe('adminQuizNameUpdate', () => {
+  beforeEach(() => {
+    clear()
+  })
+
   test('ERROR: AuthUserId is not a valid user', () => {
     expect(adminQuizNameUpdate(1, 1, 'name')).toStrictEqual({
       error: 'AuthUserId is not a valid user'
@@ -43,7 +45,7 @@ describe('adminQuizNameUpdate', () => {
       error: 'Name contains invalid characters'
     })
   })
-  
+
   test('ERROR: Name is less than 3 characters long', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz', 'This is my quiz')
@@ -72,8 +74,19 @@ describe('adminQuizNameUpdate', () => {
   test('Success: Returns {} if no error', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
+    
     expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'name')).toStrictEqual({})
     const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
     expect(quizInfo.name).toStrictEqual("name")
+    expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(quizInfo.timeCreated)
+  })
+
+  test('Success: Returns {} if no error', () => {
+    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
+    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
+    expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'quiz01')).toStrictEqual({})
+    const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
+    expect(quizInfo.name).toStrictEqual("quiz01")
+    expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(quizInfo.timeCreated)
   })
 })

@@ -1,6 +1,7 @@
-import { getData } from "./dataStore"
+import { getData, setData } from "./dataStore"
 import validator from "validator"
 import { emailUsed, validName, securedPassword } from "./authHelper"
+
 
 //Register a user with an email, password, and names, then returns their authUserId value.
 function adminAuthRegister(email, password, nameFirst, nameLast) {
@@ -48,6 +49,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     return {
       error: "Password must have at least 8 characters"
     }
+
   }
 
   if (securedPassword(password) === false) {
@@ -69,12 +71,30 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   data.users.push(user)
   data.nextUserId += 1
 
+
   return { authUserId: user.authUserId }
 }
+  
+// This function is responsible for returning user details when the ID is given
+
+/*
+function adminUserDetails (authUserId) {
+  return {
+    user:
+      {
+        userId: 1,
+        name: 'Hayden Smith',
+        email: 'hayden.smith@unsw.edu.au',
+        numSuccessfulLogins: 3,
+        numFailedPasswordsSinceLastLogin: 1,
+      }
+    }
+}
+*/
 
 //Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
-  const data = getData();
+  const data = getData()
   const userInfo = data.users.find(user => user.email === email)
   if (!userInfo) {
     return { error: "Email adress does not exist" }
@@ -92,15 +112,22 @@ function adminAuthLogin(email, password) {
 
 //Given an admin user's authUserId, return details about the user.
 function adminUserDetails(authUserId) {
+  const data = getData()
+  const userInfo = data.users.find(user => user.authUserId === authUserId)
+  if (!userInfo) {
+    return { error: "AuthUserId is not a valid user" }
+  }
+  const fullname = userInfo.nameFirst.concat(" ", userInfo.nameLast)
   return {
     user: {
-      userId: 1,
-      name: 'Hayden Smith',
-      email: 'hayden.smith@unsw.edu.au',
-      numSuccessfulLogins: 3,
-      numFailedPasswordsSinceLastLogin: 1,
+      userId: authUserId,
+      name: fullname,
+      email: userInfo.email,
+      numSuccessfulLogins: userInfo.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: userInfo.numFailedPasswordsSinceLastLogin
     }
   }
 }
 
-export {adminAuthRegister, adminAuthLogin}
+export {adminAuthRegister, adminAuthLogin, adminUserDetails}
+

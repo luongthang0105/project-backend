@@ -118,7 +118,7 @@ function adminQuizRemove(authUserId, quizId) {
 
 // This function gets all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
-  //checking for authUserId validity
+  // checking for authUserId validity
   const data = getData()
   const userID = authUserId
   const validUserId = data.users.find(({ authUserId }) => authUserId === userID);
@@ -211,9 +211,9 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   }
 
   for (const quiz of data.quizzes) {
-    if (quiz.quizId === quizId && quiz.authUserId === authUserId) {
+    if (quiz.quizId === quizId && quiz.quizAuthorId === authUserId) {
       quiz.name = name
-      console.log(quiz)
+      quiz.timeLastEdited = getCurrentTimestamp()
       break
     }
   }

@@ -25,10 +25,6 @@ function adminQuizList(authUserId) {
   return {quizzes: quizList}
 }
 
-// This function updates the description of the relevant quiz.
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-  return {}
-} 
 
 // Helper function to check if a string contains alphanumeric characters or spaces
 function alphanumericAndSpaceCheck(str) {
@@ -37,15 +33,48 @@ function alphanumericAndSpaceCheck(str) {
 
 // Helper function to get the current timestamp
 function getCurrentTimestamp () {
-  return Date.now()
+  return Math.floor(Date.now() / 1000)
 }
+
+// This function updates the description of the relevant quiz.
+// this function is yet to be tested. fn testing has been done, but needs to be further modified. 
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+  const data = getData()
+  const id = authUserId
+  const validUserId = data.users.find(({ authUserId }) => authUserId === id);
+
+  if (!validUserId) {
+    return { error: "AuthUserID is not a valid user" }
+  }
+  
+  // finding the quizId and checking to see if it exists
+ const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
+
+ //error message if it does not exist
+ if (!existingQuiz) {
+  return { error: "Quiz ID does not refer to a valid quiz" };
+}
+
+// error message if the quizId is not what the user owns
+if (existingQuiz.quizId !== authUserId) {
+  return { error: "Quiz ID does not refer to a quiz that this user owns" };
+}
+
+if (description.length > 100) {
+  return { error: "Description is more than 100 characters in length" }
+}
+const timestamp = getCurrentTimestamp()
+existingQuiz.description = description
+existingQuiz.timeLastEdited = timestamp
+  return {success : true}
+} 
 
 // This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
 function adminQuizCreate(authUserId, name, description) {
   // AuthUserId is not a valid user
   const currData = getData()
-  const id = authUserId
-  const validUserId = currData.users.find(({ authUserId }) => authUserId === id)
+  const uid = authUserId
+  const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
   if (!validUserId) {
     return { error: "AuthUserId is not a valid user" }
   }
@@ -79,6 +108,7 @@ function adminQuizCreate(authUserId, name, description) {
     return { error: "Description is more than 100 characters in length" }
   }
   const timestamp = getCurrentTimestamp()
+  
   const newQuiz = {
     quizId: currData.nextQuizId,
     quizAuthorId: authUserId,
@@ -89,6 +119,7 @@ function adminQuizCreate(authUserId, name, description) {
   }
   currData.nextQuizId++
   currData.quizzes.push(newQuiz)
+  
   return { quizId: newQuiz.quizId }
 }
 
@@ -131,12 +162,40 @@ function adminQuizRemove(authUserId, quizId) {
 
 // This function gets all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
+  //checking for authUserId validity
+  const data = getData()
+  const userID = authUserId
+  const validUserId = data.users.find(({ authUserId }) => authUserId === userID);
+
+  if (!validUserId) {
+    return { error: "AuthUserID is not a valid user" }
+  }
+  
+  // finding the quizId and checking to see if it exists
+ const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
+
+
+ //error message if it does not exist
+ if (!existingQuiz) {
+  return { error: "Quiz ID does not refer to a valid quiz" };
+}
+const timeCreated = existingQuiz.timeCreated
+const timeLastEdited = existingQuiz.timeLastEdited
+
+
+// error message if the quizId is not what the user owns
+if (existingQuiz.quizAuthorId !== authUserId) {
+  return { error: "Quiz ID does not refer to a quiz that this user owns" };
+}
+
+// show QuizInfo
+
   return {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated: 1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',
+    quizId: existingQuiz.quizId,
+    name: existingQuiz.name,
+    timeCreated: timeCreated,
+    timeLastEdited: timeLastEdited, 
+    description: existingQuiz.description,
   }
 }
 

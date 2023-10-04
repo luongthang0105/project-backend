@@ -20,7 +20,7 @@ function alphanumericAndSpaceCheck(str) {
 
 // Helper function to get the current timestamp
 function getCurrentTimestamp () {
-  return Date.now()
+  return Math.floor(Date.now() / 1000)
 }
 
 // This function updates the description of the relevant quiz.
@@ -60,8 +60,8 @@ existingQuiz.timeLastEdited = timestamp
 function adminQuizCreate(authUserId, name, description) {
   // AuthUserId is not a valid user
   const currData = getData()
-  const id = authUserId
-  const validUserId = currData.users.find(({ authUserId }) => authUserId === id)
+  const uid = authUserId
+  const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
   if (!validUserId) {
     return { error: "AuthUserId is not a valid user" }
   }
@@ -95,7 +95,7 @@ function adminQuizCreate(authUserId, name, description) {
     return { error: "Description is more than 100 characters in length" }
   }
   const timestamp = getCurrentTimestamp()
-
+  
   const newQuiz = {
     quizId: currData.nextQuizId,
     quizAuthorId: authUserId,
@@ -106,6 +106,7 @@ function adminQuizCreate(authUserId, name, description) {
   }
   currData.nextQuizId++
   currData.quizzes.push(newQuiz)
+  
   return { quizId: newQuiz.quizId }
 }
 

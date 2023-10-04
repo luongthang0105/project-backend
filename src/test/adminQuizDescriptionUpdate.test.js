@@ -1,42 +1,57 @@
 import {adminQuizInfo, adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate} from "../quiz.js"
 import { adminAuthRegister } from "../auth"
 import {clear} from "../other"
-
 describe('adminQuizDescriptionUpdate', () => {
-  test ('AuthUserID is not valid', () => {
-    const result = adminQuizDescriptionUpdate(1, 999, 'Description')
+  let user, quiz
+  beforeEach(() => {
+    clear()
+    user = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
+    quiz = adminQuizCreate(user.authUserId, 'New Quiz', 'description')	
+  })
+
+  test ('AuthUserId is not a valid user', () => {
+    const result = adminQuizDescriptionUpdate(user.authUserId + 1, quiz.quizId, 'New description')
     expect(result).toStrictEqual({
       error: 'AuthUserID is not a valid user',
     })
   })
-  test ('QuizID is not owned by this user', () => {
-    const result2 = adminQuizDescriptionUpdate(1, 999, 'Description')
+  
+  test ('Quiz ID does not refer to a valid quiz', () => {
+    const result3 = adminQuizDescriptionUpdate(user.authUserId, quiz.quizId + 1, 'Description')
+    expect(result3).toStrictEqual({
+      error: "Quiz ID does not refer to a valid quiz"
+    })
+  })
+
+  test ('Quiz ID does not refer to a quiz that this user owns', () => {
+    let user2 = adminAuthRegister('thang@gmail.com', '0105uwuwuw', 'Thomas', 'Nguyen')
+    let quiz2 = adminQuizCreate(user2.authUserId, 'New Quiz 2', 'long description')
+
+    const result2 = adminQuizDescriptionUpdate(user.authUserId, quiz2.quizId, 'Description')
     expect(result2).toStrictEqual({
       error: 'Quiz ID does not refer to a quiz that this user owns',
     })
   })
-  test ('QuizId is invalid', () => {
-    const result3 = adminQuizDescriptionUpdate(1, -1, 'Description')
-    expect(result3).toStrictEqual({
-      error: "QuizID is invalid"
-    })
-  })
-  test ('Description is more than 100 characters', () => {
-    const authUserId = 1
-    const quizID = 999;
-    const descriptionCharacters = 'The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the very lazy dog.'
-    const result = adminQuizDescriptionUpdate(authUserId, quizId, descriptionCharacters)
-    expect(result).toEqual({
-      error: 'Description exceed the 100 characters limit'
-    })
-  })
-  test ('Success case', () => {
-    let newUserId = adminAuthRegister('nuha@gmail.com', 'nuha@c$1', 'Nuha', 'Ennec')
-    let newquizID = adminQuizCreate(newUserId, 'Nuha', 'Description')
-    expect(adminQuizDescriptionUpdate(1, 1, 'description')).toStrictEqual({})
-    expect(adminQuizInfo(1, 1).description).toStrictEqual('New des')
 
-    expect(adminQuizDescriptionUpdate(1)).toStrictEqual({
+  test ('Description is more than 100 characters in length', () => {
+    const oldDescription = adminQuizInfo(user.authUserId, quiz.quizId).description
+    // 105 characters
+    const newDescription = 'okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki.'
+
+    const result = adminQuizDescriptionUpdate(user.authUserId, quiz.quizId, newDescription)
+    expect(result).toEqual({
+      error: 'Description is more than 100 characters in length'
     })
+    
+    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
+    expect(quizInfo.description).toStrictEqual(oldDescription)
+  })
+
+  test ('Success case: check different timestamps', () => {
+    expect(adminQuizDescriptionUpdate(user.authUserId, quiz.quizId, 'New description')).toStrictEqual({})
+    
+    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
+    expect(quizInfo.description).toStrictEqual('New description')
+    expect(quizInfo.timeCreated).toBeLessThan(quizInfo.timeLastEdited)
   })
 })

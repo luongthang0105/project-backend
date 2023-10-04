@@ -29,14 +29,21 @@ describe('adminQuizNameUpdate', () => {
     })
   })
 
-  test('ERROR: Name contains invalid characters', () => {
+  test.each([
+    { name: 'name-'},
+    { name: '-----'},
+    { name: 'name123-'},
+    { name: 'name 123 -'},
+    { name: '123-'},
+    { name: '   -   -'}
+  ])("ERROR: Name contains invalid characters", ({ name }) => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz', 'This is my quiz')
-    expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'name-')).toStrictEqual({
+    expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, name)).toStrictEqual({
       error: 'Name contains invalid characters'
     })
   })
-
+  
   test('ERROR: Name is less than 3 characters long', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz', 'This is my quiz')
@@ -69,5 +76,4 @@ describe('adminQuizNameUpdate', () => {
     const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
     expect(quizInfo.name).toStrictEqual("name")
   })
-
 })

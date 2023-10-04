@@ -1,4 +1,4 @@
-import { adminQuizCreate, adminQuizRemove, adminQuizList } from "../quiz"
+import { adminQuizCreate, adminQuizRemove, adminQuizList, adminQuizInfo } from "../quiz"
 import { adminAuthRegister } from "../auth"
 import { clear } from "../other"
 
@@ -63,7 +63,9 @@ describe("adminQuizRemove", () => {
         const quiz01 = adminQuizCreate(user.authUserId, 'Hihihihihih', 'This is my quiz')
         const quiz02 = adminQuizCreate(user.authUserId, 'Hiiii', 'This is my quiz')
         expect(adminQuizRemove(user.authUserId, quiz02.quizId)).toStrictEqual({ })
-        const quizList = adminQuizList(user.authUserId).quizzes
-        const found = quizList.find(({ quizId }) => quizId === quiz01.quizId)
+        const result = adminQuizInfo(user.authUserId, quiz02.quizId)
+        expect(result).toStrictEqual({
+            error: "Quiz ID does not refer to a valid quiz"
+        })
     })
 })

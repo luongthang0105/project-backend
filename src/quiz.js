@@ -38,36 +38,7 @@ function getCurrentTimestamp () {
 
 // This function updates the description of the relevant quiz.
 // this function is yet to be tested. fn testing has been done, but needs to be further modified. 
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-  const data = getData()
-  const id = authUserId
-  const validUserId = data.users.find(({ authUserId }) => authUserId === id);
 
-  if (!validUserId) {
-    return { error: "AuthUserID is not a valid user" }
-  }
-  
-  // finding the quizId and checking to see if it exists
- const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
-
- //error message if it does not exist
- if (!existingQuiz) {
-  return { error: "Quiz ID does not refer to a valid quiz" };
-}
-
-// error message if the quizId is not what the user owns
-if (existingQuiz.quizId !== authUserId) {
-  return { error: "Quiz ID does not refer to a quiz that this user owns" };
-}
-
-if (description.length > 100) {
-  return { error: "Description is more than 100 characters in length" }
-}
-const timestamp = getCurrentTimestamp()
-existingQuiz.description = description
-existingQuiz.timeLastEdited = timestamp
-  return {success : true}
-} 
 
 // This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
 function adminQuizCreate(authUserId, name, description) {
@@ -123,6 +94,37 @@ function adminQuizCreate(authUserId, name, description) {
   return { quizId: newQuiz.quizId }
 }
 
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+  const data = getData()
+  const id = authUserId
+  const validUserId = data.users.find(({ authUserId }) => authUserId === id);
+
+  if (!validUserId) {
+    return { error: "AuthUserID is not a valid user" }
+  }
+  
+  // finding the quizId and checking to see if it exists
+ const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
+
+ //error message if it does not exist
+ if (!existingQuiz) {
+  return { error: "Quiz ID does not refer to a valid quiz" };
+}
+
+// error message if the quizId is not what the user owns
+if (existingQuiz.quizAuthorId !== authUserId) {
+  return { error: "Quiz ID does not refer to a quiz that this user owns" };
+}
+
+if (description.length > 100) {
+  return { error: "Description is more than 100 characters in length" }
+}
+const timestamp = getCurrentTimestamp()
+existingQuiz.description = description
+existingQuiz.timeLastEdited = timestamp
+
+  return {}
+} 
 
 // This function is responsible for permanently removing a particular quiz.
 function adminQuizRemove(authUserId, quizId) {

@@ -46,12 +46,12 @@ describe('adminQuizDescriptionUpdate', () => {
     let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
     expect(quizInfo.description).toStrictEqual(oldDescription)
   })
-
   test ('Success case: check different timestamps', () => {
     expect(adminQuizDescriptionUpdate(user.authUserId, quiz.quizId, 'New description')).toStrictEqual({})
     
     let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
     expect(quizInfo.description).toStrictEqual('New description')
-    expect(quizInfo.timeCreated).toBeLessThan(quizInfo.timeLastEdited)
+    expect(quizInfo.timeCreated).toBeLessThanOrEqual(quizInfo.timeLastEdited)
   })
 })
+

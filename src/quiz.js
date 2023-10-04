@@ -126,7 +126,7 @@ function adminQuizCreate(authUserId, name, description) {
 
 // This function is responsible for permanently removing a particular quiz.
 function adminQuizRemove(authUserId, quizId) {
-
+  // AuthUserId is not a valid user
   const currData = getData()
   const uid = authUserId
   const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
@@ -157,7 +157,6 @@ function adminQuizRemove(authUserId, quizId) {
   }
   
   return { }
-  return {}
 }
 
 // This function gets all of the relevant information about the current quiz.

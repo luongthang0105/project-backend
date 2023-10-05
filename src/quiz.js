@@ -1,4 +1,5 @@
 import { getData } from "./dataStore.js"
+import { alphanumericAndSpaceCheck, getCurrentTimestamp} from "./quizHelper.js"
 
 /**
  * Provides a list of all the quizzes owned by the logged in user
@@ -47,16 +48,6 @@ function adminQuizList(authUserId) {
   return {quizzes: quizList}
 }
 
-
-// Helper function to check if a string contains alphanumeric characters or spaces
-function alphanumericAndSpaceCheck(str) {
-  return /^[A-Za-z\s\d]*$/.test(str)
-}
-
-// Helper function to get the current timestamp
-function getCurrentTimestamp () {
-  return Math.floor(Date.now() / 1000)
-}
 
 /**
  * Creates a new quiz for a logged-in user, given basic details about the new quiz.

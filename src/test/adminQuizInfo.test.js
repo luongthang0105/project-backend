@@ -1,6 +1,6 @@
-import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz"
-import {clear} from "../other"
-import { adminAuthRegister } from "../auth"
+import {adminQuizInfo, adminQuizCreate} from "../quiz.js"
+import {clear} from "../other.js"
+import { adminAuthRegister } from "../auth.js"
 describe ('adminQuizInfo', () =>  {
   let user, quiz
   beforeEach(() => {

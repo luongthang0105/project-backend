@@ -1,4 +1,4 @@
-import { getData } from "./dataStore"
+import { getData } from "./dataStore.js"
 // This function is responsible for providing a list of all the quizzes owned by the logged in user 
 
 function adminQuizList(authUserId) {
@@ -259,4 +259,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate }
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate }

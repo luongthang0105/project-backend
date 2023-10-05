@@ -71,17 +71,32 @@ describe('adminQuizNameUpdate', () => {
     })
   })
 
-  test('Success: Returns {} if no error', () => {
+  test('Success: Returns {} if no error, 1 user', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
-    
+
     expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'name')).toStrictEqual({})
+
     const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
     expect(quizInfo.name).toStrictEqual("name")
     expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(quizInfo.timeCreated)
   })
 
-  test('Success: Returns {} if no error', () => {
+  test('Success: Returns {} if no error, 2 different users', () => {
+    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
+    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
+    
+    const user02 = adminAuthRegister('han222@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
+    const quiz02 = adminQuizCreate(user02.authUserId, 'quiz02', 'This is my quiz 2')
+
+    expect(adminQuizNameUpdate(user02.authUserId, quiz02.quizId, 'name')).toStrictEqual({})
+
+    const quizInfo = adminQuizInfo(user02.authUserId, quiz02.quizId)
+    expect(quizInfo.name).toStrictEqual("name")
+    expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(quizInfo.timeCreated)
+  })
+
+  test('Success: Returns {} if no error, updating same name', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
     expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'quiz01')).toStrictEqual({})

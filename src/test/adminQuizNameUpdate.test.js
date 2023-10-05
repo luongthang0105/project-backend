@@ -1,6 +1,6 @@
-import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from "../quiz"
-import { adminAuthRegister } from "../auth"
-import {clear} from "../other"
+import { adminQuizCreate, adminQuizNameUpdate, adminQuizInfo } from "../quiz.js"
+import { adminAuthRegister } from "../auth.js"
+import {clear} from "../other.js"
 
 
 

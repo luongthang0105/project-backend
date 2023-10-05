@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore"
+import { getData, setData } from "./dataStore.js"
 import validator from "validator"
-import { emailUsed, validName, securedPassword } from "./authHelper"
+import { emailUsed, validName, securedPassword } from "./authHelper.js"
 
 
 //Register a user with an email, password, and names, then returns their authUserId value.

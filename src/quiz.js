@@ -163,7 +163,7 @@ function adminQuizRemove(authUserId, quizId) {
 
 // This function gets all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
-  //checking for authUserId validity
+  // checking for authUserId validity
   const data = getData()
   const userID = authUserId
   const validUserId = data.users.find(({ authUserId }) => authUserId === userID);
@@ -202,7 +202,61 @@ if (existingQuiz.quizAuthorId !== authUserId) {
 
 // This function updates the name of the relevant quiz.
 function adminQuizNameUpdate(authUserId, quizId, name) {
+
+  const data = getData()
+  const userid = authUserId
+  const quizid = quizId
+
+  // Checks if authUserId is valid
+  const validUser = data.users.find(({ authUserId }) => authUserId === userid)
+
+  // If authUserId is invalid it returns error
+  if (!validUser) {
+    return { error: 'AuthUserId is not a valid user' }
+  }
+
+  // Checks if authUserId is valid
+  const validQuiz = data.quizzes.find(( { quizId }) => quizId === quizid)
+
+  // If authUserId is invalid it returns error
+  if (!validQuiz) {
+    return { error: 'Quiz ID does not refer to a valid quiz' }
+  }
+
+  if (validQuiz.quizAuthorId !== authUserId) {
+    return { error: "Quiz ID does not refer to a quiz that this user owns" }
+  }
+
+  // Checks if name contains invalid characters
+  if (!alphanumericAndSpaceCheck(name)) {
+    return { error: "Name contains invalid characters" }
+  }
+
+  // Checks if name is less than 3 characters
+  if (name.length < 3) {
+    return { error: 'Name is less than 3 characters long' }
+  }
+
+  // Checks if name is greater than 30 characters
+  if (name.length > 30) {
+    return { error: 'Name is greater than 30 characters long' }
+  }
+
+  // If the given name is the same as the current name of the quiz, we just need to update the timestamp
+  if (validQuiz.name === name) {
+    validQuiz.timeLastEdited = getCurrentTimestamp()
+  } else {
+    for (const quiz of data.quizzes) {
+      if (quiz.quizAuthorId === authUserId) {
+        if (quiz.name === name) {
+          return { error: "Name is already used by the current logged in user for another quiz" }
+        }
+      }
+    }
+    validQuiz.name = name
+    validQuiz.timeLastEdited = getCurrentTimestamp()
+  }
   return {}
 }
 
-export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList }
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate }

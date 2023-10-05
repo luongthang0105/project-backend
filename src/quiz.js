@@ -243,4 +243,4 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   return {}
 }
 
-export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate }
+export { adminQuizCreate, adminQuizInfo, adminQuizRemove, adminQuizList, adminQuizNameUpdate, adminQuizDescriptionUpdate }

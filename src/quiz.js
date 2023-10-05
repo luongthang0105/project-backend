@@ -1,27 +1,52 @@
 import { getData } from "./dataStore.js"
-// This function is responsible for providing a list of all the quizzes owned by the logged in user 
+
+// This function is responsible for  
+
+/**
+ * Provides a list of all the quizzes owned by the logged in user
+ *
+ * @param {number} - The currently logged in user id
+ * @returns {
+ * {
+ *   quizzes: Array<
+ *     {
+ *       quizId: number,
+ *       quizAuthorId: number,
+ *       name: string,
+ *       timeCreated: number, 
+ *       timeLastEdited: number, 
+ *       description: string
+ *     }
+ *   >
+ * }
+ * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
+ */
 
 function adminQuizList(authUserId) {
-
+  // Retrieve data
   const data = getData()
 
-  // Checks if authUserId is valid
+  // Check if authUserId is valid by searching for it in the list of users
   const validId = data.users.find(user => user.authUserId === authUserId)
 
-  // If authUserId is invalid it returns error
+  // If authUserId is invalid, return an error object
   if (!validId) {
     return { error: "AuthUserId is not a valid user" }
   }
 
+  // Initialize an empty array to store the user's owned quizzes
   let quizList = []
 
+  // Filter quizzes owned by the authenticated user
   const ownedQuizzes = data.quizzes.filter((quiz) => quiz.quizAuthorId === authUserId);
+
+  // Map the filtered quizzes to a simplified format, containing quizId and name
   quizList = ownedQuizzes.map((quiz) => ({
     quizId: quiz.quizId,
     name: quiz.name,
   }));
 
-
+  // Return an object containing the user's quizzes
   return {quizzes: quizList}
 }
 
@@ -36,36 +61,47 @@ function getCurrentTimestamp () {
   return Math.floor(Date.now() / 1000)
 }
 
-// This function updates the description of the relevant quiz.
-// this function is yet to be tested. fn testing has been done, but needs to be further modified. 
+/**
+ * Creates a new quiz for a logged-in user, given basic details about the new quiz.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {string} name - The name of the new quiz.
+ * @param {string} description - The description of the new quiz.
+ * @returns {
+ * {quizId: number} | { error: string }} 
+ * - An object containing the new quiz id if the quiz is successfully created.
+ *   If any validation errors occur, it returns an error object with a message.
+*/
 
-
-// This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
 function adminQuizCreate(authUserId, name, description) {
-  // AuthUserId is not a valid user
+  // Retrieve the current data
   const currData = getData()
+
+  // Check if authUserId is valid by searching for it in the list of users
   const uid = authUserId
   const validUserId = currData.users.find(({ authUserId }) => authUserId === uid)
+
+  // If authUserId is not valid, return an error object
   if (!validUserId) {
     return { error: "AuthUserId is not a valid user" }
   }
   
-  // Name contains invalid characters
+  // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
     return { error: "Name contains invalid characters" }
   }
 
-  // Name is less than 3 characters long
+  // Check if the name is less than 3 characters long
   if (name.length < 3) {
     return { error: "Name is less than 3 characters long" }
   }
 
-  // Name is more than 30 characters long
+  // Check if the name is more than 30 characters long
   if (name.length > 30) {
     return { error: "Name is more than 30 characters long" }
   }
 
-  // Name is already used by the current logged in user for another quiz
+  // Check if the name is already used by the current logged-in user for another quiz
   for (const quiz of currData.quizzes) {
     if (quiz.quizAuthorId === authUserId) {
       if (quiz.name === name) {
@@ -74,12 +110,15 @@ function adminQuizCreate(authUserId, name, description) {
     }
   }
 
-  // Description is more than 100 characters in length
+  // Check if the description is more than 100 characters in length
   if (description.length > 100) {
     return { error: "Description is more than 100 characters in length" }
   }
+
+  // Get the current timestamp
   const timestamp = getCurrentTimestamp()
   
+  // Create a new quiz object
   const newQuiz = {
     quizId: currData.nextQuizId,
     quizAuthorId: authUserId,
@@ -88,41 +127,64 @@ function adminQuizCreate(authUserId, name, description) {
     timeLastEdited: timestamp,
     description: description
   }
+
+  // Increment the nextQuizId and add the new quiz to the data
   currData.nextQuizId++
   currData.quizzes.push(newQuiz)
   
+  // Return an object containing the quizId of the newly created quiz
   return { quizId: newQuiz.quizId }
 }
 
+/**
+ * Updates the description of a quiz owned by the authenticated user.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {number} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ * @returns {{ error: string } | {}} 
+ *    - An empty object if the description is successfully updated.
+ *      If any validation errors occur, it returns an error object with a message.
+ */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+  // Retrieve the current data
   const data = getData()
   const id = authUserId
+  
+  // Check if authUserId is valid by searching for it in the list of users
   const validUserId = data.users.find(({ authUserId }) => authUserId === id);
 
+  // If authUserId is not valid, return an error object
   if (!validUserId) {
     return { error: "AuthUserID is not a valid user" }
   }
   
-  // finding the quizId and checking to see if it exists
- const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
+  // Find the quiz with the specified quizId and check if it exists
+  const existingQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId)
 
- //error message if it does not exist
- if (!existingQuiz) {
-  return { error: "Quiz ID does not refer to a valid quiz" };
-}
+ // Return an error message if the quiz with the given quizId does not exist
+  if (!existingQuiz) {
+    return { error: "Quiz ID does not refer to a valid quiz" };
+  }
 
-// error message if the quizId is not what the user owns
-if (existingQuiz.quizAuthorId !== authUserId) {
-  return { error: "Quiz ID does not refer to a quiz that this user owns" };
-}
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (existingQuiz.quizAuthorId !== authUserId) {
+    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+  }
 
-if (description.length > 100) {
-  return { error: "Description is more than 100 characters in length" }
-}
-const timestamp = getCurrentTimestamp()
-existingQuiz.description = description
-existingQuiz.timeLastEdited = timestamp
+  // Check if the description is more than 100 characters in length
+  if (description.length > 100) {
+    return { error: "Description is more than 100 characters in length" }
+  }
 
+  // Get the current timestamp
+  const timestamp = getCurrentTimestamp()
+
+  // Update the quiz's description and last edited timestamp
+  existingQuiz.description = description
+  existingQuiz.timeLastEdited = timestamp
+
+  // Return an empty object to indicate a successful update
   return {}
 } 
 

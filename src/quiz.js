@@ -2,7 +2,6 @@ import { getData } from "./dataStore"
 // This function is responsible for providing a list of all the quizzes owned by the logged in user 
 
 function adminQuizList(authUserId) {
-
   const data = getData()
 
   // Checks if authUserId is valid
@@ -21,24 +20,8 @@ function adminQuizList(authUserId) {
     name: quiz.name,
   }));
 
-
   return {quizzes: quizList}
 }
-
-
-// Helper function to check if a string contains alphanumeric characters or spaces
-function alphanumericAndSpaceCheck(str) {
-  return /^[A-Za-z\s\d]*$/.test(str)
-}
-
-// Helper function to get the current timestamp
-function getCurrentTimestamp () {
-  return Math.floor(Date.now() / 1000)
-}
-
-// This function updates the description of the relevant quiz.
-// this function is yet to be tested. fn testing has been done, but needs to be further modified. 
-
 
 // This function is responsible for creating a new quiz for a logged in user, given basic details about a new quiz
 function adminQuizCreate(authUserId, name, description) {

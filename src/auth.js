@@ -2,62 +2,81 @@ import { getData, setData } from "./dataStore.js"
 import validator from "validator"
 import { emailUsed, validName, securedPassword } from "./authHelper.js"
 
-
-//Register a user with an email, password, and names, then returns their authUserId value.
+/**
+ * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
+ *
+ * @param {string} email - The email address of the user to be registered.
+ * @param {string} password - The password for the user account.
+ * @param {string} nameFirst - The user's first name.
+ * @param {string} nameLast - The user's last name.
+ * @returns {{authUserId: number} | { error: string }}
+ * - An object containing the authUserId of the registered user if registration is successful.
+ *   If any validation errors occur, it returns an error object with a message.
+ */
 function adminAuthRegister(email, password, nameFirst, nameLast) {
+  // Retrieve the current data
   let data = getData()
 
-  // email address used by another user
+  // Check if the email address is used by another user
   if (emailUsed(email, data) === true) {
     return {
-      error: "Email address used by another user"
+      error: "Email address used by another user",
     }
   }
 
-  // email address invalid
+  // Check if the email address is valid
   if (validator.isEmail(email) === false) {
     return {
-      error: "Invalid email address"
+      error: "Invalid email address",
     }
   }
 
+  // Check if the first name is valid
   if (validName(nameFirst) === false) {
     return {
-      error: "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"
+      error:
+        "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
     }
   }
 
+  // Check the length of the first name
   if (nameFirst.length > 20 || nameFirst.length < 2) {
     return {
-      error: "First name length must be between 2 and 20 characters"
+      error: "First name length must be between 2 and 20 characters",
     }
   }
 
+  // Check if the last name is valid
   if (validName(nameLast) === false) {
     return {
-      error: "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"
+      error:
+        "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
     }
   }
 
+  // Check the length of the last name
   if (nameLast.length > 20 || nameLast.length < 2) {
     return {
-      error: "Last name length must be between 2 and 20 characters"
+      error: "Last name length must be between 2 and 20 characters",
     }
   }
 
+  // Check the length of the password
   if (password.length < 8) {
     return {
-      error: "Password must have at least 8 characters"
+      error: "Password must have at least 8 characters",
     }
-
   }
 
+  // Check if the password contains at least one number and one letter
   if (securedPassword(password) === false) {
     return {
-      error: "Password must contain at least one number and at least one letter"
+      error:
+        "Password must contain at least one number and at least one letter",
     }
   }
 
+  // Create a new user object
   let user = {
     authUserId: data.nextUserId,
     nameFirst: nameFirst,
@@ -67,50 +86,96 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   }
-
+  // Add the new user to the data
   data.users.push(user)
   data.nextUserId += 1
 
-
+  // Return an object containing the authUserId of the registered user
   return { authUserId: user.authUserId }
 }
 
-//Given a registered user's email and password returns their authUserId value.
+/**
+ * Given a registered user's email and password, returns their authUserId value upon successful login.
+ *
+ * @param {string} email - The email address of the user attempting to log in.
+ * @param {string} password - The password provided by the user for authentication.
+ * @returns {{authUserId: number,} | { error: string }}
+ * - An object containing the authUserId of the user upon successful login.
+ *   If the email does not exist, the password is incorrect, or other errors occur,
+ *   it returns an error object with a message.
+ */
 function adminAuthLogin(email, password) {
+  // Retrieve the current data
   const data = getData()
-  const userInfo = data.users.find(user => user.email === email)
+
+  // Find user information based on the provided email
+  const userInfo = data.users.find((user) => user.email === email)
+
+  // If the email does not exist in the database, return an error
   if (!userInfo) {
     return { error: "Email adress does not exist" }
   }
+
+  // Check if the provided password matches the stored password
   if (userInfo.password !== password) {
+    // Increment the count of failed login attempts
     userInfo.numFailedPasswordsSinceLastLogin += 1
     return { error: "Password is not correct for the given email" }
   }
+  // Reset the count of failed login attempts and update the count of successful logins
   userInfo.numFailedPasswordsSinceLastLogin = 0
   userInfo.numSuccessfulLogins += 1
+
+  // Return an object containing the authUserId of the authenticated user
   return {
-    authUserId: userInfo.authUserId
+    authUserId: userInfo.authUserId,
   }
 }
 
-//Given an admin user's authUserId, return details about the user.
+/**
+ * Given an admin user's authUserId, returns details about the user.
+ *
+ * @param {number} authUserId - The authUserId of the admin user whose details are requested.
+ * @returns {
+ * {
+ *   user: {
+ *     userId: number,
+ *     name: string,
+ *     email: string,
+ *     numSuccessfulLogins: number,
+ *     numFailedPasswordsSinceLastLogin: number,
+ *   },
+ * } | { error: string }
+ * }
+ *   - An object containing details about the admin user if the authUserId is valid.
+ *     If the authUserId is not valid, it returns an error object with a message.
+ */
 function adminUserDetails(authUserId) {
+  // Retrieve the current data
   const data = getData()
-  const userInfo = data.users.find(user => user.authUserId === authUserId)
+
+  // Find user information based on the provided authUserId
+  const userInfo = data.users.find((user) => user.authUserId === authUserId)
+
+  // If the authUserId is not valid, return an error
   if (!userInfo) {
     return { error: "AuthUserId is not a valid user" }
   }
+
+  // Concatenate the first name and last name to form the full name
   const fullname = userInfo.nameFirst.concat(" ", userInfo.nameLast)
+
+  // Return an object containing details about the admin user
   return {
     user: {
       userId: authUserId,
       name: fullname,
       email: userInfo.email,
       numSuccessfulLogins: userInfo.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: userInfo.numFailedPasswordsSinceLastLogin
-    }
+      numFailedPasswordsSinceLastLogin:
+        userInfo.numFailedPasswordsSinceLastLogin,
+    },
   }
 }
 
-export {adminAuthRegister, adminAuthLogin, adminUserDetails}
-
+export { adminAuthRegister, adminAuthLogin, adminUserDetails }

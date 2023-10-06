@@ -1,7 +1,25 @@
 import { getData } from "./dataStore.js"
 import { getCurrentTimestamp, alphanumericAndSpaceCheck } from "./quizHelper.js"
-// This function is responsible for providing a list of all the quizzes owned by the logged in user 
-
+/**
+ * Provides a list of all the quizzes owned by the logged in user
+ *
+ * @param {number} - The currently logged in user id
+ * @returns {
+* {
+  *   quizzes: Array<
+  *     {
+  *       quizId: number,
+  *       quizAuthorId: number,
+  *       name: string,
+  *       timeCreated: number, 
+  *       timeLastEdited: number, 
+  *       description: string
+  *     }
+  *   >
+  * }
+  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
+  */
+ 
 function adminQuizList(authUserId) {
   // Retrieve data
   const data = getData()

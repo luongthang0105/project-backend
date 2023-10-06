@@ -47,10 +47,10 @@ describe("adminQuizInfo", () => {
   test("Success: Quiz Information Retrieved:", () => {
     expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual({
       quizId: quiz.quizId,
-      name: expect.any(String),
+      name: "New Quiz",
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
-      description: expect.any(String),
+      description: "description",
     })
   })
 
@@ -69,10 +69,10 @@ describe("adminQuizInfo", () => {
 
     expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual({
       quizId: quiz2.quizId,
-      name: expect.any(String),
+      name: "New Quiz 2",
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
-      description: expect.any(String),
+      description: "long description",
     })
   })
 })

@@ -92,4 +92,18 @@ describe("adminQuizDescriptionUpdate", () => {
     expect(quizInfo.description).toStrictEqual("New description")
     expect(quizInfo.timeCreated).toBeLessThanOrEqual(quizInfo.timeLastEdited)
   })
+  test("Success case: Empty Description", () => {
+    expect(
+      adminQuizDescriptionUpdate(
+        user.authUserId,
+        quiz.quizId,
+        ""
+      )
+    ).toStrictEqual({})
+
+    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
+    expect(quizInfo.description).toStrictEqual("")
+    expect(quizInfo.timeCreated).toBeLessThanOrEqual(quizInfo.timeLastEdited)
+  })
+  
 })

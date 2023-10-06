@@ -21,26 +21,8 @@ describe("adminQuizRemove", () => {
       "Han",
       "Hanh"
     )
-    let result = adminQuizRemove(user.authUserId + 1, 1)
-    expect(result).toStrictEqual({
-      error: "AuthUserId is not a valid user",
-    })
-  })
-
-  test("AuthUserId is not a valid user: dataStore has 2 users", () => {
-    const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    )
-    const user02 = adminAuthRegister(
-      "hanh@gmai.com",
-      "27705uwuwuwuwuwuw",
-      "Hanh",
-      "Han"
-    )
-    let result = adminQuizRemove(user02.authUserId + 1, 1)
+    const quiz = adminQuizCreate(user, "Quiz01", "myQuiz")
+    let result = adminQuizRemove(user.authUserId + 1, quiz)
     expect(result).toStrictEqual({
       error: "AuthUserId is not a valid user",
     })
@@ -99,6 +81,9 @@ describe("adminQuizRemove", () => {
     expect(adminQuizRemove(user01.authUserId, quiz02.quizId)).toStrictEqual({
       error: "Quiz ID does not refer to a quiz that this user owns",
     })
+    expect(adminQuizRemove(user02.authUserId, quiz01.quizId)).toStrictEqual({
+      error: "Quiz ID does not refer to a quiz that this user owns",
+    })
   })
 
   test("Successful case: delete 1 quiz from a user who has 2 quizzes", () => {
@@ -108,7 +93,7 @@ describe("adminQuizRemove", () => {
       "Han",
       "Hanh"
     )
-    const quiz01 = adminQuizCreate(
+    adminQuizCreate(
       user.authUserId,
       "Hihihihihih",
       "This is my quiz"

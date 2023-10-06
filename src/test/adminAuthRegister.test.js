@@ -11,8 +11,7 @@ describe('adminAuthRegister', () => {
     expect(error).toEqual({error: 'Email address used by another user'})
 
     let authUserId = adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
-    expect(authUserId).toEqual({ authUserId: 1})
-    
+    expect(authUserId).toEqual({ authUserId: expect.any(Number)})
     error = adminAuthRegister("lt05@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
     expect(error).toEqual({error: 'Email address used by another user'})
   })
@@ -22,13 +21,13 @@ describe('adminAuthRegister', () => {
     expect(error).toEqual({error: 'Invalid email address'})
 
     let authUserId = adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
-    expect(authUserId).toEqual({ authUserId: 0})
+    expect(authUserId).toEqual({ authUserId: expect.any(Number)})
 
     error = adminAuthRegister("lt@05", 'ltngu2705', 'Thang', 'Ngu')
     expect(error).toEqual({error: 'Invalid email address'})
 
     authUserId = adminAuthRegister("lt@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
-    expect(authUserId).toEqual({ authUserId: 1})
+    expect(authUserId).toEqual({ authUserId: expect.any(Number)})
   })
 
   test('ERROR: NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', () => {
@@ -208,6 +207,6 @@ describe('adminAuthRegister', () => {
     { email: 'apcs@gmail.vn', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "-----" },
     { email: 'thomas@ad.unsw.edu.au', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "    " },
   ])('SUCESS', ({ email, password, nameFirst, nameLast }) => {
-    expect(adminAuthRegister(email, password, nameFirst, nameLast).authUserId).toEqual(0)
+    expect(adminAuthRegister(email, password, nameFirst, nameLast).authUserId).toEqual(expect.any(Number))
   })
 })

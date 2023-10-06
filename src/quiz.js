@@ -21,7 +21,7 @@ import { alphanumericAndSpaceCheck, getCurrentTimestamp} from "./quizHelper.js"
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
 function adminQuizList(authUserId) {
-  // Retrieve data
+  // Retrieve the current data
   const data = getData()
 
   // Check if authUserId is valid by searching for it in the list of users
@@ -245,7 +245,7 @@ function adminQuizRemove(authUserId, quizId) {
  *   If any validation errors occur, it returns an error object with a message.
 */
 function adminQuizInfo(authUserId, quizId) {
-   // Retrieve the current data
+  // Retrieve the current data
   const data = getData()
   const userID = authUserId
 
@@ -303,7 +303,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
-    return { error: 'AuthUserId is not a valid user' }
+    return { error: "AuthUserId is not a valid user" }
   }
 
   // Check if quizId is valid by searching for it in the list of quizzes
@@ -311,7 +311,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
   // If quizId is not valid, return an error object
   if (!validQuiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz' }
+    return { error: "Quiz ID does not refer to a valid quiz" }
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
@@ -326,12 +326,12 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
   // Checks if name is less than 3 characters
   if (name.length < 3) {
-    return { error: 'Name is less than 3 characters long' }
+    return { error: "Name is less than 3 characters long" }
   }
 
   // Checks if name is greater than 30 characters
   if (name.length > 30) {
-    return { error: 'Name is greater than 30 characters long' }
+    return { error: "Name is greater than 30 characters long" }
   }
 
   // If the given name is the same as the current name of the quiz, update the last edited timestamp

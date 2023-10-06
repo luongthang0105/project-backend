@@ -4,7 +4,7 @@ function alphanumericAndSpaceCheck(str) {
 }
 
 // Helper function to get the current timestamp in seconds
-function getCurrentTimestamp () {
+function getCurrentTimestamp() {
   return Math.floor(Date.now() / 1000)
 }
 

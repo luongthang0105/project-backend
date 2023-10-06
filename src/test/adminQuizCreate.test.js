@@ -207,7 +207,7 @@ describe("adminQuizCreate", () => {
     expect(
       adminQuizCreate(user.authUserId, "Han", "This is my quiz")
     ).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -221,7 +221,7 @@ describe("adminQuizCreate", () => {
     expect(
       adminQuizCreate(user.authUserId, "Han123", "This is my quiz")
     ).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -235,7 +235,7 @@ describe("adminQuizCreate", () => {
     expect(
       adminQuizCreate(user.authUserId, "Han 34 uwu", "This is my quiz")
     ).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -247,7 +247,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     )
     expect(adminQuizCreate(user.authUserId, "Han", "")).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -260,7 +260,7 @@ describe("adminQuizCreate", () => {
     )
     adminQuizCreate(user.authUserId, "Huhu", "")
     expect(adminQuizCreate(user.authUserId, "Han", "")).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -279,7 +279,7 @@ describe("adminQuizCreate", () => {
     )
     adminQuizCreate(user01.authUserId, "Huhu", "")
     expect(adminQuizCreate(user02.authUserId, "Han", "")).toStrictEqual({
-      quizId: any(Number),
+      quizId: expect.any(Number),
     })
   })
 
@@ -298,7 +298,7 @@ describe("adminQuizCreate", () => {
     )
     adminQuizCreate(user01.authUserId, "Han", "")
     expect(adminQuizCreate(user02.authUserId, "Han", "")).toStrictEqual({
-      quizId: any(Number)
+      quizId: expect.any(Number)
     })
   })
 })

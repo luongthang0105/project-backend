@@ -147,30 +147,12 @@ describe("adminQuizNameUpdate", () => {
     })
   })
 
-<<<<<<< HEAD
   test('Success: Returns {} if no error, 1 user', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
 
     expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'name')).toStrictEqual({})
 
-=======
-  test("Success: Returns {} if no error", () => {
-    const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    )
-    const quiz01 = adminQuizCreate(
-      user01.authUserId,
-      "quiz01",
-      "This is my quiz"
-    )
-    expect(
-      adminQuizNameUpdate(user01.authUserId, quiz01.quizId, "name")
-    ).toStrictEqual({})
->>>>>>> han/fixStyle
     const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
     expect(quizInfo.name).toStrictEqual("name")
     expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(
@@ -178,7 +160,6 @@ describe("adminQuizNameUpdate", () => {
     )
   })
 
-<<<<<<< HEAD
   test('Success: Returns {} if no error, 2 different users', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
     const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
@@ -195,44 +176,7 @@ describe("adminQuizNameUpdate", () => {
 
   test('Success: Returns {} if no error, updating same name', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh')
-    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')
-    expect(adminQuizNameUpdate(user01.authUserId, quiz01.quizId, 'quiz01')).toStrictEqual({})
-=======
-  test("Success: Returns {} if no error", () => {
-    const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    )
-    const quiz01 = adminQuizCreate(
-      user01.authUserId,
-      "quiz01",
-      "This is my quiz"
-    )
-    expect(
-      adminQuizNameUpdate(user01.authUserId, quiz01.quizId, "quiz01")
-    ).toStrictEqual({})
->>>>>>> han/fixStyle
-    const quizInfo = adminQuizInfo(user01.authUserId, quiz01.quizId)
-    expect(quizInfo.name).toStrictEqual("quiz01")
-    expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(
-      quizInfo.timeCreated
-    )
-  })
-
-  test("Success: Returns {} if no error", () => {
-    const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    )
-    const quiz01 = adminQuizCreate(
-      user01.authUserId,
-      "quiz01",
-      "This is my quiz"
-    )
+    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz')    
     expect(
       adminQuizNameUpdate(user01.authUserId, quiz01.quizId, "quiz01")
     ).toStrictEqual({})

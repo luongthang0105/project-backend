@@ -1,49 +1,8 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz.js"
-import {clear} from "../other"
-import { adminAuthRegister } from "../auth"
-
-describe ('adminQuizInfo', () =>  {
-  test ('AuthUserID is not valid', () => {
-    expect(adminQuizInfo(1)).toStrictEqual({
-        error: "AuthUserID is an invalid user"
-      })
-  })
-  test ('QuizID is not owned by this user', () => {
-    expect(adminQuizInfo(1)).toStrictEqual ({
-        error: "QuizID is not owned by this user"
-      })
-    })
-  test ('QuizId is invalid', () => {
-    expect(adminQuizCreate(1)).toStrictEqual({
-        error: "QuizID is invalid"
-      })
-  })
-  test ('Success: Quiz Information Retrieved:', () => {
-    expect(adminQuizInfo(1)).toStrictEqual(
-      {
-        quizId: 1,
-        name: 'MyQuiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz'
-      })
-    })
-})
-=======
-import {adminQuizInfo, adminQuizList, adminQuizCreate} from "../quiz"
-import {clear} from "../other"
-import { adminAuthRegister } from "../auth"
-describe ('adminQuizInfo', () =>  {
-=======
 import { adminQuizInfo, adminQuizCreate } from "../quiz.js"
 import { clear } from "../other.js"
 import { adminAuthRegister } from "../auth.js"
 
 describe("adminQuizInfo", () => {
->>>>>>> 1bc89fed3093c499728d705361d88a390d15e8c1
   let user, quiz
   beforeEach(() => {
     clear()
@@ -117,9 +76,3 @@ describe("adminQuizInfo", () => {
     })
   })
 })
-<<<<<<< HEAD
-
-
->>>>>>> 2f18bc1ec3111bcccce134dccf205d3ef7a9f221
-=======
->>>>>>> 1bc89fed3093c499728d705361d88a390d15e8c1

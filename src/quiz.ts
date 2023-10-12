@@ -7,7 +7,7 @@ import {
 /**
  * Provides a list of all the quizzes owned by the logged in user
  *
- * @param {number} - The currently logged in user id
+ * @param {number} authUserId - The currently logged in user id
  * @returns {
  * {
  *   quizzes: Array<
@@ -23,7 +23,7 @@ import {
  * }
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
-function adminQuizList(authUserId: number): { quizzes: { quizId: number, quizAuthorId: number, name: string, timeCreated: number, timeLastEdited: number, description: string }[] } {
+function adminQuizList(authUserId: number): { quizzes: { quizId: number, quizAuthorId: number, name: string, timeCreated: number, timeLastEdited: number, description: string }[] } | { error: string } {
   // Retrieve the current data
   const data = getData()
 

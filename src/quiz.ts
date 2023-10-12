@@ -23,7 +23,7 @@ import {
  * }
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
-function adminQuizList(authUserId) {
+function adminQuizList(authUserId: number): { quizzes: { quizId: number, quizAuthorId: number, name: string, timeCreated: number, timeLastEdited: number, description: string }[] } {
   // Retrieve the current data
   const data = getData()
 
@@ -64,7 +64,7 @@ function adminQuizList(authUserId) {
  * - An object containing the new quiz id if the quiz is successfully created.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizCreate(authUserId, name, description) {
+function adminQuizCreate(authUserId: number, name: string, description: string): { quizId: number } | { error: string } {
   // Retrieve the current data
   const currData = getData()
 
@@ -142,7 +142,7 @@ function adminQuizCreate(authUserId, name, description) {
  *    - An empty object if the description is successfully updated.
  *      If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): { error: string } | {} {
   // Retrieve the current data
   const data = getData()
   const id = authUserId
@@ -193,7 +193,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
  *   - An empty object if the quiz is successfully removed.
  *     If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizRemove(authUserId, quizId) {
+function adminQuizRemove(authUserId: number, quizId: number): { error: string }| {} {
   // Retrieve the current data
   const currData = getData()
   const uid = authUserId
@@ -257,7 +257,7 @@ function adminQuizRemove(authUserId, quizId) {
  *   by the authenticated user.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizInfo(authUserId, quizId) {
+function adminQuizInfo(authUserId:number, quizId: number): {quizId: number, name: string, timeCreated: string, timeLastEdited: string, description: string} {
   // Retrieve the current data
   const data = getData()
   const userID = authUserId
@@ -307,7 +307,7 @@ function adminQuizInfo(authUserId, quizId) {
  *   - An empty object if the quiz name is successfully updated.
  *     If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizNameUpdate(authUserId, quizId, name) {
+function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): { error: string } | {} {
   // Retrieve the current data
   const data = getData()
   const userid = authUserId

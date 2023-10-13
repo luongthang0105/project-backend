@@ -10,7 +10,9 @@
         "@babel/cli": "^7.22.5",
         "@babel/core": "^7.22.5",
         "@babel/preset-env": "^7.22.5",
-        "jest": "^28.1.0"
+        "jest": "^28.1.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
     },
     "type": "module",
     "nyc": {

@@ -3,27 +3,16 @@ import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
 } from "./quizHelper.js"
+import { EmptyObject, ErrorObject, Quiz, QuizList, QuizObject } from "./types.js"
 
 /**
  * Provides a list of all the quizzes owned by the logged in user
  *
  * @param {number} authUserId - The currently logged in user id
- * @returns {
- * {
- *   quizzes: Array<
- *     {
- *       quizId: number,
- *       quizAuthorId: number,
- *       name: string,
- *       timeCreated: number,
- *       timeLastEdited: number,
- *       description: string
- *     }
- *   >
- * }
+ * @returns {QuizList | ErrorObject}
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
-function adminQuizList(authUserId: number): { quizzes: { quizId: number, quizAuthorId: number, name: string, timeCreated: number, timeLastEdited: number, description: string }[] } | { error: string } {
+function adminQuizList(authUserId: number): QuizList | ErrorObject {
   // Retrieve the current data
   const data = getData()
 
@@ -60,11 +49,11 @@ function adminQuizList(authUserId: number): { quizzes: { quizId: number, quizAut
  * @param {string} name - The name of the new quiz.
  * @param {string} description - The description of the new quiz.
  * @returns {
- * {quizId: number} | { error: string }}
+ * Quiz | ErrorObject}
  * - An object containing the new quiz id if the quiz is successfully created.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizCreate(authUserId: number, name: string, description: string): { quizId: number } | { error: string } {
+function adminQuizCreate(authUserId: number, name: string, description: string): Quiz | ErrorObject {
   // Retrieve the current data
   const currData = getData()
 
@@ -138,11 +127,11 @@ function adminQuizCreate(authUserId: number, name: string, description: string):
  * @param {number} authUserId - The ID of the authenticated user.
  * @param {number} quizId - The ID of the quiz to be updated.
  * @param {string} description - The new description for the quiz.
- * @returns {{ error: string } | {}}
+ * @returns { ErrorObject | EmptyObject}
  *    - An empty object if the description is successfully updated.
  *      If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): { error: string } | {} {
+function adminQuizDescriptionUpdate(authUserId: number, quizId: number, description: string): ErrorObject | EmptyObject {
   // Retrieve the current data
   const data = getData()
   const id = authUserId
@@ -189,11 +178,11 @@ function adminQuizDescriptionUpdate(authUserId: number, quizId: number, descript
  *
  * @param {number} authUserId - The ID of the authenticated user.
  * @param {number} quizId - The ID of the quiz to be removed.
- * @returns {{ error: string } | {}}
+ * @returns { ErrorObject | EmptyObject}
  *   - An empty object if the quiz is successfully removed.
  *     If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizRemove(authUserId: number, quizId: number): { error: string }| {} {
+function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | EmptyObject {
   // Retrieve the current data
   const currData = getData()
   const uid = authUserId
@@ -245,19 +234,12 @@ function adminQuizRemove(authUserId: number, quizId: number): { error: string }|
  *
  * @param {number} authUserId - The ID of the authenticated user.
  * @param {number} quizId - The ID of the quiz for which information is requested.
- * @returns {
- * {
- *   quizId: number,
- *   name: string,
- *   timeCreated: string,
- *   timeLastEdited: string,
- *   description: string,
- *   } | { error: string }}
+ * @returns {QuizObject | ErrorObject}
  * - An object containing information about the quiz if it exists and is owned
  *   by the authenticated user.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizInfo(authUserId:number, quizId: number): {quizId: number, name: string, timeCreated: string, timeLastEdited: string, description: string} {
+function adminQuizInfo(authUserId:number, quizId: number): QuizObject | ErrorObject{
   // Retrieve the current data
   const data = getData()
   const userID = authUserId
@@ -288,6 +270,7 @@ function adminQuizInfo(authUserId:number, quizId: number): {quizId: number, name
   }
 
   // Return object with relevant information about the quiz
+  // There is still an error here for type check because we haven't updated our function to the It2 spec yet (which needs to return questions, numQuestions, and duration also). 
   return {
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,
@@ -303,11 +286,11 @@ function adminQuizInfo(authUserId:number, quizId: number): {quizId: number, name
  * @param {number} authUserId - The ID of the authenticated user.
  * @param {number} quizId - The ID of the quiz to be updated.
  * @param {string} name - The new name for the quiz.
- * @returns {{ error: string } | {}}
+ * @returns {ErrorObject | EmptyObject}
  *   - An empty object if the quiz name is successfully updated.
  *     If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): { error: string } | {} {
+function adminQuizNameUpdate(authUserId: number, quizId: number, name: string): ErrorObject | EmptyObject {
   // Retrieve the current data
   const data = getData()
   const userid = authUserId

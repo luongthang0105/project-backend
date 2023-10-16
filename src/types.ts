@@ -1,6 +1,9 @@
 type ErrorObject = {
   error: string
 }
+
+type EmptyObject = {}
+
 type Token = {
   identifier: string,
   authUserId: number
@@ -107,6 +110,7 @@ type DataStore = {
 }
 
 export {
+  EmptyObject,
   ErrorObject,
   Token, 
   LoginInfo, 

@@ -239,7 +239,14 @@ function adminQuizRemove(authUserId: number, quizId: number): ErrorObject | Empt
  *   by the authenticated user.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminQuizInfo(authUserId:number, quizId: number): QuizObject | ErrorObject{
+// DONT FORGET TO UPDATE THE RETURNED TYPE TO QuizObject AFTER FINISHED EDITING THIS FUNCTION
+function adminQuizInfo(authUserId: number, quizId: number): {
+  quizId: number,
+  name: string,
+  description: string,
+  timeCreated: number,
+  timeLastEdited: number,
+} | ErrorObject{
   // Retrieve the current data
   const data = getData()
   const userID = authUserId

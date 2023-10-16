@@ -59,17 +59,6 @@ type question = {
   answers: answer[]
 }
 
-//response for adminQuizInfo
-type quizInfo = {
-  quizId: number,
-  name: string,
-  timeCreated: number,
-  timeLastEdited: number,
-  description: string,
-  numQuestions: number,
-  questions: question[],
-  duration: number,
-}
 
 //parameter for adminQuizNameUpdate
 type nameUpdate = {
@@ -123,8 +112,7 @@ export {
   quizCreate, 
   colours, 
   answer, 
-  question, 
-  quizInfo, 
+  question,  
   nameUpdate, 
   descriptionUpdate,
   userObject,

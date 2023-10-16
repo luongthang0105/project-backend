@@ -1,12 +1,6 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 import fs from 'fs'
-
-let data = {
-  users: [],
-  quizzes: [],
-  nextUserId: 0,
-  nextQuizId: 0
-}
+import { dataStore } from './types'
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -25,12 +19,12 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
+function getData(): dataStore {
   return JSON.parse(String(fs.readFileSync('./dataStore.json')))
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+function setData(newData: dataStore) {
   fs.writeFileSync('./dataStore.json', JSON.stringify(newData))
 }
 

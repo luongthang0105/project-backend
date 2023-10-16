@@ -2,7 +2,7 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizDescriptionUpdate,
-} from "../quiz.js"
+} from "../quiz.ts"
 import { adminAuthRegister } from "../auth.js"
 import { clear } from "../other.js"
 describe("adminQuizDescriptionUpdate", () => {

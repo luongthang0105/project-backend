@@ -11,7 +11,7 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-} from "../quiz.js"
+} from "../quiz.ts"
 
 describe("Test on all admin functions", () => {
   beforeEach(() => {

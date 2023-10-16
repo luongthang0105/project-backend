@@ -90,6 +90,9 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   data.users.push(user)
   data.nextUserId += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+    
   // Return an object containing the authUserId of the registered user
   return { authUserId: user.authUserId }
 }
@@ -126,6 +129,9 @@ function adminAuthLogin(email, password) {
   userInfo.numFailedPasswordsSinceLastLogin = 0
   userInfo.numSuccessfulLogins += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+  
   // Return an object containing the authUserId of the authenticated user
   return {
     authUserId: userInfo.authUserId,

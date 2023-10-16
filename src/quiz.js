@@ -1,4 +1,4 @@
-import { getData } from "./dataStore.js"
+import { getData, setData } from "./dataStore.js"
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -49,6 +49,8 @@ function adminQuizList(authUserId) {
     name: quiz.name,
   }))
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
   // Return an object containing the user's quizzes
   return { quizzes: quizList }
 }
@@ -128,6 +130,9 @@ function adminQuizCreate(authUserId, name, description) {
   currData.nextQuizId++
   currData.quizzes.push(newQuiz)
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+
   // Return an object containing the quizId of the newly created quiz
   return { quizId: newQuiz.quizId }
 }
@@ -179,6 +184,9 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   // Update the quiz's description and last edited timestamp
   existingQuiz.description = description
   existingQuiz.timeLastEdited = timestamp
+
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
 
   // Return an empty object to indicate a successful update
   return {}
@@ -236,6 +244,9 @@ function adminQuizRemove(authUserId, quizId) {
     }
   }
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+  
   // Return an empty object to indicate a successful removal
   return {}
 }
@@ -369,6 +380,10 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     validQuiz.name = name
     validQuiz.timeLastEdited = getCurrentTimestamp()
   }
+  
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+  
   // Return an empty object to indicate a successful update
   return {}
 }

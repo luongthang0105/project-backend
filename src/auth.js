@@ -18,21 +18,21 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   let data = getData()
 
   // Check if the email address is used by another user
-  if (emailUsed(email, data) === true) {
+  if (emailUsed(email, data)) {
     return {
       error: "Email address used by another user",
     }
   }
 
   // Check if the email address is valid
-  if (validator.isEmail(email) === false) {
+  if (!validator.isEmail(email)) {
     return {
       error: "Invalid email address",
     }
   }
 
   // Check if the first name is valid
-  if (validName(nameFirst) === false) {
+  if (!validName(nameFirst)) {
     return {
       error:
         "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
@@ -47,7 +47,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   }
 
   // Check if the last name is valid
-  if (validName(nameLast) === false) {
+  if (!validName(nameLast)) {
     return {
       error:
         "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
@@ -69,7 +69,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   }
 
   // Check if the password contains at least one number and one letter
-  if (securedPassword(password) === false) {
+  if (!securedPassword(password)) {
     return {
       error:
         "Password must contain at least one number and at least one letter",

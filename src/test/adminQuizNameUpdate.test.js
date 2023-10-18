@@ -2,7 +2,7 @@ import {
   adminQuizCreate,
   adminQuizNameUpdate,
   adminQuizInfo,
-} from "../quiz.js"
+} from "../quiz.ts"
 import { adminAuthRegister } from "../auth.js"
 import { clear } from "../other"
 

@@ -1,4 +1,4 @@
-import { adminQuizCreate } from "../quiz.js"
+import { adminQuizCreate } from "../quiz.ts"
 import { adminAuthRegister } from "../auth.js"
 import { clear } from "../other"
 

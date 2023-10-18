@@ -1,4 +1,4 @@
-import { getData } from "./dataStore";
+import { getData, setData } from "./dataStore";
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -129,6 +129,7 @@ const adminQuizCreate = (
   currData.nextQuizId++;
   currData.quizzes.push(newQuiz);
 
+  setData(currData)
   // Return an object containing the quizId of the newly created quiz
   return { quizId: newQuiz.quizId };
 };
@@ -184,6 +185,8 @@ const adminQuizDescriptionUpdate = (
   existingQuiz.description = description;
   existingQuiz.timeLastEdited = timestamp;
 
+  setData(data)
+
   // Return an empty object to indicate a successful update
   return {};
 };
@@ -234,6 +237,8 @@ const adminQuizRemove = (
       currData.quizzes.splice(i, 1);
     }
   }
+
+  setData(currData)
 
   // Return an empty object to indicate a successful removal
   return {};
@@ -376,6 +381,9 @@ const adminQuizNameUpdate = (
     validQuiz.name = name;
     validQuiz.timeLastEdited = getCurrentTimestamp();
   }
+
+  setData(data)
+
   // Return an empty object to indicate a successful update
   return {};
 };

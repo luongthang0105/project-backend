@@ -1,10 +1,16 @@
-type token = {
+type ErrorObject = {
+  error: string
+}
+
+type EmptyObject = {}
+
+type Token = {
   identifier: string,
   authUserId: number
 }
 
 //parameter for adminAuthRegister and adminAuthLogin
-type loginInfo = {
+type LoginInfo = {
   email: string,
   password: string,
   nameFirst?: string,
@@ -12,7 +18,7 @@ type loginInfo = {
 }
 
 //response for adminUserDetails
-type userDetails = {
+type UserDetails = {
   user: {
     userId: number,
     name: string,
@@ -23,19 +29,19 @@ type userDetails = {
 }
 
 //response for adminQuizList and adminQuizCreate
-type quiz = {quizId: number, name?: string};
-type quizList = {
-  quizzes: quiz[]
+type Quiz = {quizId: number, name?: string};
+type QuizList = {
+  quizzes: Quiz[]
 }
 
 //parameter for adminQuizCreate
-type quizCreate = {
+type QuizCreate = {
   token: string,
   name: string,
   description: string
 }
 
-type colours = 
+type Colour = 
   | 'red'
   | 'blue'
   | 'green'
@@ -44,36 +50,36 @@ type colours =
   | 'brown'
   | 'orange'
 
-type answer = {
+type Answer = {
   answerId: number,
   answer: string,
-  colour: colours,
+  colour: Colour,
   correct: boolean
 }
 
-type question = {
+type Question = {
   questionId: number,
   question: string,
   duration: number,
   points: number,
-  answers: answer[]
+  answers: Answer[]
 }
 
 
 //parameter for adminQuizNameUpdate
-type nameUpdate = {
+type NameUpdate = {
   token: string,
   name: string
 }
 
 //parameter for adminQuizDescriptionUpdate
-type descriptionUpdate = {
+type DescriptionUpdate = {
   token: string,
   name: string
 }
 
 
-type userObject = {
+type UserObject = {
   authUserId: number,
   nameFirst: string,
   nameLast: string,
@@ -81,43 +87,47 @@ type userObject = {
   password: string
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
-  sessions: token[]
 }
 
-type quizObject = {
+type QuizObject = {
   quizId: number,
+  quizAuthorId: number,
   name: string,
   description: string,
   timeCreated: number,
   timeLastEdited: number,
-  questions: question[],
+  questions: Question[],
   numQuestions: number,
   duration: number
 }
 
-type dataStore = {
-  users: userObject[],
-  quizzes: quizObject[],
-  trash: quizObject[]
+type DataStore = {
+  users: UserObject[],
+  quizzes: QuizObject[],
+  trash: QuizObject[],
+  sessions: Token[],
+  nextTokenId: number,
   nextUserId: number,
   nextQuizId: number
 }
 
 export {
-  token, 
-  loginInfo, 
-  userDetails, 
-  quiz, 
-  quizList, 
-  quizCreate, 
-  colours, 
-  answer, 
-  question,  
-  nameUpdate, 
-  descriptionUpdate,
-  userObject,
-  quizObject,
-  dataStore
+  EmptyObject,
+  ErrorObject,
+  Token, 
+  LoginInfo, 
+  UserDetails, 
+  Quiz, 
+  QuizList, 
+  QuizCreate, 
+  Colour, 
+  Answer, 
+  Question,  
+  NameUpdate, 
+  DescriptionUpdate,
+  UserObject,
+  QuizObject,
+  DataStore
 }
 
 

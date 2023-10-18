@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore.js"
+import { getData, setData } from "./dataStore"
 import validator from "validator"
-import { emailUsed, validName, securedPassword } from "./authHelper.js"
+import { emailUsed, validName, securedPassword } from "./authHelper"
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -90,6 +90,9 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
   data.users.push(user)
   data.nextUserId += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+    
   // Return an object containing the authUserId of the registered user
   return { authUserId: user.authUserId }
 }
@@ -120,12 +123,17 @@ function adminAuthLogin(email, password) {
   if (userInfo.password !== password) {
     // Increment the count of failed login attempts
     userInfo.numFailedPasswordsSinceLastLogin += 1
+    
+    setData(data)
     return { error: "Password is not correct for the given email" }
   }
   // Reset the count of failed login attempts and update the count of successful logins
   userInfo.numFailedPasswordsSinceLastLogin = 0
   userInfo.numSuccessfulLogins += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+  
   // Return an object containing the authUserId of the authenticated user
   return {
     authUserId: userInfo.authUserId,

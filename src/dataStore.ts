@@ -20,9 +20,7 @@ Example usage
 */
 
 // Use get() to access the data
-function getData(): dataStore {
-  return JSON.parse(String(fs.readFileSync('./data.json')))
-}
+const getData = (): dataStore => JSON.parse(String(fs.readFileSync('./data.json')))
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: dataStore) {

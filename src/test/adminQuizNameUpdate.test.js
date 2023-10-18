@@ -4,7 +4,7 @@ import {
   adminQuizInfo,
 } from "../quiz.js"
 import { adminAuthRegister } from "../auth.js"
-import { clear } from "../other.js"
+import { clear } from "../other"
 
 describe("adminQuizNameUpdate", () => {
   beforeEach(() => {

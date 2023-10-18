@@ -1,4 +1,4 @@
-import { clear } from "../other.js"
+import { clear } from "../other"
 import {
   adminAuthLogin,
   adminAuthRegister,

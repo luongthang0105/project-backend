@@ -3,7 +3,7 @@ import {
   adminAuthLogin,
   adminUserDetails,
 } from "../auth.js"
-import { clear } from "../other.js"
+import { clear } from "../other"
 describe("adminUserDetails", () => {
   beforeEach(() => {
     clear()

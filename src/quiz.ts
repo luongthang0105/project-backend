@@ -2,7 +2,7 @@ import { getData } from "./dataStore.js";
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
-} from "./quizHelper.js";
+} from "./quizHelper";
 import {
   EmptyObject,
   ErrorObject,

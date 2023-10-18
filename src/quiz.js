@@ -139,10 +139,9 @@ function adminQuizCreate(authUserId, name, description) {
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   // Retrieve the current data
   const data = getData();
-  const id = authUserId;
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(({ authUserId }) => authUserId === id);
+  const validUser = data.users.find((user) => user.authUserId === authUserId);
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
@@ -190,10 +189,9 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 function adminQuizRemove(authUserId, quizId) {
   // Retrieve the current data
   const currData = getData();
-  const uid = authUserId;
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(({ authUserId }) => authUserId === uid);
+  const validUser = currData.users.find((user) => user.authUserId === authUserId);
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
@@ -247,10 +245,9 @@ function adminQuizRemove(authUserId, quizId) {
 function adminQuizInfo(authUserId, quizId) {
   // Retrieve the current data
   const data = getData();
-  const userID = authUserId;
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(({ authUserId }) => authUserId === userID);
+  const validUser = data.users.find((user) => user.authUserId === authUserId);
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
@@ -295,11 +292,9 @@ function adminQuizInfo(authUserId, quizId) {
 function adminQuizNameUpdate(authUserId, quizId, name) {
   // Retrieve the current data
   const data = getData();
-  const userid = authUserId;
-  const quizid = quizId;
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(({ authUserId }) => authUserId === userid);
+  const validUser = data.users.find((user) => user.authUserId === authUserId);
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
@@ -307,7 +302,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
   }
 
   // Check if quizId is valid by searching for it in the list of quizzes
-  const validQuiz = data.quizzes.find(({ quizId }) => quizId === quizid);
+  const validQuiz = data.quizzes.find((quiz) => quiz.quizId === quizId);
 
   // If quizId is not valid, return an error object
   if (!validQuiz) {

@@ -1,8 +1,8 @@
-import { getData, setData } from "./dataStore.js"
+import { getData, setData } from "./dataStore"
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
-} from "./quizHelper.js"
+} from "./quizHelper"
 
 /**
  * Provides a list of all the quizzes owned by the logged in user

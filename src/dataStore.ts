@@ -1,6 +1,6 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 import fs from 'fs'
-import { dataStore } from './types'
+import { dataStore } from "./types"
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -12,6 +12,7 @@ Example usage
     names = store.names
 
     names.pop()
+
     names.push('Jake')
 
     console.log(store) # Prints { 'names': ['Hayden', 'Tam', 'Rani', 'Giuliana', 'Jake'] }

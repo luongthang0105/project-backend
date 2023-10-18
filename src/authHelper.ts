@@ -1,7 +1,7 @@
 import { DataStore } from "./types"
 
 // Return true if newEmail has already been used by another user in data
-export function emailUsed(newEmail: string, data: DataStore): boolean  {
+function emailUsed(newEmail: string, data: DataStore): boolean  {
   for (let user of data.users) {
     if (user.email === newEmail) {
       return true
@@ -12,7 +12,7 @@ export function emailUsed(newEmail: string, data: DataStore): boolean  {
 
 // Return true if given name is valid
 // Name should not contain characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
-export function validName(name: string): boolean {
+function validName(name: string): boolean {
   for (let character of name) {
     // character is an alphabetic character
     if (character.toLowerCase() != character.toUpperCase()) continue
@@ -33,7 +33,7 @@ export function validName(name: string): boolean {
 }
 
 // Return true if password has at least one letter and at least one number
-export function securedPassword(password: string): boolean {
+function securedPassword(password: string): boolean {
   let hasLetter = false
   let hasNumber = false
 
@@ -51,3 +51,5 @@ export function securedPassword(password: string): boolean {
 
   return hasLetter && hasNumber
 }
+
+export { validName, securedPassword, emailUsed}

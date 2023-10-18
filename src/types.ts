@@ -87,7 +87,6 @@ type UserObject = {
   password: string
   numSuccessfulLogins: number,
   numFailedPasswordsSinceLastLogin: number
-  sessions: Token[]
 }
 
 type QuizObject = {
@@ -104,7 +103,9 @@ type QuizObject = {
 type DataStore = {
   users: UserObject[],
   quizzes: QuizObject[],
-  trash: QuizObject[]
+  trash: QuizObject[],
+  sessions: Token[],
+  nextTokenId: number,
   nextUserId: number,
   nextQuizId: number
 }

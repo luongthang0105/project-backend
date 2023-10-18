@@ -1,4 +1,4 @@
-import { getData } from "./dataStore.js";
+import { getData } from "./dataStore";
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -6,11 +6,12 @@ import {
 import {
   EmptyObject,
   ErrorObject,
+  Question,
   Quiz,
   QuizList,
   QuizObject,
   UserObject,
-} from "./types.js";
+} from "./types";
 
 /**
  * Provides a list of all the quizzes owned by the logged in user
@@ -119,6 +120,9 @@ const adminQuizCreate = (
     timeCreated: timestamp,
     timeLastEdited: timestamp,
     description: description,
+    questions: [] as any,
+    numQuestions: 0,
+    duration: 0
   };
 
   // Increment the nextQuizId and add the new quiz to the data
@@ -250,14 +254,16 @@ const adminQuizInfo = (
   authUserId: number,
   quizId: number
 ):
-  | {
-      quizId: number;
-      name: string;
-      description: string;
-      timeCreated: number;
-      timeLastEdited: number;
-    }
-  | ErrorObject => {
+  {
+    quizId: number,
+    name: string,
+    description: string,
+    timeCreated: number,
+    timeLastEdited: number,
+    questions: Question[],
+    numQuestions: number,
+    duration: number
+  } | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -285,13 +291,15 @@ const adminQuizInfo = (
   }
 
   // Return object with relevant information about the quiz
-  // There is still an error here for type check because we haven't updated our function to the It2 spec yet (which needs to return questions, numQuestions, and duration also).
   return {
     quizId: existingQuiz.quizId,
     name: existingQuiz.name,
     timeCreated: timeCreated,
     timeLastEdited: timeLastEdited,
     description: existingQuiz.description,
+    questions: existingQuiz.questions,
+    numQuestions: existingQuiz.numQuestions,
+    duration: existingQuiz.duration
   };
 };
 

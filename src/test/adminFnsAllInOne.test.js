@@ -3,7 +3,7 @@ import {
   adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
-} from "../auth.js"
+} from "../auth"
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
@@ -11,7 +11,7 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-} from "../quiz.ts"
+} from "../quiz"
 
 describe("Test on all admin functions", () => {
   beforeEach(() => {

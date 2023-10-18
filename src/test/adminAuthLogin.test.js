@@ -1,4 +1,4 @@
-import { adminAuthRegister, adminAuthLogin } from "../auth.js"
+import { adminAuthRegister, adminAuthLogin } from "../auth"
 import { clear } from "../other"
 describe("adminAuthLogin", () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { adminQuizInfo, adminQuizCreate } from "../quiz"
 import { clear } from "../other"
-import { adminAuthRegister } from "../auth.js"
+import { adminAuthRegister } from "../auth"
 
 describe("adminQuizInfo", () => {
   let user, quiz

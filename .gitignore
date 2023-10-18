@@ -7,7 +7,7 @@ coverage/
 results/
 
 # data persistence file
-dataStore.json
+data.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

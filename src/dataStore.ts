@@ -21,12 +21,12 @@ Example usage
 
 // Use get() to access the data
 function getData(): dataStore {
-  return JSON.parse(String(fs.readFileSync('./dataStore.json')))
+  return JSON.parse(String(fs.readFileSync('./data.json')))
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: dataStore) {
-  fs.writeFileSync('./dataStore.json', JSON.stringify(newData))
+  fs.writeFileSync('./data.json', JSON.stringify(newData))
 }
 
 export { getData, setData }

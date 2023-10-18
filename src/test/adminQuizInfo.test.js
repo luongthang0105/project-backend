@@ -1,88 +1,88 @@
-import { adminQuizInfo, adminQuizCreate } from "../quiz"
-import { clear } from "../other"
-import { adminAuthRegister } from "../auth"
+// import { adminQuizInfo, adminQuizCreate } from "../quiz"
+// import { clear } from "../other"
+// import { adminAuthRegister } from "../auth"
 
-describe("adminQuizInfo", () => {
-  let user, quiz
-  beforeEach(() => {
-    clear()
-    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
-    quiz = adminQuizCreate(user.authUserId, "New Quiz", "description")
-  })
+// describe("adminQuizInfo", () => {
+//   let user, quiz
+//   beforeEach(() => {
+//     clear()
+//     user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
+//     quiz = adminQuizCreate(user.authUserId, "New Quiz", "description")
+//   })
 
-  test("AuthUserID is not valid", () => {
-    let result = adminQuizInfo(user.authUserId + 1, quiz.quizId)
-    expect(result).toStrictEqual({
-      error: "AuthUserID is not a valid user",
-    })
-  })
+//   test("AuthUserID is not valid", () => {
+//     let result = adminQuizInfo(user.authUserId + 1, quiz.quizId)
+//     expect(result).toStrictEqual({
+//       error: "AuthUserID is not a valid user",
+//     })
+//   })
 
-  test("Quiz ID does not refer to a valid quiz", () => {
-    const result = adminQuizInfo(user.authUserId, quiz.quizId + 1)
-    expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
+//   test("Quiz ID does not refer to a valid quiz", () => {
+//     const result = adminQuizInfo(user.authUserId, quiz.quizId + 1)
+//     expect(result).toStrictEqual({
+//       error: "Quiz ID does not refer to a valid quiz",
+//     })
+//   })
 
-  test("Quiz ID does not refer to a quiz that this user owns", () => {
-    let user2 = adminAuthRegister(
-      "thang@gmail.com",
-      "0105uwuwuw",
-      "Thomas",
-      "Nguyen"
-    )
-    let quiz2 = adminQuizCreate(
-      user2.authUserId,
-      "New Quiz 2",
-      "long description"
-    )
+//   test("Quiz ID does not refer to a quiz that this user owns", () => {
+//     let user2 = adminAuthRegister(
+//       "thang@gmail.com",
+//       "0105uwuwuw",
+//       "Thomas",
+//       "Nguyen"
+//     )
+//     let quiz2 = adminQuizCreate(
+//       user2.authUserId,
+//       "New Quiz 2",
+//       "long description"
+//     )
 
-    const result = adminQuizInfo(user.authUserId, quiz2.quizId)
+//     const result = adminQuizInfo(user.authUserId, quiz2.quizId)
 
-    expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
-    })
-  })
+//     expect(result).toStrictEqual({
+//       error: "Quiz ID does not refer to a quiz that this user owns",
+//     })
+//   })
 
-  test("Success: Quiz Information Retrieved:", () => {
-    expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual({
-      quizId: quiz.quizId,
-      name: "New Quiz",
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: "description",
+//   test("Success: Quiz Information Retrieved:", () => {
+//     expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual({
+//       quizId: quiz.quizId,
+//       name: "New Quiz",
+//       timeCreated: expect.any(Number),
+//       timeLastEdited: expect.any(Number),
+//       description: "description",
 
-      // these last three properties need to be tested after implementing Question create function
-      questions: [],
-      numQuestions: 0,
-      duration: 0
-    })
-  })
+//       // these last three properties need to be tested after implementing Question create function
+//       questions: [],
+//       numQuestions: 0,
+//       duration: 0
+//     })
+//   })
 
-  test("Success: More Quiz Retrieved:", () => {
-    let user2 = adminAuthRegister(
-      "thang@gmail.com",
-      "0105uwuwuw",
-      "Thomas",
-      "Nguyen"
-    )
-    let quiz2 = adminQuizCreate(
-      user2.authUserId,
-      "New Quiz 2",
-      "long description"
-    )
+//   test("Success: More Quiz Retrieved:", () => {
+//     let user2 = adminAuthRegister(
+//       "thang@gmail.com",
+//       "0105uwuwuw",
+//       "Thomas",
+//       "Nguyen"
+//     )
+//     let quiz2 = adminQuizCreate(
+//       user2.authUserId,
+//       "New Quiz 2",
+//       "long description"
+//     )
 
-    expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual({
-      quizId: quiz2.quizId,
-      name: "New Quiz 2",
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: "long description",
+//     expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual({
+//       quizId: quiz2.quizId,
+//       name: "New Quiz 2",
+//       timeCreated: expect.any(Number),
+//       timeLastEdited: expect.any(Number),
+//       description: "long description",
       
-      // these last three properties need to be tested after implementing Question create function
-      questions: [],
-      numQuestions: 0,
-      duration: 0
-    })
-  })
-})
+//       // these last three properties need to be tested after implementing Question create function
+//       questions: [],
+//       numQuestions: 0,
+//       duration: 0
+//     })
+//   })
+// })

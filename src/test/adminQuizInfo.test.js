@@ -51,6 +51,11 @@ describe("adminQuizInfo", () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: "description",
+
+      // these last three properties need to be tested after implementing Question create function
+      questions: [],
+      numQuestions: 0,
+      duration: 0
     })
   })
 
@@ -73,6 +78,11 @@ describe("adminQuizInfo", () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: "long description",
+      
+      // these last three properties need to be tested after implementing Question create function
+      questions: [],
+      numQuestions: 0,
+      duration: 0
     })
   })
 })

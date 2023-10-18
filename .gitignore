@@ -6,6 +6,9 @@ coverage/
 .nyc_output
 results/
 
+# data persistence file
+dataStore.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

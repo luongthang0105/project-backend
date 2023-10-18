@@ -131,7 +131,7 @@ function adminQuizCreate(authUserId, name, description) {
   currData.quizzes.push(newQuiz)
 
   // update dataStore by calling setData which will save it to dataStore.json
-  setData(data)
+  setData(currData)
 
   // Return an object containing the quizId of the newly created quiz
   return { quizId: newQuiz.quizId }
@@ -245,7 +245,7 @@ function adminQuizRemove(authUserId, quizId) {
   }
 
   // update dataStore by calling setData which will save it to dataStore.json
-  setData(data)
+  setData(currData)
   
   // Return an empty object to indicate a successful removal
   return {}

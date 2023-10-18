@@ -123,6 +123,8 @@ function adminAuthLogin(email, password) {
   if (userInfo.password !== password) {
     // Increment the count of failed login attempts
     userInfo.numFailedPasswordsSinceLastLogin += 1
+    
+    setData(data)
     return { error: "Password is not correct for the given email" }
   }
   // Reset the count of failed login attempts and update the count of successful logins

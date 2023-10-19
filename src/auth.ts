@@ -13,7 +13,8 @@ import { emailUsed, validName, securedPassword } from "./authHelper"
  * - An object containing the authUserId of the registered user if registration is successful.
  *   If any validation errors occur, it returns an error object with a message.
  */
-function adminAuthRegister(email, password, nameFirst, nameLast) {
+
+function adminAuthRegister(email: string, password: string, nameFirst: string, nameLast: string): { authUserId: number } | { error: string} {
   // Retrieve the current data
   let data = getData()
 
@@ -107,7 +108,7 @@ function adminAuthRegister(email, password, nameFirst, nameLast) {
  *   If the email does not exist, the password is incorrect, or other errors occur,
  *   it returns an error object with a message.
  */
-function adminAuthLogin(email, password) {
+function adminAuthLogin(email: string, password: string): { authUserId: number } | { error: string} {
   // Retrieve the current data
   const data = getData()
 
@@ -158,7 +159,7 @@ function adminAuthLogin(email, password) {
  *   - An object containing details about the admin user if the authUserId is valid.
  *     If the authUserId is not valid, it returns an error object with a message.
  */
-function adminUserDetails(authUserId) {
+function adminUserDetails(authUserId: number): { user: { userId: number, name: string, email: string, numSuccessfulLogins: number, numFailedPasswordsSinceLastLogin: number }} |  {error: string} {
   // Retrieve the current data
   const data = getData()
 

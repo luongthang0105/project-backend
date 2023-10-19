@@ -1,6 +1,6 @@
-import { adminQuizInfo, adminQuizCreate } from "../quiz.js"
-import { clear } from "../other.js"
-import { adminAuthRegister } from "../auth.js"
+import { adminQuizInfo, adminQuizCreate } from "../quiz"
+import { clear } from "../other"
+import { adminAuthRegister } from "../auth"
 
 describe("adminQuizInfo", () => {
   let user, quiz
@@ -51,6 +51,11 @@ describe("adminQuizInfo", () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: "description",
+
+      // these last three properties need to be tested after implementing Question create function
+      questions: [],
+      numQuestions: 0,
+      duration: 0
     })
   })
 
@@ -73,6 +78,11 @@ describe("adminQuizInfo", () => {
       timeCreated: expect.any(Number),
       timeLastEdited: expect.any(Number),
       description: "long description",
+      
+      // these last three properties need to be tested after implementing Question create function
+      questions: [],
+      numQuestions: 0,
+      duration: 0
     })
   })
 })

@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore.js"
+import { getData, setData } from "./dataStore"
 import validator from "validator"
-import { emailUsed, validName, securedPassword } from "./authHelper.js"
+import { emailUsed, validName, securedPassword } from "./authHelper"
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -19,21 +19,21 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   let data = getData()
 
   // Check if the email address is used by another user
-  if (emailUsed(email, data) === true) {
+  if (emailUsed(email, data)) {
     return {
       error: "Email address used by another user",
     }
   }
 
   // Check if the email address is valid
-  if (validator.isEmail(email) === false) {
+  if (!validator.isEmail(email)) {
     return {
       error: "Invalid email address",
     }
   }
 
   // Check if the first name is valid
-  if (validName(nameFirst) === false) {
+  if (!validName(nameFirst)) {
     return {
       error:
         "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
@@ -48,7 +48,7 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   }
 
   // Check if the last name is valid
-  if (validName(nameLast) === false) {
+  if (!validName(nameLast)) {
     return {
       error:
         "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
@@ -70,7 +70,7 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   }
 
   // Check if the password contains at least one number and one letter
-  if (securedPassword(password) === false) {
+  if (!securedPassword(password)) {
     return {
       error:
         "Password must contain at least one number and at least one letter",
@@ -91,6 +91,9 @@ function adminAuthRegister(email: string, password: string, nameFirst: string, n
   data.users.push(user)
   data.nextUserId += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+    
   // Return an object containing the authUserId of the registered user
   return { authUserId: user.authUserId }
 }
@@ -121,12 +124,17 @@ function adminAuthLogin(email: string, password: string): { authUserId: number }
   if (userInfo.password !== password) {
     // Increment the count of failed login attempts
     userInfo.numFailedPasswordsSinceLastLogin += 1
+    
+    setData(data)
     return { error: "Password is not correct for the given email" }
   }
   // Reset the count of failed login attempts and update the count of successful logins
   userInfo.numFailedPasswordsSinceLastLogin = 0
   userInfo.numSuccessfulLogins += 1
 
+  // update dataStore by calling setData which will save it to dataStore.json
+  setData(data)
+  
   // Return an object containing the authUserId of the authenticated user
   return {
     authUserId: userInfo.authUserId,

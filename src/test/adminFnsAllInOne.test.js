@@ -1,9 +1,9 @@
-import { clear } from "../other.js"
+import { clear } from "../other"
 import {
   adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
-} from "../auth.js"
+} from "../auth"
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
@@ -11,7 +11,7 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-} from "../quiz.js"
+} from "../quiz"
 
 describe("Test on all admin functions", () => {
   beforeEach(() => {

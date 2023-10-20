@@ -81,8 +81,8 @@ export const adminQuizCreate = (
   const res = request("POST", SERVER_URL + "/v1/admin/quiz", {
     json: {
       token: token.token,
-			name: name,
-			description: description
+      name: name,
+      description: description
     },
   })
 

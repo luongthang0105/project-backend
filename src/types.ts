@@ -1,5 +1,6 @@
 type ErrorObject = {
-  error: string
+  statusCode?: number,
+  content: string
 }
 
 type EmptyObject = {}

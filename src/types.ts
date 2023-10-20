@@ -1,4 +1,5 @@
 type ErrorObject = {
+  statusCode?: number,
   error: string
 }
 

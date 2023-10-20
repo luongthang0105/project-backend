@@ -8,16 +8,22 @@ describe('adminAuthRegister', () => {
   test('ERROR: Email address is used by another user', () => {
     adminAuthRegister("nguyenluongthang33@gmail.com", 'ltngu0105', 'Thang', 'Nguyen')
     let error = adminAuthRegister("nguyenluongthang33@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
-    expect(error).toEqual({error: 'Email address used by another user'})
+
+    expect(error.statusCode).toEqual(400)
+    expect(error.content).toEqual('Email address used by another user')
 
     adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
     error = adminAuthRegister("lt05@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
-    expect(error).toEqual({error: 'Email address used by another user'})
+    
+    expect(error.statusCode).toEqual(400)
+    expect(error.content).toEqual('Email address used by another user')
   })
 
   test('ERROR: Invalid email', () => {
     let error = adminAuthRegister("nguyenluongthang33@com", 'ltngu2705', 'Thang', 'Ngu')
-    expect(error).toEqual({error: 'Invalid email address'})
+    
+    expect(error.statusCode).toEqual(400)
+    expect(error.content).toEqual('Invalid email address')
 
     let authUserId = adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
     expect(authUserId).toEqual({ authUserId: expect.any(Number)})

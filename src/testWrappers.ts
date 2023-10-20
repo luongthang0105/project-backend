@@ -1,6 +1,6 @@
 import request from "sync-request-curl"
 import { port, url } from "./config.json"
-import { ErrorObject, Quiz, QuizList, Token } from "./types"
+import { EmptyObject, ErrorObject, Quiz, QuizList, Token, UserDetails } from "./types"
 
 const SERVER_URL = `${url}:${port}`
 
@@ -43,7 +43,7 @@ export const adminAuthLogin = (
 
 export const adminUserDetails = (token: {
   token: string
-}): { content: ErrorObject; statusCode: number } => {
+}): { content: UserDetails | ErrorObject; statusCode: number } => {
   const res = request("GET", SERVER_URL + "/v1/admin/user/details", {
     qs: {
       token: token,
@@ -80,7 +80,7 @@ export const adminQuizCreate = (
 ): { content: Quiz | ErrorObject; statusCode: number } => {
   const res = request("POST", SERVER_URL + "/v1/admin/quiz", {
     json: {
-      token: token,
+      token: token.token,
 			name: name,
 			description: description
     },

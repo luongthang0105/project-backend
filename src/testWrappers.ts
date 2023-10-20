@@ -61,7 +61,7 @@ export const adminQuizNameUpdate = (
   name: string,
   quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
-  const route = "/v1/admin/quiz/" + quizId + "name";
+  const route = "/v1/admin/quiz/" + quizId + "/name";
 
   const res = request("PUT", SERVER_URL + route, {
     json: {
@@ -78,10 +78,10 @@ export const adminQuizNameUpdate = (
 
 export const adminQuizDescriptionUpdate = (
   token: { token: string },
+  quizId: number,
   description: string,
-  quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
-  const route = "/v1/admin/quiz/" + quizId + "description";
+  const route = "/v1/admin/quiz/" + quizId + "/description";
 
   const res = request("PUT", SERVER_URL + route, {
     json: {

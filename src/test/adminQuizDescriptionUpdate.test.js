@@ -13,8 +13,8 @@ describe("adminQuizDescriptionUpdate", () => {
   };
   beforeEach(() => {
     clear();
-    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh");
-    quiz = adminQuizCreate(user.content, "New Quiz", "description");
+    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh").content;
+    quiz = adminQuizCreate(user, "New Quiz", "description").content;
   });
 
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
@@ -31,7 +31,7 @@ describe("adminQuizDescriptionUpdate", () => {
 
   test("Quiz ID does not refer to a valid quiz", () => {
     const result3 = adminQuizDescriptionUpdate(
-      user.content,
+      user,
       quiz.quizId + 1,
       "Description"
     );
@@ -48,10 +48,10 @@ describe("adminQuizDescriptionUpdate", () => {
       "Thomas",
       "Nguyen"
     );
-    let quiz2 = adminQuizCreate(user2.content, "New Quiz 2", "long description");
+    let quiz2 = adminQuizCreate(user2, "New Quiz 2", "long description").content;
 
     const result2 = adminQuizDescriptionUpdate(
-      user.content,
+      user,
       quiz2.quizId,
       "Description"
     );
@@ -62,13 +62,13 @@ describe("adminQuizDescriptionUpdate", () => {
   });
 
   test("Description is more than 100 characters in length", () => {
-    const oldDescription = adminQuizInfo(user.content, quiz.quizId).description;
+    const oldDescription = adminQuizInfo(user, quiz.quizId).content.description;
     // 105 characters
     const newDescription =
       "okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki.";
 
     const result = adminQuizDescriptionUpdate(
-      user.content,
+      user,
       quiz.quizId,
       newDescription
     );
@@ -83,7 +83,7 @@ describe("adminQuizDescriptionUpdate", () => {
   
   test("Success case: check different timestamps", () => {
     expect(
-      adminQuizDescriptionUpdate(user.content, quiz.quizId, "New description")
+      adminQuizDescriptionUpdate(user, quiz.quizId, "New description")
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
     let quizInfo = adminQuizInfo(user.content, quiz.quizId);
@@ -94,10 +94,10 @@ describe("adminQuizDescriptionUpdate", () => {
   });
   test("Success case: Empty Description", () => {
     expect(
-      adminQuizDescriptionUpdate(user.content, quiz.quizId, "")
+      adminQuizDescriptionUpdate(user, quiz.quizId, "")
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual("");
     expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
       quizInfo.timeLastEdited

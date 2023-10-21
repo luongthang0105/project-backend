@@ -53,7 +53,7 @@ describe('adminAuthRegister', () => {
     {email: 'lt05@gmail.com', password: 'ltngu0105', nameFirst: '123345', nameLast: 'Ngu'},
   ])('ERROR: NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', ({email, password, nameFirst, nameLast}) => {
     let error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'})
+    expect(error).toEqual({statusCode: 400, content: {error: 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'}})
   })
 
   test.each([
@@ -67,7 +67,7 @@ describe('adminAuthRegister', () => {
     {email: 'lt05@gmail.com', password: 'ltngu0105', nameLast: '123345', nameFirst: 'Ngu'},
   ])('ERROR: NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', ({email, password, nameLast, nameFirst}) => {
     let error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, error : "First name length must be between 2 and 20 characters"})
+    expect(error).toEqual({statusCode: 400, content: {error : "First name length must be between 2 and 20 characters"}})
   })
 
   test.each([
@@ -77,7 +77,7 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: 'ltngu0105', nameFirst: "T", nameLast: 'Ngu'},
   ])('ERROR: NameFirst is less than 2 characters or more than 20 characters', ({email, password, nameFirst, nameLast}) => {
     error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, error : "First name length must be between 2 and 20 characters"})
+    expect(error).toEqual({statusCode: 400, content: {error : "First name length must be between 2 and 20 characters"}})
   })
 
   test.each([
@@ -87,7 +87,7 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: 'ltngu0105', nameLast: "T", nameFirst: 'Ngu'},
   ])('ERROR: NameFirst is less than 2 characters or more than 20 characters', ({email, password, nameFirst, nameLast}) => {
     error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, error : "Last name length must be between 2 and 20 characters"})
+    expect(error).toEqual({statusCode: 400, content: {error: "Last name length must be between 2 and 20 characters"}})
   })
 
   test.each([
@@ -98,7 +98,7 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: '', nameLast: "Thang", nameFirst: 'Ngu'},
   ])('ERROR: Password is less than 8 characters', ({email, password, nameFirst, nameLast}) => {
     error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, error : "Password must have at least 8 characters"})
+    expect(error).toEqual({statusCode: 400, content: {error: "Password must have at least 8 characters"}})
   })
 
   test.each([
@@ -115,7 +115,7 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: '        123321', nameLast: "Thang", nameFirst: 'Ngu'},
   ])('ERROR: Password is less than 8 characters', ({email, password, nameFirst, nameLast}) => {
     error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, error : "ERROR: Password does not contain at least one number and at least one letter"})
+    expect(error).toEqual({statusCode: 400, content: {error: "ERROR: Password does not contain at least one number and at least one letter"}})
   })
 
   test.each([

@@ -14,7 +14,7 @@ describe("adminQuizDescriptionUpdate", () => {
   beforeEach(() => {
     clear();
     user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh");
-    quiz = adminQuizCreate(user.token, "New Quiz", "description");
+    quiz = adminQuizCreate(user.content, "New Quiz", "description");
   });
 
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
@@ -31,7 +31,7 @@ describe("adminQuizDescriptionUpdate", () => {
 
   test("Quiz ID does not refer to a valid quiz", () => {
     const result3 = adminQuizDescriptionUpdate(
-      user.token,
+      user.content,
       quiz.quizId + 1,
       "Description"
     );
@@ -48,10 +48,10 @@ describe("adminQuizDescriptionUpdate", () => {
       "Thomas",
       "Nguyen"
     );
-    let quiz2 = adminQuizCreate(user2.token, "New Quiz 2", "long description");
+    let quiz2 = adminQuizCreate(user2.content, "New Quiz 2", "long description");
 
     const result2 = adminQuizDescriptionUpdate(
-      user.token,
+      user.content,
       quiz2.quizId,
       "Description"
     );
@@ -62,13 +62,13 @@ describe("adminQuizDescriptionUpdate", () => {
   });
 
   test("Description is more than 100 characters in length", () => {
-    const oldDescription = adminQuizInfo(user.token, quiz.quizId).description;
+    const oldDescription = adminQuizInfo(user.content, quiz.quizId).description;
     // 105 characters
     const newDescription =
       "okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki.";
 
     const result = adminQuizDescriptionUpdate(
-      user.token,
+      user.content,
       quiz.quizId,
       newDescription
     );
@@ -77,16 +77,16 @@ describe("adminQuizDescriptionUpdate", () => {
       statusCode: 400,
     });
 
-    let quizInfo = adminQuizInfo(user.token, quiz.quizId);
+    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual(oldDescription);
   });
   
   test("Success case: check different timestamps", () => {
     expect(
-      adminQuizDescriptionUpdate(user.token, quiz.quizId, "New description")
+      adminQuizDescriptionUpdate(user.content, quiz.quizId, "New description")
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user.token, quiz.quizId);
+    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual("New description");
     expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
       quizInfo.timeLastEdited
@@ -94,10 +94,10 @@ describe("adminQuizDescriptionUpdate", () => {
   });
   test("Success case: Empty Description", () => {
     expect(
-      adminQuizDescriptionUpdate(user.token, quiz.quizId, "")
+      adminQuizDescriptionUpdate(user.content, quiz.quizId, "")
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user.token, quiz.quizId);
+    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual("");
     expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
       quizInfo.timeLastEdited

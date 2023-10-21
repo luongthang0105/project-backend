@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { DataStore, ErrorObject } from "./types";
 import { getData } from "./dataStore";
-import { adminQuizDescriptionUpdate } from "./quiz";
+import { adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
 
 // Set up web app
 const app = express();
@@ -87,6 +87,21 @@ app.put(
   }
 );
 
+app.get("/v1/admin/quiz/{quizid}", (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.body.token;
+
+  const result = adminQuizInfo(token, quizId);
+
+    if ("error" in result) {
+      res.status(result.statusCode).json(result);
+      return;
+    }
+
+    res.json(result);
+
+});
 
 // start server
 const server = app.listen(PORT, HOST, () => {

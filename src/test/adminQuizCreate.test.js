@@ -69,7 +69,6 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    console.log(user);
     expect(adminQuizCreate(user, "Han Hanh!", "This is my quiz")).toStrictEqual(
       {
         content: { error: "Name contains invalid characters" },

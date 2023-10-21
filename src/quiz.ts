@@ -76,11 +76,11 @@ const adminQuizCreate = (
     return {
       statusCode: 401,
       error:
-      "Token is empty or invalid (does not refer to valid logged in user session)",
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
-  
-  let authUserId = validSession.authUserId
+
+  let authUserId = validSession.authUserId;
 
   // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {

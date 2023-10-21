@@ -9,37 +9,37 @@ describe('adminAuthRegister', () => {
     adminAuthRegister("nguyenluongthang33@gmail.com", 'ltngu0105', 'Thang', 'Nguyen')
     let error = adminAuthRegister("nguyenluongthang33@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
 
-    expect(error.statusCode).toEqual(400)
-    expect(error.content).toEqual({error: 'Email address used by another user'})
+    expect(error.statusCode).toStrictEqual(400)
+    expect(error.content).toStrictEqual({error: 'Email address used by another user'})
 
     let res = adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
     let user1 = res.content
     expect(res.statusCode).toStrictEqual(200)
-    expect(user1.token).toStrictEqual({token: expect.any(String)})
+    expect(user1).toStrictEqual({token: expect.any(String)})
 
     error = adminAuthRegister("lt05@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
     
-    expect(error.statusCode).toEqual(400)
-    expect(error.content).toEqual({error: 'Email address used by another user'})
+    expect(error.statusCode).toStrictEqual(400)
+    expect(error.content).toStrictEqual({error: 'Email address used by another user'})
   })
 
   test('ERROR: Invalid email', () => {
     let error = adminAuthRegister("nguyenluongthang33@com", 'ltngu2705', 'Thang', 'Ngu')
     
-    expect(error.statusCode).toEqual(400)
-    expect(error.content).toEqual('Invalid email address')
+    expect(error.statusCode).toStrictEqual(400)
+    expect(error.content).toStrictEqual({error: 'Invalid email address'})
 
     let res = adminAuthRegister("lt05@gmail.com", 'ltngu0105', 'Thang', 'Ngu')
     expect(res.statusCode).toBe(200)
-    expect(res.content).toEqual({ token: expect.any(String)})
+    expect(res.content).toStrictEqual({ token: expect.any(String)})
 
     error = adminAuthRegister("lt@05", 'ltngu2705', 'Thang', 'Ngu')
-    expect(error.statusCode).toEqual(400)
-    expect(error.content).toEqual({error: 'Invalid email address'})
+    expect(error.statusCode).toStrictEqual(400)
+    expect(error.content).toStrictEqual({error: 'Invalid email address'})
 
     res = adminAuthRegister("lt@gmail.com", 'ltngu2705', 'Thang', 'Ngu')
-    expect(res.statusCode).toEqual(200)
-    expect(res.content).toEqual({ token: expect.any(String) })
+    expect(res.statusCode).toStrictEqual(200)
+    expect(res.content).toStrictEqual({ token: expect.any(String) })
   })
 
   test.each([
@@ -53,7 +53,7 @@ describe('adminAuthRegister', () => {
     {email: 'lt05@gmail.com', password: 'ltngu0105', nameFirst: '123345', nameLast: 'Ngu'},
   ])('ERROR: NameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', ({email, password, nameFirst, nameLast}) => {
     let error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error: 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'}})
+    expect(error).toStrictEqual({statusCode: 400, content: {error: 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'}})
   })
 
   test.each([
@@ -67,7 +67,7 @@ describe('adminAuthRegister', () => {
     {email: 'lt05@gmail.com', password: 'ltngu0105', nameLast: '123345', nameFirst: 'Ngu'},
   ])('ERROR: NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', ({email, password, nameLast, nameFirst}) => {
     let error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error : "First name length must be between 2 and 20 characters"}})
+    expect(error).toStrictEqual({statusCode: 400, content: {error : "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"}})
   })
 
   test.each([
@@ -76,8 +76,8 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: 'ltngu0105', nameFirst: " ", nameLast: 'Ngu'},
     {email: "lt05@gmail.com", password: 'ltngu0105', nameFirst: "T", nameLast: 'Ngu'},
   ])('ERROR: NameFirst is less than 2 characters or more than 20 characters', ({email, password, nameFirst, nameLast}) => {
-    error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error : "First name length must be between 2 and 20 characters"}})
+    let error = adminAuthRegister(email, password, nameFirst, nameLast)
+    expect(error).toStrictEqual({statusCode: 400, content: {error : "First name length must be between 2 and 20 characters"}})
   })
 
   test.each([
@@ -85,9 +85,9 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: 'ltngu0105', nameLast: "", nameFirst: 'Ngu'},
     {email: "lt05@gmail.com", password: 'ltngu0105', nameLast: " ", nameFirst: 'Ngu'},
     {email: "lt05@gmail.com", password: 'ltngu0105', nameLast: "T", nameFirst: 'Ngu'},
-  ])('ERROR: NameFirst is less than 2 characters or more than 20 characters', ({email, password, nameFirst, nameLast}) => {
-    error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error: "Last name length must be between 2 and 20 characters"}})
+  ])('ERROR: NameLast is less than 2 characters or more than 20 characters', ({email, password, nameFirst, nameLast}) => {
+    let error = adminAuthRegister(email, password, nameFirst, nameLast)
+    expect(error).toStrictEqual({statusCode: 400, content: {error: "Last name length must be between 2 and 20 characters"}})
   })
 
   test.each([
@@ -97,8 +97,8 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: '       ', nameLast: "Thang", nameFirst: 'Ngu'},
     {email: "lt05@gmail.com", password: '', nameLast: "Thang", nameFirst: 'Ngu'},
   ])('ERROR: Password is less than 8 characters', ({email, password, nameFirst, nameLast}) => {
-    error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error: "Password must have at least 8 characters"}})
+    let error = adminAuthRegister(email, password, nameFirst, nameLast)
+    expect(error).toStrictEqual({statusCode: 400, content: {error: "Password must have at least 8 characters"}})
   })
 
   test.each([
@@ -113,9 +113,9 @@ describe('adminAuthRegister', () => {
     {email: "lt05@gmail.com", password: '       abcdef', nameLast: "Thang", nameFirst: 'Ngu'},
     {email: "lt05@gmail.com", password: '        ?+', nameLast: "Thang", nameFirst: 'Ngu'},
     {email: "lt05@gmail.com", password: '        123321', nameLast: "Thang", nameFirst: 'Ngu'},
-  ])('ERROR: Password is less than 8 characters', ({email, password, nameFirst, nameLast}) => {
-    error = adminAuthRegister(email, password, nameFirst, nameLast)
-    expect(error).toEqual({statusCode: 400, content: {error: "ERROR: Password does not contain at least one number and at least one letter"}})
+  ])('ERROR: Password does not contain at least one number and at least one letter', ({email, password, nameFirst, nameLast}) => {
+    let error = adminAuthRegister(email, password, nameFirst, nameLast)
+    expect(error).toStrictEqual({statusCode: 400, content: {error: "Password must contain at least one number and at least one letter"}})
   })
 
   test.each([
@@ -171,6 +171,6 @@ describe('adminAuthRegister', () => {
     { email: 'apcs@gmail.vn', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "-----" },
     { email: 'thomas@ad.unsw.edu.au', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "    " },
   ])('SUCESS', ({ email, password, nameFirst, nameLast }) => {
-    expect(adminAuthRegister(email, password, nameFirst, nameLast).content).toEqual({token: expect.any(String)})
+    expect(adminAuthRegister(email, password, nameFirst, nameLast).content).toStrictEqual({token: expect.any(String)})
   })
 })

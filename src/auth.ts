@@ -1,7 +1,7 @@
 import { getData, setData } from "./dataStore";
 import validator from "validator";
 import { emailUsed, validName, securedPassword } from "./authHelper";
-import { ErrorObject, UserDetails } from "./types";
+import { ErrorObject, Token, UserDetails } from "./types";
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -19,13 +19,14 @@ const adminAuthRegister = (
   password: string,
   nameFirst: string,
   nameLast: string
-): { authUserId: number } | ErrorObject => {
+): { token: string } | ErrorObject => {
   // Retrieve the current data
   let data = getData();
 
   // Check if the email address is used by another user
   if (emailUsed(email, data)) {
     return {
+      statusCode: 400,
       error: "Email address used by another user",
     };
   }
@@ -34,6 +35,7 @@ const adminAuthRegister = (
   if (!validator.isEmail(email)) {
     return {
       error: "Invalid email address",
+      statusCode: 400
     };
   }
 
@@ -42,6 +44,7 @@ const adminAuthRegister = (
     return {
       error:
         "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
+      statusCode: 400
     };
   }
 
@@ -49,6 +52,7 @@ const adminAuthRegister = (
   if (nameFirst.length > 20 || nameFirst.length < 2) {
     return {
       error: "First name length must be between 2 and 20 characters",
+      statusCode: 400
     };
   }
 
@@ -57,12 +61,14 @@ const adminAuthRegister = (
     return {
       error:
         "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
+      statusCode: 400
     };
   }
 
   // Check the length of the last name
   if (nameLast.length > 20 || nameLast.length < 2) {
     return {
+      statusCode: 400,
       error: "Last name length must be between 2 and 20 characters",
     };
   }
@@ -71,6 +77,7 @@ const adminAuthRegister = (
   if (password.length < 8) {
     return {
       error: "Password must have at least 8 characters",
+      statusCode: 400
     };
   }
 
@@ -79,6 +86,7 @@ const adminAuthRegister = (
     return {
       error:
         "Password must contain at least one number and at least one letter",
+      statusCode: 400
     };
   }
 
@@ -96,11 +104,19 @@ const adminAuthRegister = (
   data.users.push(user);
   data.nextUserId += 1;
 
-  // update dataStore by calling setData which will save it to dataStore.json
+  let newToken: Token = {
+    identifier: (data.nextTokenId).toString(),
+    authUserId: user.authUserId
+  }
+
+  data.sessions.push(newToken)
+  data.nextTokenId += 1
+
+  // update dataStore by calling setData which will save it to data.json
   setData(data);
 
   // Return an object containing the authUserId of the registered user
-  return { authUserId: user.authUserId };
+  return {token: newToken.identifier};
 };
 
 /**

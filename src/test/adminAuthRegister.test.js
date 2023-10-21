@@ -171,6 +171,8 @@ describe('adminAuthRegister', () => {
     { email: 'apcs@gmail.vn', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "-----" },
     { email: 'thomas@ad.unsw.edu.au', password: 'ltngu0105', nameLast: 'Ngu', nameFirst: "    " },
   ])('SUCESS', ({ email, password, nameFirst, nameLast }) => {
-    expect(adminAuthRegister(email, password, nameFirst, nameLast).content).toStrictEqual({token: expect.any(String)})
+    let res = adminAuthRegister(email, password, nameFirst, nameLast)
+    expect(res.content).toStrictEqual({token: expect.any(String)})
+    expect(res.statusCode).toStrictEqual(200)
   })
 })

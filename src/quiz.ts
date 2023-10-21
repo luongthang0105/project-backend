@@ -145,37 +145,37 @@ const adminQuizCreate = (
  *      If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizDescriptionUpdate = (
-  authUserId: number,
+  token:  string,
   quizId: number,
   description: string
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
+  const authUserId = data.sessions.find((currToken) => currToken.identifier === token).authUserId;
+  if (token === "" || !authUserId) {
+    return {statusCode: 401, error: "Token is empty or invalid (does not refer to valid logged in user session)" };
+  }
+  
   // Check if authUserId is valid by searching for it in the list of users
   const validUser = data.users.find((user: UserObject) => user.authUserId === authUserId);
-
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserID is not a valid user" };
-  }
 
   // Find the quiz with the specified quizId and check if it exists
   const existingQuiz = data.quizzes.find((quiz: QuizObject) => quiz.quizId === quizId);
 
   // Return an error message if the quiz with the given quizId does not exist
   if (!existingQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error:  "Quiz ID does not refer to a valid quiz"};
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId) {
-    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+    return { statusCode: 403, error: "Valid token is provided, but user is not an owner of this quiz"};
   }
 
   // Check if the description is more than 100 characters in length
   if (description.length > 100) {
-    return { error: "Description is more than 100 characters in length" };
+    return { statusCode: 400, error: "Description is more than 100 characters in length" };
   }
 
   // Get the current timestamp

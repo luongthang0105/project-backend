@@ -1,4 +1,4 @@
-import { adminAuthRegister, adminAuthLogin, clear } from "../auth";
+import { adminAuthRegister, adminAuthLogin, clear } from "../testWrappers";
 
 describe("clear", () => {
   beforeEach(() => {
@@ -13,14 +13,14 @@ describe("clear", () => {
       "Script"
     ).content;
     const success = adminAuthLogin("javascript@gmail.com", "aikfnrg7").content;
-    expect(success).toEqual(userId1);
     let result = clear();
     expect(result.content).toStrictEqual({});
     expect(result.statusCode).toBe(200);
     expect(
-      adminAuthLogin("javascript@gmail.com", "aikfnrg7").content
+      adminAuthLogin("javascript@gmail.com", "aikfnrg7")
     ).toStrictEqual({
-      error: "Email adress does not exist",
+      content: {error: "Email adress does not exist"},
+      statusCode: 400
     });
   });
 });

@@ -351,7 +351,6 @@ describe("adminQuizCreate", () => {
       "Hanh",
       "Han"
     ).content;
-    console.log(user01)
     adminQuizCreate(user01, "Han", "");
     expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
       content: {quizId: expect.any(Number)},

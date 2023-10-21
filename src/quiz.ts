@@ -61,36 +61,40 @@ const adminQuizList = (authUserId: number): QuizList | ErrorObject => {
  *   If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizCreate = (
-  authUserId: number,
+  token: string,
   name: string,
   description: string
 ): Quiz | ErrorObject => {
   // Retrieve the current data
   const currData = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(
-    (user: UserObject) => user.authUserId === authUserId
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
   );
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === "" || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
+
+  let authUserId = validSession.authUserId;
 
   // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
-    return { error: "Name contains invalid characters" };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Check if the name is less than 3 characters long
   if (name.length < 3) {
-    return { error: "Name is less than 3 characters long" };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Check if the name is more than 30 characters long
   if (name.length > 30) {
-    return { error: "Name is more than 30 characters long" };
+    return { statusCode: 400, error: "Name is more than 30 characters long" };
   }
 
   // Check if the name is already used by the current logged-in user for another quiz
@@ -99,13 +103,17 @@ const adminQuizCreate = (
   );
   if (quizNameUsed)
     return {
+      statusCode: 400,
       error:
         "Name is already used by the current logged in user for another quiz",
     };
 
   // Check if the description is more than 100 characters in length
   if (description.length > 100) {
-    return { error: "Description is more than 100 characters in length" };
+    return {
+      statusCode: 400,
+      error: "Description is more than 100 characters in length",
+    };
   }
 
   // Get the current timestamp
@@ -290,10 +298,13 @@ const adminQuizInfo = (
   // Retrieve the current data
   const data = getData();
 
-  const authUserId = data.sessions.find(
+  const validSession = data.sessions.find(
     (currToken) => currToken.identifier === token
-  ).authUserId;
-  if (token === "" || !authUserId) {
+  );
+
+  console.log(validSession);
+
+  if (!validSession) {
     return {
       statusCode: 401,
       error:
@@ -301,10 +312,7 @@ const adminQuizInfo = (
     };
   }
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(
-    (user: UserObject) => user.authUserId === authUserId
-  );
+  let authUserId = validSession.authUserId;
 
   // Find the quiz with the specified quizId and check if it exists
   const existingQuiz = data.quizzes.find(

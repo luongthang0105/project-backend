@@ -13,7 +13,12 @@ describe("adminQuizDescriptionUpdate", () => {
   };
   beforeEach(() => {
     clear();
-    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh").content;
+    user = adminAuthRegister(
+      "han@gmai.com",
+      "2705uwuwuwu",
+      "Han",
+      "Hanh"
+    ).content;
     quiz = adminQuizCreate(user, "New Quiz", "description").content;
   });
 
@@ -24,7 +29,10 @@ describe("adminQuizDescriptionUpdate", () => {
       "New description"
     );
     expect(result).toStrictEqual({
-      content: "Token is empty or invalid (does not refer to valid logged in user session)",
+      content: {
+        error:
+          "Token is empty or invalid (does not refer to valid logged in user session)",
+      },
       statusCode: 401,
     });
   });
@@ -36,7 +44,7 @@ describe("adminQuizDescriptionUpdate", () => {
       "Description"
     );
     expect(result3).toStrictEqual({
-      content: "Quiz ID does not refer to a valid quiz",
+      content: { error: "Quiz ID does not refer to a valid quiz" },
       statusCode: 400,
     });
   });
@@ -48,7 +56,11 @@ describe("adminQuizDescriptionUpdate", () => {
       "Thomas",
       "Nguyen"
     );
-    let quiz2 = adminQuizCreate(user2, "New Quiz 2", "long description").content;
+    let quiz2 = adminQuizCreate(
+      user2,
+      "New Quiz 2",
+      "long description"
+    ).content;
 
     const result2 = adminQuizDescriptionUpdate(
       user,
@@ -56,7 +68,9 @@ describe("adminQuizDescriptionUpdate", () => {
       "Description"
     );
     expect(result2).toStrictEqual({
-      content: "Valid token is provided, but user is not an owner of this quiz",
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
       statusCode: 403,
     });
   });
@@ -73,14 +87,14 @@ describe("adminQuizDescriptionUpdate", () => {
       newDescription
     );
     expect(result).toEqual({
-      content: "Description is more than 100 characters in length",
+      content: { error: "Description is more than 100 characters in length" },
       statusCode: 400,
     });
 
     let quizInfo = adminQuizInfo(user.content, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual(oldDescription);
   });
-  
+
   test("Success case: check different timestamps", () => {
     expect(
       adminQuizDescriptionUpdate(user, quiz.quizId, "New description")
@@ -93,9 +107,10 @@ describe("adminQuizDescriptionUpdate", () => {
     );
   });
   test("Success case: Empty Description", () => {
-    expect(
-      adminQuizDescriptionUpdate(user, quiz.quizId, "")
-    ).toStrictEqual({ content: {}, statusCode: 200 });
+    expect(adminQuizDescriptionUpdate(user, quiz.quizId, "")).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
 
     let quizInfo = adminQuizInfo(user, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual("");

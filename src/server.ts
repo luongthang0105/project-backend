@@ -8,9 +8,12 @@ import sui from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
 import process from "process";
-import { DataStore, ErrorObject } from "./types";
-import { getData } from "./dataStore";
-import { adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
+import { adminAuthRegister } from "./auth";
+import {
+  adminQuizDescriptionUpdate,
+  adminQuizCreate,
+  adminQuizInfo,
+} from "./quiz";
 
 // Set up web app
 const app = express();
@@ -48,6 +51,68 @@ app.get("/echo", (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ("error" in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.put(
+  "/v1/admin/quiz/:quizid/description",
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizId);
+
+    const token = req.body.token as string;
+    
+    const description = req.body.description;
+
+    const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+    if ("error" in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
+
+app.post("/v1/admin/quiz", (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+
+  const result = adminQuizCreate(token, name, description);
+
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  console.log(token);
+  const result = adminQuizInfo(token, quizId);
+
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
@@ -65,42 +130,6 @@ app.use((req: Request, res: Response) => {
          of /posts/list in your server.ts or test file
   `;
   res.status(404).json({ error });
-});
-
-app.put(
-  "/v1/admin/quiz/{quizid}/description",
-  (req: Request, res: Response) => {
-    const quizId = parseInt(req.params.quizId);
-
-    const token = req.body.token;
-
-    const description = req.body.description;
-
-    const result = adminQuizDescriptionUpdate(token, quizId, description);
-
-    if ("error" in result) {
-      res.status(result.statusCode).json(result);
-      return;
-    }
-
-    res.json(result);
-  }
-);
-
-app.get("/v1/admin/quiz/{quizid}", (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.body.token;
-
-  const result = adminQuizInfo(token, quizId);
-
-    if ("error" in result) {
-      res.status(result.statusCode).json(result);
-      return;
-    }
-
-    res.json(result);
-
 });
 
 // start server

@@ -68,21 +68,19 @@ const adminQuizCreate = (
   // Retrieve the current data
   const currData = getData();
 
-  const authUserId = currData.sessions.find(
-    (currToken) => currToken.identifier === token
-  ).authUserId;
-  if (token === "" || !authUserId) {
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        "Token is empty or invalid (does not refer to valid logged in user session)",
+      "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
-
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(
-    (user: UserObject) => user.authUserId === authUserId
-  );
+  
+  let authUserId = validSession.authUserId
 
   // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {

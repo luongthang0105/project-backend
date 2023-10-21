@@ -1,4 +1,3 @@
-import { stringify } from "yaml/dist/stringify/stringify";
 import { adminQuizCreate, adminAuthRegister, clear } from "../testWrappers";
 
 beforeEach(() => {
@@ -6,10 +5,10 @@ beforeEach(() => {
 });
 
 describe("adminQuizCreate", () => {
+  let invalidToken = {
+    token: "-1",
+  };
   test("AuthUserId is not a valid user: dataStore is empty", () => {
-    let invalidToken = {
-      token: "-1",
-    };
     expect(
       adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
     ).toStrictEqual({
@@ -28,9 +27,6 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    let invalidToken = {
-      token: JSON.stringify(user.authUserId + 1),
-    };
     expect(
       adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
     ).toStrictEqual({
@@ -55,9 +51,6 @@ describe("adminQuizCreate", () => {
       "Hanh",
       "Han"
     ).content;
-    let invalidToken = {
-      token: JSON.stringify(user02.authUserId + 1),
-    };
     expect(
       adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
     ).toStrictEqual({
@@ -77,7 +70,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "Han Hanh!", "This is my quiz")
+      adminQuizCreate(user, "Han Hanh!", "This is my quiz")
     ).toStrictEqual({
       content: { error: "Name contains invalid characters" },
       statusCode: 400,
@@ -92,7 +85,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "----", "This is my quiz")
+      adminQuizCreate(user, "----", "This is my quiz")
     ).toStrictEqual({
       content: { error: "Name contains invalid characters" },
       statusCode: 400,
@@ -107,7 +100,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "1234+", "This is my quiz")
+      adminQuizCreate(user, "1234+", "This is my quiz")
     ).toStrictEqual({
       content: { error: "Name contains invalid characters" },
       statusCode: 400,
@@ -122,7 +115,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "Hi", "This is my quiz")
+      adminQuizCreate(user, "Hi", "This is my quiz")
     ).toStrictEqual({
       content:
       {error: "Name is less than 3 characters long"},
@@ -138,7 +131,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "1", "This is my quiz")
+      adminQuizCreate(user, "1", "This is my quiz")
     ).toStrictEqual({
       
       content: {error: "Name is less than 3 characters long"},
@@ -155,7 +148,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "1H", "This is my quiz")
+      adminQuizCreate(user, "1H", "This is my quiz")
     ).toStrictEqual({
       content:
       {error: "Name is less than 3 characters long"},
@@ -172,7 +165,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "", "This is my quiz")
+      adminQuizCreate(user, "", "This is my quiz")
     ).toStrictEqual({
       content:
       {error: "Name is less than 3 characters long"},
@@ -190,7 +183,7 @@ describe("adminQuizCreate", () => {
     ).content;
     expect(
       adminQuizCreate(
-        user.authUserId,
+        user,
         "okiokiokiokiokiokiokiokiokiokioki",
         "This is my quiz"
       )
@@ -209,9 +202,9 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    adminQuizCreate(user.authUserId, "quiz", "This is my quiz");
+    adminQuizCreate(user, "quiz", "This is my quiz");
     expect(
-      adminQuizCreate(user.authUserId, "quiz", "This is my quiz")
+      adminQuizCreate(user, "quiz", "This is my quiz")
     ).toStrictEqual({
       content:
       {error:
@@ -230,7 +223,7 @@ describe("adminQuizCreate", () => {
     ).content;
     expect(
       adminQuizCreate(
-        user.authUserId,
+        user,
         "Han",
         "Llllorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu"
       )
@@ -251,7 +244,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "Han", "This is my quiz")
+      adminQuizCreate(user, "Han", "This is my quiz")
     ).toStrictEqual({
       
       content: {quizId: expect.any(Number)},
@@ -267,7 +260,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "Han123", "This is my quiz")
+      adminQuizCreate(user, "Han123", "This is my quiz")
     ).toStrictEqual({
       
       content: {quizId: expect.any(Number)},
@@ -284,7 +277,7 @@ describe("adminQuizCreate", () => {
       "Hanh"
     ).content;
     expect(
-      adminQuizCreate(user.authUserId, "Han 34 uwu", "This is my quiz")
+      adminQuizCreate(user, "Han 34 uwu", "This is my quiz")
     ).toStrictEqual({
       
       content: {quizId: expect.any(Number)},
@@ -300,7 +293,7 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    expect(adminQuizCreate(user.authUserId, "Han", "")).toStrictEqual({
+    expect(adminQuizCreate(user, "Han", "")).toStrictEqual({
       
       content: {quizId: expect.any(Number)},
       statusCode: 200
@@ -315,8 +308,8 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    adminQuizCreate(user.authUserId, "Huhu", "");
-    expect(adminQuizCreate(user.authUserId, "Han", "")).toStrictEqual({
+    adminQuizCreate(user, "Huhu", "");
+    expect(adminQuizCreate(user, "Han", "")).toStrictEqual({
       
       content: {quizId: expect.any(Number)},
       statusCode: 200
@@ -337,8 +330,8 @@ describe("adminQuizCreate", () => {
       "Hanh",
       "Han"
     ).content;
-    adminQuizCreate(user01.authUserId, "Huhu", "");
-    expect(adminQuizCreate(user02.authUserId, "Han", "")).toStrictEqual({
+    adminQuizCreate(user01, "Huhu", "");
+    expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
      
       content: { quizId: expect.any(Number)},
       statusCode: 200
@@ -359,12 +352,11 @@ describe("adminQuizCreate", () => {
       "Hanh",
       "Han"
     ).content;
-    adminQuizCreate(user01.authUserId, "Han", "");
-    expect(adminQuizCreate(user02.authUserId, "Han", "")).toStrictEqual({
-      
+    console.log(user01)
+    adminQuizCreate(user01, "Han", "");
+    expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
       content: {quizId: expect.any(Number)},
       statusCode: 200
-
     });
   });
 });

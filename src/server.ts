@@ -82,12 +82,8 @@ app.put(
 );
 
 app.post("/v1/admin/quiz", (req: Request, res: Response) => {
-  const token = req.body.token;
-
-  const name = req.body.name;
-
-  const description = req.body.description;
-
+  const {token, name, description} = req.body;
+  
   const result = adminQuizCreate(token, name, description);
 
   if ("error" in result) {

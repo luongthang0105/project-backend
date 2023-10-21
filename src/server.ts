@@ -8,7 +8,7 @@ import sui from "swagger-ui-express"
 import fs from "fs"
 import path from "path"
 import process from "process"
-import { adminAuthRegister } from "./auth"
+import { adminAuthLogin, adminAuthRegister } from "./auth"
 
 // Set up web app
 const app = express()
@@ -49,6 +49,20 @@ app.get("/echo", (req: Request, res: Response) => {
 app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body
   const result = adminAuthRegister(email, password, nameFirst, nameLast)
+
+  if ("error" in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode).json({ error: result.error })
+    return
+  }
+
+  res.json(result)
+})
+
+app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
+  const { email, password } = req.body
+  const result = adminAuthLogin(email, password)
 
   if ("error" in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.

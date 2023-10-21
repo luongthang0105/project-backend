@@ -1,51 +1,70 @@
-import { adminQuizInfo, adminQuizCreate } from "../quiz"
-import { clear } from "../other"
-import { adminAuthRegister } from "../auth"
+import {
+  adminQuizInfo,
+  adminQuizCreate,
+  adminAuthRegister,
+  clear,
+} from "../testWrappers";
 
 describe("adminQuizInfo", () => {
-  let user, quiz
+  let user, quiz;
+  let invalidToken = {
+    token: "-1",
+  };
   beforeEach(() => {
-    clear()
-    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
-    quiz = adminQuizCreate(user.authUserId, "New Quiz", "description")
-  })
+    clear();
+    user = adminAuthRegister(
+      "han@gmai.com",
+      "2705uwuwuwu",
+      "Han",
+      "Hanh"
+    ).content;
+    quiz = adminQuizCreate(user, "New Quiz", "description").content;
+  });
 
-  test("AuthUserID is not valid", () => {
-    let result = adminQuizInfo(user.authUserId + 1, quiz.quizId)
+  test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
+    let result = adminQuizInfo(invalidToken, quiz.quizId);
     expect(result).toStrictEqual({
-      error: "AuthUserID is not a valid user",
-    })
-  })
+      statusCode: 401,
+      content: {
+        error:
+          "Token is empty or invalid (does not refer to valid logged in user session)",
+      },
+    });
+  });
 
   test("Quiz ID does not refer to a valid quiz", () => {
-    const result = adminQuizInfo(user.authUserId, quiz.quizId + 1)
+    const result = adminQuizInfo(user, quiz.quizId + 1);
     expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
+      statusCode: 400,
+      content: { error: "Quiz ID does not refer to a valid quiz" },
+    });
+  });
 
-  test("Quiz ID does not refer to a quiz that this user owns", () => {
+  test("Valid token is provided, but user is not an owner of this quiz", () => {
     let user2 = adminAuthRegister(
       "thang@gmail.com",
       "0105uwuwuw",
       "Thomas",
       "Nguyen"
-    )
+    ).content;
     let quiz2 = adminQuizCreate(
-      user2.authUserId,
+      user2,
       "New Quiz 2",
       "long description"
-    )
+    ).content;
 
-    const result = adminQuizInfo(user.authUserId, quiz2.quizId)
+    const result = adminQuizInfo(user, quiz2.quizId).content;
 
     expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
-    })
-  })
+      statusCode: 403,
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
+    });
+  });
 
   test("Success: Quiz Information Retrieved:", () => {
-    expect(adminQuizInfo(user.authUserId, quiz.quizId)).toStrictEqual({
+    expect(adminQuizInfo(user, quiz.quizId)).toStrictEqual({
       quizId: quiz.quizId,
       name: "New Quiz",
       timeCreated: expect.any(Number),
@@ -55,9 +74,9 @@ describe("adminQuizInfo", () => {
       // these last three properties need to be tested after implementing Question create function
       questions: [],
       numQuestions: 0,
-      duration: 0
-    })
-  })
+      duration: 0,
+    });
+  });
 
   test("Success: More Quiz Retrieved:", () => {
     let user2 = adminAuthRegister(
@@ -65,24 +84,27 @@ describe("adminQuizInfo", () => {
       "0105uwuwuw",
       "Thomas",
       "Nguyen"
-    )
+    ).content;
     let quiz2 = adminQuizCreate(
-      user2.authUserId,
+      user2,
       "New Quiz 2",
       "long description"
-    )
+    ).content;
+    let result = adminQuizInfo(user2, quiz2.quizId);
+    expect(result.content).toStrictEqual({
+      error: {
+        quizId: quiz2.quizId,
+        name: "New Quiz 2",
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: "long description",
 
-    expect(adminQuizInfo(user2.authUserId, quiz2.quizId)).toStrictEqual({
-      quizId: quiz2.quizId,
-      name: "New Quiz 2",
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: "long description",
-      
-      // these last three properties need to be tested after implementing Question create function
-      questions: [],
-      numQuestions: 0,
-      duration: 0
-    })
-  })
-})
+        // these last three properties need to be tested after implementing Question create function
+        questions: [],
+        numQuestions: 0,
+        duration: 0,
+      },
+    });
+    expect(result.statusCode).toStrictEqual(200);
+  });
+});

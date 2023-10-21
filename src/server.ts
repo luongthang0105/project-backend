@@ -79,14 +79,13 @@ app.put(
     const result = adminQuizDescriptionUpdate(token, quizId, description);
 
     if ("error" in result) {
-      res.status(result.statusCode).json(result);
+      res.status(result.statusCode).json({ error: result.error });
       return;
     }
 
     res.json(result);
   }
 );
-
 
 // start server
 const server = app.listen(PORT, HOST, () => {

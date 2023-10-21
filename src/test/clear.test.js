@@ -1,23 +1,25 @@
-import { adminAuthRegister, adminAuthLogin } from "../auth";
-import { clear } from "../other";
+import { adminAuthRegister, adminAuthLogin, clear } from "../auth";
 
 describe("clear", () => {
   beforeEach(() => {
-    clear()
-  })
+    clear();
+  });
   test("Success: Can't login after clear", () => {
     const userId1 = adminAuthRegister(
       "javascript@gmail.com",
       "aikfnrg7",
       "Java",
       "Script"
-    );
-    const success = adminAuthLogin("javascript@gmail.com", "aikfnrg7");
+    ).content;
+    const success = adminAuthLogin("javascript@gmail.com", "aikfnrg7").content;
     expect(success).toEqual(userId1);
+    let result = clear();
+    expect(result.content).toStrictEqual({});
+    expect(result.statusCode).toBe(200);
 
-    expect(clear()).toStrictEqual({});
-
-    expect(adminAuthLogin("javascript@gmail.com", "aikfnrg7")).toStrictEqual({
+    expect(
+      adminAuthLogin("javascript@gmail.com", "aikfnrg7").content
+    ).toStrictEqual({
       error: "Email adress does not exist",
     });
   });

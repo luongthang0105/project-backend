@@ -277,7 +277,7 @@ const adminQuizInfo = (
 
   // If authUserId is not valid, return an error object
   if (!validUser) {
-    return { error: "AuthUserID is not a valid user" };
+    return {error: "AuthUserID is not a valid user" };
   }
 
   // Find the quiz with the specified quizId and check if it exists

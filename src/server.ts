@@ -1,13 +1,14 @@
-import express, { json, Request, Response } from 'express';
-import { echo } from './newecho';
-import morgan from 'morgan';
-import config from './config.json';
-import cors from 'cors';
-import YAML from 'yaml';
-import sui from 'swagger-ui-express';
-import fs from 'fs';
-import path from 'path';
-import process from 'process';
+import express, { json, Request, Response } from "express";
+import { echo } from "./newecho";
+import morgan from "morgan";
+import config from "./config.json";
+import cors from "cors";
+import YAML from "yaml";
+import sui from "swagger-ui-express";
+import fs from "fs";
+import path from "path";
+import process from "process";
+import { clear } from "./other";
 
 // Set up web app
 const app = express();
@@ -16,24 +17,30 @@ app.use(json());
 // Use middleware that allows for access from other domains
 app.use(cors());
 // for logging errors (print to terminal)
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 // for producing the docs that define the API
-const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
-app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
-app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
+const file = fs.readFileSync(path.join(process.cwd(), "swagger.yaml"), "utf8");
+app.get("/", (req: Request, res: Response) => res.redirect("/docs"));
+app.use(
+  "/docs",
+  sui.serve,
+  sui.setup(YAML.parse(file), {
+    swaggerOptions: { docExpansion: config.expandDocs ? "full" : "list" },
+  })
+);
 
 const PORT: number = parseInt(process.env.PORT || config.port);
-const HOST: string = process.env.IP || 'localhost';
+const HOST: string = process.env.IP || "localhost";
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
 // Example get request
-app.get('/echo', (req: Request, res: Response) => {
+app.get("/echo", (req: Request, res: Response) => {
   const data = req.query.echo as string;
   const ret = echo(data);
-  if ('error' in ret) {
+  if ("error" in ret) {
     res.status(400);
   }
   return res.json(ret);
@@ -58,6 +65,11 @@ app.use((req: Request, res: Response) => {
   res.status(404).json({ error });
 });
 
+app.delete("/v1/clear", (req: Request, res: Response) => {
+  const result = clear();
+  return res.json(result);
+});
+
 // start server
 const server = app.listen(PORT, HOST, () => {
   // DO NOT CHANGE THIS LINE
@@ -65,6 +77,6 @@ const server = app.listen(PORT, HOST, () => {
 });
 
 // For coverage, handle Ctrl+C gracefully
-process.on('SIGINT', () => {
-  server.close(() => console.log('Shutting down server gracefully.'));
+process.on("SIGINT", () => {
+  server.close(() => console.log("Shutting down server gracefully."));
 });

@@ -11,7 +11,7 @@ import process from "process";
 import { adminQuizRemove } from "./quiz";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
-import { adminQuizCreate, adminQuizDescriptionUpdate } from "./quiz";
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -135,6 +135,29 @@ app.post("/v1/admin/quiz", (req: Request, res: Response) => {
   }
   res.json(result);
 });
+
+app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  
+  console.log(token);
+
+  const result = adminQuizInfo(token, quizId);
+
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.delete("/v1/clear", (req: Request, res: Response) => {
+  const result = clear();
+  return res.json(result);
+});
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

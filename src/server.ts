@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
-import { adminQuizCreate, adminQuizDescriptionUpdate } from "./quiz";
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizList } from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -78,6 +78,20 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
 app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminUserDetails(token);
+
+  if ("error" in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.get("/v1/admin/quiz/list", (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = adminQuizList(token);
 
   if ("error" in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.

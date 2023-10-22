@@ -2,18 +2,21 @@ import {
   adminQuizCreate,
   adminQuizNameUpdate,
   adminQuizInfo,
-} from "../quiz"
-import { adminAuthRegister } from "../auth"
-import { clear } from "../other"
+  adminAuthRegister,
+  clear
+} from "../testWrappers"
 
 describe("adminQuizNameUpdate", () => {
   beforeEach(() => {
     clear()
   })
-
+  const invalidToken = {
+    token: "-1"
+  }
   test("ERROR: AuthUserId is not a valid user", () => {
-    expect(adminQuizNameUpdate(1, 1, "name")).toStrictEqual({
-      error: "AuthUserId is not a valid user",
+    expect(adminQuizNameUpdate(invalidToken, -1, "name")).toStrictEqual({
+      content: {error: "Token is empty or invalid (does not refer to valid logged in user session)"},
+      statusCode: 401
     })
   })
 
@@ -23,13 +26,14 @@ describe("adminQuizNameUpdate", () => {
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
-    expect(adminQuizNameUpdate(user.authUserId, 1, "name")).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
+    ).content
+    expect(adminQuizNameUpdate(user, -1, "name")).toStrictEqual({
+      content: {error: "Quiz ID does not refer to a valid quiz"},
+      statusCode: 400
     })
   })
 
-  test("ERROR: Quiz ID does not refer to a quiz that this user owns", () => {
+  test("ERROR: Valid token is provided, but user is not an owner of this quiz", () => {
     const user01 = adminAuthRegister(
       "han@gmai.com",
       "2705uwuwuwuwuwuw",
@@ -50,7 +54,8 @@ describe("adminQuizNameUpdate", () => {
     expect(
       adminQuizNameUpdate(user02.authUserId, quiz01.quizId, "name")
     ).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
+      content: {error: "Valid token is provided, but user is not an owner of this quiz"},
+      statusCode: 403
     })
   })
 
@@ -76,7 +81,8 @@ describe("adminQuizNameUpdate", () => {
     expect(
       adminQuizNameUpdate(user01.authUserId, quiz01.quizId, name)
     ).toStrictEqual({
-      error: "Name contains invalid characters",
+      content: {error: "Name contains invalid characters"},
+      statusCode: 400
     })
   })
 
@@ -95,7 +101,8 @@ describe("adminQuizNameUpdate", () => {
     expect(
       adminQuizNameUpdate(user01.authUserId, quiz01.quizId, "na")
     ).toStrictEqual({
-      error: "Name is less than 3 characters long",
+      content: {error: "Name is less than 3 characters long"},
+      statusCode: 400
     })
   })
 
@@ -118,7 +125,8 @@ describe("adminQuizNameUpdate", () => {
         "uwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuw"
       )
     ).toStrictEqual({
-      error: "Name is greater than 30 characters long",
+      content: {error: "Name is greater than 30 characters long"},
+      statusCode: 400
     })
   })
 
@@ -144,6 +152,7 @@ describe("adminQuizNameUpdate", () => {
     ).toStrictEqual({
       error:
         "Name is already used by the current logged in user for another quiz",
+      statusCode: 400
     })
   })
 

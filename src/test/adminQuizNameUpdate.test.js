@@ -48,7 +48,7 @@ describe("adminQuizNameUpdate", () => {
       "Haanh"
     ).content
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz",
       "This is my quiz"
     ).content
@@ -75,7 +75,7 @@ describe("adminQuizNameUpdate", () => {
       "Hanh"
     ).content
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz",
       "This is my quiz"
     ).content
@@ -95,7 +95,7 @@ describe("adminQuizNameUpdate", () => {
       "Hanh"
     ).content
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz",
       "This is my quiz"
     ).content
@@ -115,13 +115,13 @@ describe("adminQuizNameUpdate", () => {
       "Hanh"
     ).content
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz",
       "This is my quiz"
     ).content
     expect(
       adminQuizNameUpdate(
-        user01.authUserId,
+        user01,
         quiz01.quizId,
         "uwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuw"
       )
@@ -139,20 +139,20 @@ describe("adminQuizNameUpdate", () => {
       "Hanh"
     ).content
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz01",
       "This is my quiz"
     ).content
     const quiz02 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "quiz02",
       "This is my quiz"
     ).content
     expect(
       adminQuizNameUpdate(user01, quiz01.quizId, "quiz02")
-    ).toStrictEqual({
-      error:
-        "Name is already used by the current logged in user for another quiz",
+    ).toStrictEqual(
+      {
+      content: {error: "Name is already used by the current logged in user for another quiz"},
       statusCode: 400
     })
   })
@@ -172,10 +172,10 @@ describe("adminQuizNameUpdate", () => {
 
   test('Success: Returns {} if no error, 2 different users', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content
-    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz').content
+    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content
     
     const user02 = adminAuthRegister('han222@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content
-    const quiz02 = adminQuizCreate(user02.authUserId, 'quiz02', 'This is my quiz 2').content
+    const quiz02 = adminQuizCreate(user02, 'quiz02', 'This is my quiz 2').content
 
     expect(adminQuizNameUpdate(user02, quiz02.quizId, 'name').content).toStrictEqual({})
 
@@ -186,9 +186,9 @@ describe("adminQuizNameUpdate", () => {
 
   test('Success: Returns {} if no error, updating same name', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content
-    const quiz01 = adminQuizCreate(user01.authUserId, 'quiz01', 'This is my quiz').content    
+    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content    
     expect(
-      adminQuizNameUpdate(user01.authUserId, quiz01.quizId, "quiz01").content
+      adminQuizNameUpdate(user01, quiz01.quizId, "quiz01").content
     ).toStrictEqual({})
     const quizInfo = adminQuizInfo(user01, quiz01.quizId).content
     expect(quizInfo.name).toStrictEqual("quiz01")
@@ -196,4 +196,5 @@ describe("adminQuizNameUpdate", () => {
       quizInfo.timeCreated
     )
   })
+  
 })

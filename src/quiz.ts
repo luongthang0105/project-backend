@@ -301,19 +301,13 @@ const adminQuizInfo = (
       duration: number;
     }
   | ErrorObject => {
-
-  console.log("Token:", token);
-
+    console.log("hello")
   // Retrieve the current data
   const data = getData();
-
-  console.log(data);
 
   const validSession = data.sessions.find(
     (currToken) => currToken.identifier === token
   );
-
-  console.log(validSession);
 
   if (!validSession) {
     return {

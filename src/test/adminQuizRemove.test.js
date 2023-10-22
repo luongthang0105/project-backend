@@ -11,7 +11,6 @@ beforeEach(() => {
 });
 
 describe("adminQuizRemove", () => {
-  /*
   test("Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty", () => {
     let unavailableToken = {
       token: "0",
@@ -22,7 +21,7 @@ describe("adminQuizRemove", () => {
         error:
           "Token is empty or invalid (does not refer to valid logged in user session)",
       },
-      statusCode: 400,
+      statusCode: 401,
     });
   });
 
@@ -43,7 +42,7 @@ describe("adminQuizRemove", () => {
         error:
           "Token is empty or invalid (does not refer to valid logged in user session)",
       },
-      statusCode: 400,
+      statusCode: 401,
     });
   });
 
@@ -102,14 +101,14 @@ describe("adminQuizRemove", () => {
       },
       statusCode: 403,
     });
-    expect(adminQuizRemove(user02.authUserId, quiz01.quizId)).toStrictEqual({
+    expect(adminQuizRemove(user02, quiz01.quizId)).toStrictEqual({
       content: {
         error: "Valid token is provided, but user is not an owner of this quiz",
       },
       statusCode: 403,
     });
   });
-*/
+
   test("Successful case: delete 1 quiz from a user who has 2 quizzes", () => {
     const user = adminAuthRegister(
       "han@gmai.com",
@@ -117,17 +116,28 @@ describe("adminQuizRemove", () => {
       "Han",
       "Hanh"
     ).content;
+
+    // console.log("1");
+
     adminQuizCreate(user, "Hihihihihih", "This is my quiz");
+    // console.log("2");
+
     const quiz02 = adminQuizCreate(user, "Hiiii", "This is my quiz").content;
-    expect(adminQuizRemove(user, quiz02.quizId)).toStrictEqual({
+    // console.log("3");
+
+    console.log(user);
+    console.log(quiz02.quizId);
+    let quizRemoved = adminQuizRemove(user, quiz02.quizId);
+    expect(quizRemoved).toStrictEqual({
       content: {},
       statusCode: 200,
     });
+    console.log("4");
+
     const result = adminQuizInfo(user, quiz02.quizId);
     expect(result).toStrictEqual({
       content: { error: "Quiz ID does not refer to a valid quiz" },
       statusCode: 400,
     });
   });
-
 });

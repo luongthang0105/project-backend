@@ -11,7 +11,11 @@ import process from "process";
 import { adminQuizRemove } from "./quiz";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
-import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
+import {
+  adminQuizCreate,
+  adminQuizDescriptionUpdate,
+  adminQuizInfo,
+} from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -56,6 +60,7 @@ app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
+  res.json(result);
 });
 app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
@@ -140,7 +145,7 @@ app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.query.token as string;
-  
+
   console.log(token);
 
   const result = adminQuizInfo(token, quizId);
@@ -157,7 +162,6 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

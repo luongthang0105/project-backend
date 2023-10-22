@@ -6,9 +6,9 @@ import {
 } from "../testWrappers";
 
 describe("adminQuizInfo", () => {
+  let user, quiz;
   beforeEach(() => {
     clear();
-    let user, quiz;
     user = adminAuthRegister(
       "han@gmai.com",
       "2705uwuwuwu",
@@ -62,8 +62,7 @@ describe("adminQuizInfo", () => {
       "long description"
     ).content;
 
-    const result = adminQuizInfo(user, quiz2.quizId).content;
-
+    const result = adminQuizInfo(user, quiz2.quizId);
     expect(result).toStrictEqual({
       statusCode: 403,
       content: {
@@ -73,7 +72,7 @@ describe("adminQuizInfo", () => {
   });
 
   test("Success: Quiz Information Retrieved:", () => {
-    expect(adminQuizInfo(user, quiz.quizId)).toStrictEqual({
+    expect(adminQuizInfo(user, quiz.quizId).content).toStrictEqual({
       quizId: quiz.quizId,
       name: "New Quiz",
       timeCreated: expect.any(Number),
@@ -101,7 +100,6 @@ describe("adminQuizInfo", () => {
     ).content;
     let result = adminQuizInfo(user2, quiz2.quizId);
     expect(result.content).toStrictEqual({
-      error: {
         quizId: quiz2.quizId,
         name: "New Quiz 2",
         timeCreated: expect.any(Number),
@@ -112,8 +110,8 @@ describe("adminQuizInfo", () => {
         questions: [],
         numQuestions: 0,
         duration: 0,
-      },
     });
     expect(result.statusCode).toStrictEqual(200);
   });
+
 });

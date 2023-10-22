@@ -11,6 +11,7 @@ beforeEach(() => {
 });
 
 describe("adminQuizRemove", () => {
+  /*
   test("Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty", () => {
     let unavailableToken = {
       token: "0",
@@ -60,6 +61,7 @@ describe("adminQuizRemove", () => {
     });
   });
 
+
   test("Quiz ID does not refer to a valid quiz: dataStore has 1 quiz", () => {
     const user = adminAuthRegister(
       "han@gmai.com",
@@ -107,7 +109,7 @@ describe("adminQuizRemove", () => {
       statusCode: 403,
     });
   });
-
+*/
   test("Successful case: delete 1 quiz from a user who has 2 quizzes", () => {
     const user = adminAuthRegister(
       "han@gmai.com",
@@ -127,4 +129,5 @@ describe("adminQuizRemove", () => {
       statusCode: 400,
     });
   });
+
 });

@@ -2,33 +2,35 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
-} from "../auth"
-import { clear } from "../other"
+  clear
+} from "../testWrappers"
+
 describe("adminUserDetails", () => {
+  let user1
+
   beforeEach(() => {
     clear()
-  })
-  test("ERROR: AuthUserId is not a valid user", () => {
-    const user1 = adminAuthRegister(
+    user1 = adminAuthRegister(
       "javascript@gmail.com",
       "aikfnrg7",
       "Java",
       "Script"
-    )
-    const error = adminUserDetails(user1.authUserId + 1)
-    expect(error).toEqual({ error: "AuthUserId is not a valid user" })
+    ).content
   })
+
+  let invalidToken = {
+    token: "-1"
+  }
+  test("ERROR: Token is empty or invalid (does not refer to valid logged in user session)", () => {
+    const error = adminUserDetails(invalidToken)
+    expect(error).toEqual({ statusCode: 401 , content: {error: "Token is empty or invalid (does not refer to valid logged in user session)"} })
+  })
+
   test("SUCCESS: Registeration", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 1,
@@ -37,17 +39,13 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Successful Login", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
-    const success = adminUserDetails(user1.authUserId)
+
+    const success = adminUserDetails(user1).content
+
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 2,
@@ -56,18 +54,12 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Successful Login => Incorrect Password", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 2,
@@ -76,17 +68,11 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Incorrect Password", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 1,
@@ -95,18 +81,12 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Incorrect Password => Successful Login", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 2,
@@ -115,19 +95,13 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Incorrect Password => Successful Login => Incorrect Password", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 2,
@@ -136,18 +110,12 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Successful Login => Successful Login", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
     adminAuthLogin("javascript@gmail.com", "aikfnrg7")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 3,
@@ -156,18 +124,12 @@ describe("adminUserDetails", () => {
     })
   })
   test("SUCCESS: Registeration => Incorrect Password => Incorrect Password", () => {
-    const user1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
-    )
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
     adminAuthLogin("javascript@gmail.com", "aikfnrg8")
-    const success = adminUserDetails(user1.authUserId)
+    const success = adminUserDetails(user1).content
     expect(success).toStrictEqual({
       user: {
-        userId: user1.authUserId,
+        userId: expect.any(Number),
         name: "Java Script",
         email: "javascript@gmail.com",
         numSuccessfulLogins: 1,

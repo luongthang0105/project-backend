@@ -8,6 +8,7 @@ import sui from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
 import process from "process";
+import { adminQuizRemove } from "./quiz";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate } from "./quiz";
@@ -45,6 +46,18 @@ app.get("/echo", (req: Request, res: Response) => {
     res.status(400);
   }
   return res.json(ret);
+});
+
+// adminQuizRemove
+app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.query.token as string;
+  const result = adminQuizRemove(token, quizId);
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+  res.json(result);
 });
 
 // adminAuthRegister
@@ -140,15 +153,14 @@ app.put(
 
 // adminQuizCreate
 app.post("/v1/admin/quiz", (req: Request, res: Response) => {
-  const {token, name, description} = req.body;
-  
+  const { token, name, description } = req.body;
+
   const result = adminQuizCreate(token, name, description);
 
   if ("error" in result) {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
-
   res.json(result);
 });
 
@@ -157,7 +169,7 @@ app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.query.token as string;
-  
+
   console.log(token);
 
   const result = adminQuizInfo(token, quizId);
@@ -175,7 +187,6 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

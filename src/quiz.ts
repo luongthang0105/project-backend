@@ -222,21 +222,27 @@ const adminQuizDescriptionUpdate = (
  *     If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizRemove = (
-  authUserId: number,
+  token: string,
   quizId: number
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const currData = getData();
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(
-    (user: UserObject) => user.authUserId === authUserId
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
   );
 
   // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (!validSession) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
+
+  const authUserId = validSession.authUserId;
 
   // Check if quizId is valid by searching for it in the list of quizzes
   const existingQuiz = currData.quizzes.find(
@@ -245,13 +251,13 @@ const adminQuizRemove = (
 
   // If quizId is not valid, return an error object
   if (!existingQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId)
     return {
-      error: "Quiz ID does not refer to a quiz that this user owns",
+      statusCode: 403, error: "Valid token is provided, but user is not an owner of this quiz",
     };
 
   // Remove the quiz from the data
@@ -293,19 +299,13 @@ const adminQuizInfo = (
       duration: number;
     }
   | ErrorObject => {
-
-  console.log("Token:", token);
-
+    console.log("hello")
   // Retrieve the current data
   const data = getData();
-
-  console.log(data);
 
   const validSession = data.sessions.find(
     (currToken) => currToken.identifier === token
   );
-
-  console.log(validSession);
 
   if (!validSession) {
     return {

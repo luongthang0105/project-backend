@@ -100,13 +100,13 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
 
 // adminQuizDescriptionUpdate
 app.put(
-  "/v1/admin/quiz/{quizid}/description",
+  "/v1/admin/quiz/:quizid/description",
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizId);
 
-    const token = req.body.token;
+    const token = req.body.token as string;
 
-    const description = req.body.description;
+    const description = req.body.description as string;
 
     const result = adminQuizDescriptionUpdate(token, quizId, description);
 

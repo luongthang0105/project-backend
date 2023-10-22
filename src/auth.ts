@@ -198,8 +198,8 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 
   // Find user information based on the provided authUserId
   const session = data.sessions.find((session) => session.identifier === token);
-
-  // If the authUserId is not valid, return an error
+  console.log(token)
+  // If token is empty or no session with given token is found
   if (token === '' || !session) {
     return { statusCode: 401, error: "Token is empty or invalid (does not refer to valid logged in user session)" };
   }

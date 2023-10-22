@@ -192,17 +192,19 @@ const adminAuthLogin = (
  *   - An object containing details about the admin user if the authUserId is valid.
  *     If the authUserId is not valid, it returns an error object with a message.
  */
-const adminUserDetails = (authUserId: number): UserDetails | ErrorObject => {
+const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
   // Find user information based on the provided authUserId
-  const userInfo = data.users.find((user) => user.authUserId === authUserId);
-
-  // If the authUserId is not valid, return an error
-  if (!userInfo) {
-    return { error: "AuthUserId is not a valid user" };
+  const session = data.sessions.find((session) => session.identifier === token);
+  console.log(token)
+  // If token is empty or no session with given token is found
+  if (token === '' || !session) {
+    return { statusCode: 401, error: "Token is empty or invalid (does not refer to valid logged in user session)" };
   }
+
+  const userInfo = data.users.find((user) => user.authUserId === session.authUserId)
 
   // Concatenate the first name and last name to form the full name
   const fullname = userInfo.nameFirst.concat(" ", userInfo.nameLast);
@@ -210,7 +212,7 @@ const adminUserDetails = (authUserId: number): UserDetails | ErrorObject => {
   // Return an object containing details about the admin user
   return {
     user: {
-      userId: authUserId,
+      userId: userInfo.authUserId,
       name: fullname,
       email: userInfo.email,
       numSuccessfulLogins: userInfo.numSuccessfulLogins,

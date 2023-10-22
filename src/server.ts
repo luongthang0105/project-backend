@@ -8,14 +8,9 @@ import sui from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
 import process from "process";
-import { adminAuthRegister, adminAuthLogin } from "./auth";
-import {
-  adminQuizDescriptionUpdate,
-  adminQuizCreate,
-  adminQuizInfo,
-} from "./quiz";
 import { clear } from "./other";
-
+import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
+import { adminQuizCreate, adminQuizDescriptionUpdate } from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -63,6 +58,37 @@ app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
     return;
   }
 
+<<<<<<<<< Temporary merge branch 1
+  res.json(result)
+})
+
+app.put(
+  "/v1/admin/quiz/{quizid}/description",
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizId);
+
+    const token = req.body.token;
+
+    const description = req.body.description;
+
+    const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+    if ("error" in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
+
+app.post("/v1/admin/quiz", (req: Request, res: Response) => {
+  const {token, name, description} = req.body;
+  
+  const result = adminQuizCreate(token, name, description);
+
+  if ("error" in result) {
+=========
   res.json(result);
 });
 
@@ -73,47 +99,21 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
   if ("error" in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+>>>>>>>>> Temporary merge branch 2
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
 
   res.json(result);
 });
-app.post("/v1/admin/quiz", (req: Request, res: Response) => {
-  const { token, name, description } = req.body;
+<<<<<<<<< Temporary merge branch 1
 
-  const result = adminQuizCreate(token, name, description);
-
-  if ("error" in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
-
-  res.json(result);
-});
-
-app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.query.token as string;
-  
-  console.log(token);
-
-  const result = adminQuizInfo(token, quizId);
-
-  if ("error" in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
-
-  res.json(result);
-});
-
+=========
 app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
-
+>>>>>>>>> Temporary merge branch 2
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

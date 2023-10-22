@@ -69,7 +69,6 @@ describe("adminQuizCreate", () => {
       "Han",
       "Hanh"
     ).content;
-    console.log(user);
     expect(adminQuizCreate(user, "Han Hanh!", "This is my quiz")).toStrictEqual(
       {
         content: { error: "Name contains invalid characters" },
@@ -352,7 +351,6 @@ describe("adminQuizCreate", () => {
       "Hanh",
       "Han"
     ).content;
-    console.log(user01)
     adminQuizCreate(user01, "Han", "");
     expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
       content: {quizId: expect.any(Number)},

@@ -17,20 +17,20 @@ import {
  * @returns {QuizList | ErrorObject}
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
-const adminQuizList = (authUserId: number): QuizList | ErrorObject => {
+const adminQuizList = (token: string): QuizList | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validId = data.users.find(
-    (user: UserObject) => user.authUserId === authUserId
-  );
+  const validSession = data.sessions.find( (currSession) => currSession.identifier === token)
 
-  // If authUserId is invalid, return an error object
-  if (!validId) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === '' || !validSession) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401
+    }
   }
 
+  let authUserId = validSession.authUserId
   // Initialize an empty array to store the user's owned quizzes
   let quizList = [];
 

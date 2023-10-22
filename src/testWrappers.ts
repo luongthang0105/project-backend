@@ -142,8 +142,8 @@ export const adminQuizInfo = (
 
 export const adminQuizNameUpdate = (
   tokenObject: { token: string },
+  quizId: number,
   name: string,
-  quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
   const route = "/v1/admin/quiz/" + quizId + "/name";
 

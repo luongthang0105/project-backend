@@ -21,7 +21,6 @@ describe("adminQuizDescriptionUpdate", () => {
     ).content;
     quiz = adminQuizCreate(user, "New Quiz", "description").content;
   });
-
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
     const result = adminQuizDescriptionUpdate(
       invalidToken,
@@ -55,7 +54,7 @@ describe("adminQuizDescriptionUpdate", () => {
       "0105uwuwuw",
       "Thomas",
       "Nguyen"
-    );
+    ).content;
     let quiz2 = adminQuizCreate(
       user2,
       "New Quiz 2",
@@ -118,4 +117,5 @@ describe("adminQuizDescriptionUpdate", () => {
       quizInfo.timeLastEdited
     );
   });
+
 });

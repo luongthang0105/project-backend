@@ -361,22 +361,23 @@ const adminQuizInfo = (
  *     If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizNameUpdate = (
-  authUserId: number,
+  token: string,
   quizId: number,
   name: string
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(
-    (user: UserObject) => user.authUserId === authUserId
-  );
+  let validSession = data.sessions.find( (currSession) => currSession.identifier === token)
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)'
+    }
   }
+
+  let authUserId = validSession.authUserId
 
   // Check if quizId is valid by searching for it in the list of quizzes
   const validQuiz = data.quizzes.find(
@@ -385,27 +386,28 @@ const adminQuizNameUpdate = (
 
   // If quizId is not valid, return an error object
   if (!validQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (validQuiz.quizAuthorId !== authUserId) {
-    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+    return { statusCode: 403, error: "Valid token is provided, but user is not an owner of this quiz" };
   }
 
   // Check if the new name contains invalid characters
+  console.log(!alphanumericAndSpaceCheck(name))
   if (!alphanumericAndSpaceCheck(name)) {
-    return { error: "Name contains invalid characters" };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Checks if name is less than 3 characters
   if (name.length < 3) {
-    return { error: "Name is less than 3 characters long" };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Checks if name is greater than 30 characters
   if (name.length > 30) {
-    return { error: "Name is greater than 30 characters long" };
+    return { statusCode: 400, error: "Name is greater than 30 characters long" };
   }
 
   // If the given name is the same as the current name of the quiz, update the last edited timestamp
@@ -420,6 +422,7 @@ const adminQuizNameUpdate = (
 
     if (quizNameUsed)
       return {
+        statusCode: 400,
         error:
           "Name is already used by the current logged in user for another quiz",
       };

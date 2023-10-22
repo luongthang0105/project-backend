@@ -47,6 +47,7 @@ app.get("/echo", (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+// adminAuthRegister
 app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
@@ -61,6 +62,7 @@ app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminAuthLogin
 app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
@@ -75,6 +77,7 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminUserDetails
 app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminUserDetails(token);
@@ -89,11 +92,13 @@ app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// clear
 app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
 
+// adminQuizDescriptionUpdate
 app.put(
   "/v1/admin/quiz/{quizid}/description",
   (req: Request, res: Response) => {
@@ -114,6 +119,7 @@ app.put(
   }
 );
 
+// adminQuizCreate
 app.post("/v1/admin/quiz", (req: Request, res: Response) => {
   const {token, name, description} = req.body;
   

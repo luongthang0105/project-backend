@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
-import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate } from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -119,6 +119,25 @@ app.put(
   }
 );
 
+// adminQuizNameUpdate
+app.put(
+  "/v1/admin/quiz/:quizid/name",
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const {token, name} = req.body;
+    // console.log(token, name)
+    const result = adminQuizNameUpdate(token, quizId, name);
+
+    if ("error" in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
+
 // adminQuizCreate
 app.post("/v1/admin/quiz", (req: Request, res: Response) => {
   const {token, name, description} = req.body;
@@ -133,6 +152,7 @@ app.post("/v1/admin/quiz", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizInfo
 app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
@@ -150,6 +170,7 @@ app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// clear
 app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);

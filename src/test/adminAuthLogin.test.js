@@ -1,51 +1,67 @@
-import { adminAuthRegister, adminAuthLogin } from "../auth"
+import { adminAuthRegister, adminAuthLogin } from "../testWrappers"
 import { clear } from "../other"
 describe("adminAuthLogin", () => {
   beforeEach(() => {
     clear()
-  })
-  test("ERROR: Email address does not exist", () => {
-    adminAuthRegister("javascript@gmail.com", "aikfnrg7", "Java", "Script")
-    const error = adminAuthLogin("python@gmail.com", "aikfnrg7")
-    expect(error).toEqual({ error: "Email adress does not exist" })
-  })
-  test("ERROR: Password is not correct for the given email", () => {
-    adminAuthRegister("javascript@gmail.com", "aikfnrg7", "Java", "Script")
-    const error = adminAuthLogin("javascript@gmail.com", "aikfnrg8")
-    expect(error).toEqual({
-      error: "Password is not correct for the given email",
-    })
-  })
-  test("ERROR: Password is case-insensitive", () => {
-    adminAuthRegister("javascript@gmail.com", "aikfnrg7", "Java", "Script")
-    const error = adminAuthLogin("javascript@gmail.com", "Aikfnrg7")
-    expect(error).toEqual({
-      error: "Password is not correct for the given email",
-    })
-  })
-  test("ERROR: No registeration done", () => {
-    const error = adminAuthLogin("java@gmail.com", "gdnkgeg4")
-    expect(error).toEqual({ error: "Email adress does not exist" })
-  })
-  test("Success: 1 person registered", () => {
-    const userId1 = adminAuthRegister(
+    let user = adminAuthRegister(
       "javascript@gmail.com",
       "aikfnrg7",
       "Java",
-      "Script"
+      "Script",
     )
+    expect(user.statusCode).toEqual(200)
+  })
+  test("ERROR: Email address does not exist", () => {
+    const error = adminAuthLogin("python@gmail.com", "aikfnrg7")
+    expect(error).toStrictEqual({
+      statusCode: 400,
+      content: {error: "Email adress does not exist"},
+    })
+  })
+  test("ERROR: Password is not correct for the given email", () => {
+    const error = adminAuthLogin("javascript@gmail.com", "aikfnrg8")
+    expect(error).toStrictEqual({
+      content: {error: "Password is not correct for the given email"},
+      statusCode: 400,
+    })
+  })
+  test("ERROR: Password is case-insensitive", () => {
+    const error = adminAuthLogin("javascript@gmail.com", "Aikfnrg7")
+    expect(error).toStrictEqual({
+      content: {error: "Password is not correct for the given email"},
+      statusCode: 400,
+    })
+  })
+  test("ERROR: No registration done", () => {
+    const error = adminAuthLogin("java@gmail.com", "gdnkgeg4")
+    expect(error).toStrictEqual({
+      statusCode: 400,
+      content: {error: "Email adress does not exist"},
+    })
+  })
+  test("Success: 1 person registered", () => {
     const success = adminAuthLogin("javascript@gmail.com", "aikfnrg7")
-    expect(success).toEqual(userId1)
+    expect(success).toStrictEqual({
+      statusCode: 200,
+      content: {token: expect.any(String)},
+    })
   })
   test("Success: More than 1 person registered", () => {
-    adminAuthRegister("javascript@gmail.com", "aikfnrg7", "Java", "Script")
-    const userId2 = adminAuthRegister(
+    const user2 = adminAuthRegister(
       "java@gmail.com",
       "gdnkgeg4",
       "Hello",
-      "World"
+      "World",
     )
+    expect(user2).toStrictEqual({
+      statusCode: 200,
+      content: { token: expect.any(String) },
+    })
+
     const success = adminAuthLogin("java@gmail.com", "gdnkgeg4")
-    expect(success).toEqual(userId2)
+    expect(success).toStrictEqual({
+      statusCode: 200,
+      content: { token: expect.any(String) },
+    })
   })
 })

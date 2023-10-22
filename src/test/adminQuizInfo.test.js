@@ -2,28 +2,33 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminAuthRegister,
+  clear,
 } from "../testWrappers";
 
-import { clear } from "../other";
-beforeEach(() => {
-  clear();
-});
-
 describe("adminQuizInfo", () => {
-  let user, quiz;
-  let invalidToken = {
-    token: "-1",
-  };
-
-
-  test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
+  beforeEach(() => {
+    clear();
+    let user, quiz;
     user = adminAuthRegister(
       "han@gmai.com",
       "2705uwuwuwu",
       "Han",
       "Hanh"
     ).content;
-    quiz = adminQuizCreate(user, "New Quiz", "description").content;
+
+
+    quiz = adminQuizCreate(
+      user,
+      "New Quiz",
+      "description"
+    ).content;
+    
+  });
+  test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
+    let invalidToken = {
+      token: "-1",
+    };
+
     let result = adminQuizInfo(invalidToken, quiz.quizId);
     expect(result).toStrictEqual({
       statusCode: 401,
@@ -35,15 +40,9 @@ describe("adminQuizInfo", () => {
   });
 
   test("Quiz ID does not refer to a valid quiz", () => {
-    user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwu",
-      "Han",
-      "Hanh"
-    ).content;
-    quiz = adminQuizCreate(user, "New Quiz", "description").content;
-    const result = adminQuizInfo(user, quiz.quizId + 1);
 
+    const result = adminQuizInfo(user, quiz.quizId + 1);
+    
     expect(result).toStrictEqual({
       statusCode: 400,
       content: { error: "Quiz ID does not refer to a valid quiz" },

@@ -132,7 +132,7 @@ const adminAuthRegister = (
 const adminAuthLogin = (
   email: string,
   password: string
-): { authUserId: number } | ErrorObject => {
+): { token: string } | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -141,7 +141,7 @@ const adminAuthLogin = (
 
   // If the email does not exist in the database, return an error
   if (!userInfo) {
-    return { error: "Email adress does not exist" };
+    return { statusCode: 400, error: "Email adress does not exist" };
   }
 
   // Check if the provided password matches the stored password
@@ -150,18 +150,27 @@ const adminAuthLogin = (
     userInfo.numFailedPasswordsSinceLastLogin += 1;
 
     setData(data);
-    return { error: "Password is not correct for the given email" };
+    return { statusCode: 400, error: "Password is not correct for the given email" };
   }
   // Reset the count of failed login attempts and update the count of successful logins
   userInfo.numFailedPasswordsSinceLastLogin = 0;
   userInfo.numSuccessfulLogins += 1;
 
+  
+  // If all credentials are valid, give this user another session:
+  let newToken: Token = {
+    identifier: data.nextTokenId.toString(),
+    authUserId: userInfo.authUserId
+  }
+  data.nextTokenId += 1
+  data.sessions.push(newToken)
+
   // update dataStore by calling setData which will save it to dataStore.json
   setData(data);
-
+  
   // Return an object containing the authUserId of the authenticated user
   return {
-    authUserId: userInfo.authUserId,
+    token: newToken.identifier
   };
 };
 

@@ -295,8 +295,13 @@ const adminQuizInfo = (
       duration: number;
     }
   | ErrorObject => {
+
+  console.log("Token:", token);
+
   // Retrieve the current data
   const data = getData();
+
+  console.log(data);
 
   const validSession = data.sessions.find(
     (currToken) => currToken.identifier === token

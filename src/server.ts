@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { clear } from "./other";
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
-import { adminQuizCreate, adminQuizDescriptionUpdate } from "./quiz";
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo } from "./quiz";
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -47,6 +47,7 @@ app.get("/echo", (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+// adminAuthRegister
 app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
@@ -61,6 +62,7 @@ app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminAuthLogin
 app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
@@ -75,6 +77,7 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminUserDetails
 app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminUserDetails(token);
@@ -89,19 +92,21 @@ app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   res.json(result);
 });
 
+// clear
 app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
 
+// adminQuizDescriptionUpdate
 app.put(
-  "/v1/admin/quiz/{quizid}/description",
+  "/v1/admin/quiz/:quizid/description",
   (req: Request, res: Response) => {
-    const quizId = parseInt(req.params.quizId);
+    const quizId = parseInt(req.params.quizid);
 
-    const token = req.body.token;
+    const token = req.body.token as string;
 
-    const description = req.body.description;
+    const description = req.body.description as string;
 
     const result = adminQuizDescriptionUpdate(token, quizId, description);
 
@@ -114,6 +119,7 @@ app.put(
   }
 );
 
+// adminQuizCreate
 app.post("/v1/admin/quiz", (req: Request, res: Response) => {
   const {token, name, description} = req.body;
   
@@ -126,6 +132,29 @@ app.post("/v1/admin/quiz", (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  
+  console.log(token);
+
+  const result = adminQuizInfo(token, quizId);
+
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.delete("/v1/clear", (req: Request, res: Response) => {
+  const result = clear();
+  return res.json(result);
+});
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

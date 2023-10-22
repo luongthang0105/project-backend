@@ -197,7 +197,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   const data = getData();
 
   // Find user information based on the provided authUserId
-  const session = data.sessions.find((session) => session.identifier === token);
+  const session = data.sessions.find((currSession) => currSession.identifier === token);
   console.log(token)
   // If token is empty or no session with given token is found
   if (token === '' || !session) {

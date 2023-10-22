@@ -21,7 +21,6 @@ describe("adminQuizDescriptionUpdate", () => {
     ).content;
     quiz = adminQuizCreate(user, "New Quiz", "description").content;
   });
-
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
     const result = adminQuizDescriptionUpdate(
       invalidToken,
@@ -55,7 +54,7 @@ describe("adminQuizDescriptionUpdate", () => {
       "0105uwuwuw",
       "Thomas",
       "Nguyen"
-    );
+    ).content;
     let quiz2 = adminQuizCreate(
       user2,
       "New Quiz 2",
@@ -91,7 +90,7 @@ describe("adminQuizDescriptionUpdate", () => {
       statusCode: 400,
     });
 
-    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
     expect(quizInfo.content.description).toStrictEqual(oldDescription);
   });
 
@@ -100,10 +99,11 @@ describe("adminQuizDescriptionUpdate", () => {
       adminQuizDescriptionUpdate(user, quiz.quizId, "New description")
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user.content, quiz.quizId);
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
+    expect(quizInfo.statusCode).toBe(200)
     expect(quizInfo.content.description).toStrictEqual("New description");
     expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
-      quizInfo.timeLastEdited
+      quizInfo.content.timeLastEdited
     );
   });
   test("Success case: Empty Description", () => {
@@ -113,9 +113,11 @@ describe("adminQuizDescriptionUpdate", () => {
     });
 
     let quizInfo = adminQuizInfo(user, quiz.quizId);
+    expect(quizInfo.statusCode).toBe(200)
     expect(quizInfo.content.description).toStrictEqual("");
     expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
-      quizInfo.timeLastEdited
+      quizInfo.content.timeLastEdited
     );
   });
+
 });

@@ -39,12 +39,12 @@ export const adminAuthLogin = (
   }
 }
 
-export const adminUserDetails = (token: {
+export const adminUserDetails = (tokenObject: {
   token: string
 }): { content: UserDetails | ErrorObject; statusCode: number } => {
   const res = request("GET", SERVER_URL + "/v1/admin/user/details", {
     qs: {
-      token: token,
+      token: tokenObject.token
     },
   })
 
@@ -54,12 +54,12 @@ export const adminUserDetails = (token: {
   }
 }
 
-export const adminQuizList = (token: {
+export const adminQuizList = (tokenObject: {
   token: string
 }): { content: QuizList | ErrorObject; statusCode: number } => {
   const res = request("GET", SERVER_URL + "/v1/admin/quiz/list", {
     qs: {
-      token: token,
+      token: tokenObject.token,
     },
   })
 
@@ -70,7 +70,7 @@ export const adminQuizList = (token: {
 }
 
 export const adminQuizCreate = (
-  token: {
+  tokenObject: {
     token: string
   },
   name: string,
@@ -78,7 +78,7 @@ export const adminQuizCreate = (
 ): { content: Quiz | ErrorObject; statusCode: number } => {
   const res = request("POST", SERVER_URL + "/v1/admin/quiz", {
     json: {
-      token: token.token,
+      token: tokenObject.token,
       name: name,
       description: description
     },
@@ -91,14 +91,14 @@ export const adminQuizCreate = (
 }
 
 export const adminQuizRemove = (
-  token: { token: string },
+  tokenObject: { token: string },
   quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
   const route = "/v1/admin/quiz/" + quizId;
 
   const res = request("DELETE", SERVER_URL + route, {
     qs: {
-      token: token,
+      token: tokenObject.token,
     },
   });
 
@@ -109,7 +109,7 @@ export const adminQuizRemove = (
 };
 
 export const adminQuizInfo = (
-  token: { token: string },
+  tokenObject: { token: string },
   quizId: number
 ): {
   content:
@@ -130,7 +130,7 @@ export const adminQuizInfo = (
 
   const res = request("GET", SERVER_URL + route, {
     qs: {
-      token: token,
+      token: tokenObject.token,
     },
   });
 
@@ -141,7 +141,7 @@ export const adminQuizInfo = (
 };
 
 export const adminQuizNameUpdate = (
-  token: { token: string },
+  tokenObject: { token: string },
   name: string,
   quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
@@ -149,7 +149,7 @@ export const adminQuizNameUpdate = (
 
   const res = request("PUT", SERVER_URL + route, {
     json: {
-      token: token.token,
+      token: tokenObject.token,
       name: name,
     },
   });
@@ -161,7 +161,7 @@ export const adminQuizNameUpdate = (
 };
 
 export const adminQuizDescriptionUpdate = (
-  token: { token: string },
+  tokenObject: { token: string },
   quizId: number,
   description: string,
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
@@ -169,7 +169,7 @@ export const adminQuizDescriptionUpdate = (
 
   const res = request("PUT", SERVER_URL + route, {
     json: {
-      token: token.token,
+      token: tokenObject.token,
       description: description,
     },
   });

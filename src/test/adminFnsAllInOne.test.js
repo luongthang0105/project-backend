@@ -1,17 +1,15 @@
-import { clear } from "../other"
 import {
+  clear,
   adminAuthLogin,
   adminAuthRegister,
   adminUserDetails,
-} from "../auth"
-import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizInfo,
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-} from "../quiz"
+} from "../testWrappers"
 
 describe("Test on all admin functions", () => {
   beforeEach(() => {
@@ -24,56 +22,56 @@ describe("Test on all admin functions", () => {
       "ltngu2705",
       "Thang",
       "Ngu"
-    )
+    ).content
     let user02 = adminAuthRegister(
       "ltngu06@gmail.com",
       "ltngu2705",
       "Thang",
       "Ko Ngu"
-    )
+    ).content
     let user03 = adminAuthRegister(
       "ltngu07@gmail.com",
       "ltngu2705",
       "Han",
       "Hanh"
-    )
+    ).content
 
     // user01 log in okay
-    expect(adminAuthLogin("ltngu05@gmail.com", "ltngu2705")).toStrictEqual({
-      authUserId: user01.authUserId,
+    expect(adminAuthLogin("ltngu05@gmail.com", "ltngu2705").content).toStrictEqual({
+      token: expect.any(String),
     })
 
     // user01 failed 1 time
-    expect(adminAuthLogin("ltngu05@gmail.com", "ltngu27056")).toStrictEqual({
+    expect(adminAuthLogin("ltngu05@gmail.com", "ltngu27056").content).toStrictEqual({
       error: expect.any(String),
     })
     expect(
-      adminUserDetails(user01.authUserId).user.numSuccessfulLogins
+      adminUserDetails(user01).content.user.numSuccessfulLogins
     ).toStrictEqual(2)
     expect(
-      adminUserDetails(user01.authUserId).user.numFailedPasswordsSinceLastLogin
+      adminUserDetails(user01).content.user.numFailedPasswordsSinceLastLogin
     ).toStrictEqual(1)
 
-    // user01 now log in successful
+    expect(adminAuthLogin("ltngu05@gmail.com", "ltngu2705").content).toStrictEqual({
+      token: expect.any(String),
+    })
+    
     expect(
-      adminAuthLogin("ltngu05@gmail.com", "ltngu2705").authUserId
-    ).toStrictEqual(user01.authUserId)
-    expect(
-      adminUserDetails(user01.authUserId).user.numSuccessfulLogins
+      adminUserDetails(user01).content.user.numSuccessfulLogins
     ).toStrictEqual(3)
     expect(
-      adminUserDetails(user01.authUserId).user.numFailedPasswordsSinceLastLogin
+      adminUserDetails(user01).content.user.numFailedPasswordsSinceLastLogin
     ).toStrictEqual(0)
 
-    let quiz01 = adminQuizCreate(user01.authUserId, "Quiz 01", "Des 1")
-    let quiz02 = adminQuizCreate(user02.authUserId, "Quiz 02", "Des 2")
-    let quiz03 = adminQuizCreate(user03.authUserId, "Quiz 03", "Des 3")
+    let quiz01 = adminQuizCreate(user01, "Quiz 01", "Des 1").content
+    let quiz02 = adminQuizCreate(user02, "Quiz 02", "Des 2").content
+    let quiz03 = adminQuizCreate(user03, "Quiz 03", "Des 3").content
 
-    let quiz04 = adminQuizCreate(user01.authUserId, "Quiz 04", "Des 4")
-    let quiz05 = adminQuizCreate(user02.authUserId, "Quiz 05", "Des 5")
-    let quiz06 = adminQuizCreate(user03.authUserId, "Quiz 06", "Des 6")
+    let quiz04 = adminQuizCreate(user01, "Quiz 04", "Des 4").content
+    let quiz05 = adminQuizCreate(user02, "Quiz 05", "Des 5").content
+    let quiz06 = adminQuizCreate(user03, "Quiz 06", "Des 6").content
 
-    let quizList1 = adminQuizList(user01.authUserId)
+    let quizList1 = adminQuizList(user01).content
     expect(quizList1.quizzes.length).toStrictEqual(2)
     expect(quizList1.quizzes).toStrictEqual([
       {
@@ -85,7 +83,7 @@ describe("Test on all admin functions", () => {
         name: "Quiz 04",
       },
     ])
-    let quizList2 = adminQuizList(user02.authUserId)
+    let quizList2 = adminQuizList(user02).content
     expect(quizList2.quizzes.length).toStrictEqual(2)
     expect(quizList2.quizzes).toStrictEqual([
       {
@@ -98,7 +96,7 @@ describe("Test on all admin functions", () => {
       },
     ])
 
-    let quizList3 = adminQuizList(user03.authUserId)
+    let quizList3 = adminQuizList(user03).content
     expect(quizList3.quizzes.length).toStrictEqual(2)
     expect(quizList3.quizzes).toStrictEqual([
       {
@@ -111,17 +109,17 @@ describe("Test on all admin functions", () => {
       },
     ])
 
-    expect(adminQuizRemove(user01.authUserId, quiz04.quizId)).toStrictEqual({})
-    expect(adminQuizRemove(user01.authUserId, quiz01.quizId)).toStrictEqual({})
+    expect(adminQuizRemove(user01, quiz04.quizId).content).toStrictEqual({})
+    expect(adminQuizRemove(user01, quiz01.quizId).content).toStrictEqual({})
 
-    expect(adminQuizRemove(user02.authUserId, quiz02.quizId)).toStrictEqual({})
-    expect(adminQuizRemove(user03.authUserId, quiz06.quizId)).toStrictEqual({})
+    expect(adminQuizRemove(user02, quiz02.quizId).content).toStrictEqual({})
+    expect(adminQuizRemove(user03, quiz06.quizId).content).toStrictEqual({})
 
-    quizList1 = adminQuizList(user01.authUserId)
+    quizList1 = adminQuizList(user01).content
     expect(quizList1.quizzes.length).toStrictEqual(0)
     expect(quizList1.quizzes).toStrictEqual([])
 
-    quizList2 = adminQuizList(user02.authUserId)
+    quizList2 = adminQuizList(user02).content
     expect(quizList2.quizzes.length).toStrictEqual(1)
     expect(quizList2.quizzes).toStrictEqual([
       {
@@ -130,7 +128,7 @@ describe("Test on all admin functions", () => {
       },
     ])
 
-    quizList3 = adminQuizList(user03.authUserId)
+    quizList3 = adminQuizList(user03).content
     expect(quizList3.quizzes.length).toStrictEqual(1)
     expect(quizList3.quizzes).toStrictEqual([
       {
@@ -141,34 +139,34 @@ describe("Test on all admin functions", () => {
 
     // Change quiz05 name to quiz03
     expect(
-      adminQuizNameUpdate(user02.authUserId, quiz05.quizId, "Quiz 03")
+      adminQuizNameUpdate(user02, quiz05.quizId, "Quiz 03").content
     ).toStrictEqual({})
     // Change quiz03 name to quiz05
     expect(
-      adminQuizNameUpdate(user03.authUserId, quiz03.quizId, "Quiz 05")
+      adminQuizNameUpdate(user03, quiz03.quizId, "Quiz 05").content
     ).toStrictEqual({})
 
-    expect(adminQuizInfo(user02.authUserId, quiz05.quizId).name).toStrictEqual(
+    expect(adminQuizInfo(user02, quiz05.quizId).content.name).toStrictEqual(
       "Quiz 03"
     )
-    expect(adminQuizInfo(user03.authUserId, quiz03.quizId).name).toStrictEqual(
+    expect(adminQuizInfo(user03, quiz03.quizId).content.name).toStrictEqual(
       "Quiz 05"
     )
 
     // Change quiz05 des to Des 555
     expect(
-      adminQuizDescriptionUpdate(user02.authUserId, quiz05.quizId, "Des 555")
+      adminQuizDescriptionUpdate(user02, quiz05.quizId, "Des 555").content
     ).toStrictEqual({})
     // Change quiz05 des to Des 333
     expect(
-      adminQuizDescriptionUpdate(user03.authUserId, quiz03.quizId, "Des 333")
+      adminQuizDescriptionUpdate(user03, quiz03.quizId, "Des 333").content
     ).toStrictEqual({})
 
     expect(
-      adminQuizInfo(user02.authUserId, quiz05.quizId).description
+      adminQuizInfo(user02, quiz05.quizId).content.description
     ).toStrictEqual("Des 555")
     expect(
-      adminQuizInfo(user03.authUserId, quiz03.quizId).description
+      adminQuizInfo(user03, quiz03.quizId).content.description
     ).toStrictEqual("Des 333")
   })
 })

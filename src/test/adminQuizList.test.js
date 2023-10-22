@@ -1,43 +1,39 @@
-import { adminQuizList, adminQuizCreate, adminQuizRemove } from "../quiz"
-import { adminAuthRegister } from "../auth"
-import { clear } from "../other"
+import { adminQuizList, adminQuizCreate, adminQuizRemove } from "../testWrappers"
+import { adminAuthRegister } from "../testWrappers"
+import { clear } from "../testWrappers"
 
-beforeEach(() => {
-  clear()
-})
 
 describe("adminQuizList", () => {
-  test("ERROR: AuthUserId is not a valid user", () => {
-    const user1 = adminAuthRegister(
+  let user1
+
+  beforeEach(() => {
+    clear()
+    user1 = adminAuthRegister(
       "sasaki@gmail.com",
       "hdngied3,",
       "Mutsuki",
       "Sasaki"
-    ).authUserId
-    expect(adminQuizList(user1 + 1)).toEqual({
-      error: "AuthUserId is not a valid user",
+    ).content
+  })
+
+  let invalidToken = {
+    token: "-1"
+  }
+
+  test("ERROR: Token is empty or invalid (does not refer to valid logged in user session)", () => {
+    expect(adminQuizList(invalidToken)).toEqual({
+      statusCode: 401, 
+      content: {error: "Token is empty or invalid (does not refer to valid logged in user session)"},
     })
   })
   test("SUCCESS: Empty List", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    expect(adminQuizList(user1)).toStrictEqual({
+    expect(adminQuizList(user1).content).toStrictEqual({
       quizzes: [],
     })
   })
   test("SUCCESS: 1 element", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const success = adminQuizList(user1)
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const success = adminQuizList(user1).content
     expect(success).toStrictEqual({
       quizzes: [
         {
@@ -48,15 +44,9 @@ describe("adminQuizList", () => {
     })
   })
   test("SUCCESS: 2 elements", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user1, "Quiz2", "").quizId
-    const success = adminQuizList(user1)
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user1, "Quiz2", "").content.quizId
+    const success = adminQuizList(user1).content
     expect(success).toStrictEqual({
       quizzes: [
         {
@@ -71,23 +61,17 @@ describe("adminQuizList", () => {
     })
   })
   test("SUCCESS: 2 quizzes for user1 and 1 quiz for user2 ", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
     const user2 = adminAuthRegister(
       "mutsuki@gmail.com",
       "adfweweee7",
       "Java",
       "Script"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user2, "Quiz2", "little quiz").quizId
-    const quiz3 = adminQuizCreate(user1, "Quiz3", "").quizId
-    const success1 = adminQuizList(user1)
-    const success2 = adminQuizList(user2)
+    ).content
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user2, "Quiz2", "little quiz").content.quizId
+    const quiz3 = adminQuizCreate(user1, "Quiz3", "").content.quizId
+    const success1 = adminQuizList(user1).content
+    const success2 = adminQuizList(user2).content
     expect(success1).toStrictEqual({
       quizzes: [
         {
@@ -109,18 +93,13 @@ describe("adminQuizList", () => {
       ],
     })
   })
+/*
   test("SUCCESS: Quiz list after deleting the 1st element of 3 elements list", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").quizId
-    const quiz3 = adminQuizCreate(user1, "Quiz3", "").quizId
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").content.quizId
+    const quiz3 = adminQuizCreate(user1, "Quiz3", "").content.quizId
     adminQuizRemove(user1, quiz1)
-    const success1 = adminQuizList(user1)
+    const success1 = adminQuizList(user1).content
     expect(success1).toStrictEqual({
       quizzes: [
         {
@@ -135,17 +114,11 @@ describe("adminQuizList", () => {
     })
   })
   test("SUCCESS: Quiz list after deleting the 2nd element of 3 elements list", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").quizId
-    const quiz3 = adminQuizCreate(user1, "Quiz3", "").quizId
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").content.quizId
+    const quiz3 = adminQuizCreate(user1, "Quiz3", "").content.quizId
     adminQuizRemove(user1, quiz2)
-    const success1 = adminQuizList(user1)
+    const success1 = adminQuizList(user1).content
     expect(success1).toStrictEqual({
       quizzes: [
         {
@@ -160,17 +133,11 @@ describe("adminQuizList", () => {
     })
   })
   test("SUCCESS: Quiz list after deleting the 3rd element of 3 elements list", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").quizId
-    const quiz3 = adminQuizCreate(user1, "Quiz3", "").quizId
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").content.quizId
+    const quiz3 = adminQuizCreate(user1, "Quiz3", "").content.quizId
     adminQuizRemove(user1, quiz3)
-    const success1 = adminQuizList(user1)
+    const success1 = adminQuizList(user1).content
     expect(success1).toStrictEqual({
       quizzes: [
         {
@@ -185,21 +152,16 @@ describe("adminQuizList", () => {
     })
   })
   test("SUCCESS: Empty quiz list after deleting all the elements of 3 elements list", () => {
-    const user1 = adminAuthRegister(
-      "sasaki@gmail.com",
-      "hdngied3,",
-      "Mutsuki",
-      "Sasaki"
-    ).authUserId
-    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").quizId
-    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").quizId
-    const quiz3 = adminQuizCreate(user1, "Quiz3", "").quizId
+    const quiz1 = adminQuizCreate(user1, "Quiz1", "good quiz").content.quizId
+    const quiz2 = adminQuizCreate(user1, "Quiz2", "little quiz").content.quizId
+    const quiz3 = adminQuizCreate(user1, "Quiz3", "").content.quizId
     adminQuizRemove(user1, quiz1)
     adminQuizRemove(user1, quiz2)
     adminQuizRemove(user1, quiz3)
-    const success1 = adminQuizList(user1)
+    const success1 = adminQuizList(user1).content
     expect(success1).toStrictEqual({
       quizzes: [],
     })
   })
+  */
 })

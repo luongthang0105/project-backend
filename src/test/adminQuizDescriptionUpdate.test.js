@@ -1,109 +1,123 @@
 import {
+  adminQuizDescriptionUpdate,
+  adminAuthRegister,
   adminQuizInfo,
   adminQuizCreate,
-  adminQuizDescriptionUpdate,
-} from "../quiz"
-import { adminAuthRegister } from "../auth"
-import { clear } from "../other"
-describe("adminQuizDescriptionUpdate", () => {
-  let user, quiz
-  beforeEach(() => {
-    clear()
-    user = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
-    quiz = adminQuizCreate(user.authUserId, "New Quiz", "description")
-  })
+  clear,
+} from "../testWrappers";
 
-  test("AuthUserId is not a valid user", () => {
+describe("adminQuizDescriptionUpdate", () => {
+  let user, quiz;
+  let invalidToken = {
+    token: "-1",
+  };
+  beforeEach(() => {
+    clear();
+    user = adminAuthRegister(
+      "han@gmai.com",
+      "2705uwuwuwu",
+      "Han",
+      "Hanh"
+    ).content;
+    quiz = adminQuizCreate(user, "New Quiz", "description").content;
+  });
+  test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
     const result = adminQuizDescriptionUpdate(
-      user.authUserId + 1,
+      invalidToken,
       quiz.quizId,
       "New description"
-    )
+    );
     expect(result).toStrictEqual({
-      error: "AuthUserID is not a valid user",
-    })
-  })
+      content: {
+        error:
+          "Token is empty or invalid (does not refer to valid logged in user session)",
+      },
+      statusCode: 401,
+    });
+  });
 
   test("Quiz ID does not refer to a valid quiz", () => {
     const result3 = adminQuizDescriptionUpdate(
-      user.authUserId,
+      user,
       quiz.quizId + 1,
       "Description"
-    )
+    );
     expect(result3).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
+      content: { error: "Quiz ID does not refer to a valid quiz" },
+      statusCode: 400,
+    });
+  });
 
-  test("Quiz ID does not refer to a quiz that this user owns", () => {
+  test("Valid token is provided, but user is not an owner of this quiz	", () => {
     let user2 = adminAuthRegister(
       "thang@gmail.com",
       "0105uwuwuw",
       "Thomas",
       "Nguyen"
-    )
+    ).content;
     let quiz2 = adminQuizCreate(
-      user2.authUserId,
+      user2,
       "New Quiz 2",
       "long description"
-    )
+    ).content;
 
     const result2 = adminQuizDescriptionUpdate(
-      user.authUserId,
+      user,
       quiz2.quizId,
       "Description"
-    )
+    );
     expect(result2).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
-    })
-  })
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
+      statusCode: 403,
+    });
+  });
 
   test("Description is more than 100 characters in length", () => {
-    const oldDescription = adminQuizInfo(
-      user.authUserId,
-      quiz.quizId
-    ).description
+    const oldDescription = adminQuizInfo(user, quiz.quizId).content.description;
     // 105 characters
     const newDescription =
-      "okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki."
+      "okidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidokiokidoki.";
 
     const result = adminQuizDescriptionUpdate(
-      user.authUserId,
+      user,
       quiz.quizId,
       newDescription
-    )
+    );
     expect(result).toEqual({
-      error: "Description is more than 100 characters in length",
-    })
+      content: { error: "Description is more than 100 characters in length" },
+      statusCode: 400,
+    });
 
-    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
-    expect(quizInfo.description).toStrictEqual(oldDescription)
-  })
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
+    expect(quizInfo.content.description).toStrictEqual(oldDescription);
+  });
+
   test("Success case: check different timestamps", () => {
     expect(
-      adminQuizDescriptionUpdate(
-        user.authUserId,
-        quiz.quizId,
-        "New description"
-      )
-    ).toStrictEqual({})
+      adminQuizDescriptionUpdate(user, quiz.quizId, "New description")
+    ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
-    expect(quizInfo.description).toStrictEqual("New description")
-    expect(quizInfo.timeCreated).toBeLessThanOrEqual(quizInfo.timeLastEdited)
-  })
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
+    expect(quizInfo.statusCode).toBe(200)
+    expect(quizInfo.content.description).toStrictEqual("New description");
+    expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
+      quizInfo.content.timeLastEdited
+    );
+  });
   test("Success case: Empty Description", () => {
-    expect(
-      adminQuizDescriptionUpdate(
-        user.authUserId,
-        quiz.quizId,
-        ""
-      )
-    ).toStrictEqual({})
+    expect(adminQuizDescriptionUpdate(user, quiz.quizId, "")).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
 
-    let quizInfo = adminQuizInfo(user.authUserId, quiz.quizId)
-    expect(quizInfo.description).toStrictEqual("")
-    expect(quizInfo.timeCreated).toBeLessThanOrEqual(quizInfo.timeLastEdited)
-  })
-  
-})
+    let quizInfo = adminQuizInfo(user, quiz.quizId);
+    expect(quizInfo.statusCode).toBe(200)
+    expect(quizInfo.content.description).toStrictEqual("");
+    expect(quizInfo.content.timeCreated).toBeLessThanOrEqual(
+      quizInfo.content.timeLastEdited
+    );
+  });
+
+});

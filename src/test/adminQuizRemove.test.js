@@ -1,32 +1,50 @@
-import { adminQuizCreate, adminQuizRemove, adminQuizInfo } from "../quiz"
-import { adminAuthRegister } from "../auth"
-import { clear } from "../other"
+import {
+  adminQuizCreate,
+  adminQuizRemove,
+  adminQuizInfo,
+  adminAuthRegister,
+  clear,
+} from "../testWrappers";
 
 beforeEach(() => {
-  clear()
-})
+  clear();
+});
 
 describe("adminQuizRemove", () => {
-  test("AuthUserId is not a valid user: dataStore is empty", () => {
-    let result = adminQuizRemove(1, 1)
+  test("Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty", () => {
+    let unavailableToken = {
+      token: "0",
+    };
+    let result = adminQuizRemove(unavailableToken, 1);
     expect(result).toStrictEqual({
-      error: "AuthUserId is not a valid user",
-    })
-  })
+      content: {
+        error:
+          "Token is empty or invalid (does not refer to valid logged in user session)",
+      },
+      statusCode: 401,
+    });
+  });
 
-  test("AuthUserId is not a valid user: dataStore has 1 user", () => {
+  test("Token is empty or invalid (does not refer to valid logged in user session): dataStore has 1 user", () => {
     const user = adminAuthRegister(
       "han@gmai.com",
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
-    const quiz = adminQuizCreate(user, "Quiz01", "myQuiz")
-    let result = adminQuizRemove(user.authUserId + 1, quiz)
+    ).content;
+    const invalidToken = {
+      token: "-1",
+    };
+    const quiz = adminQuizCreate(user, "Quiz01", "myQuiz").content;
+    let result = adminQuizRemove(invalidToken, quiz.quizId);
     expect(result).toStrictEqual({
-      error: "AuthUserId is not a valid user",
-    })
-  })
+      content: {
+        error:
+          "Token is empty or invalid (does not refer to valid logged in user session)",
+      },
+      statusCode: 401,
+    });
+  });
 
   test("Quiz ID does not refer to a valid quiz: dataStore has 0 quiz", () => {
     const user = adminAuthRegister(
@@ -34,12 +52,14 @@ describe("adminQuizRemove", () => {
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
-    let result = adminQuizRemove(user.authUserId, 1)
+    ).content;
+    let result = adminQuizRemove(user, 1);
     expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
+      content: { error: "Quiz ID does not refer to a valid quiz" },
+      statusCode: 400,
+    });
+  });
+
 
   test("Quiz ID does not refer to a valid quiz: dataStore has 1 quiz", () => {
     const user = adminAuthRegister(
@@ -47,13 +67,14 @@ describe("adminQuizRemove", () => {
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
-    const quiz = adminQuizCreate(user.authUserId, "Hi", "This is my quiz")
-    let result = adminQuizRemove(user.authUserId, quiz.quizId + 1)
+    ).content;
+    const quiz = adminQuizCreate(user, "Hi", "This is my quiz").content;
+    let result = adminQuizRemove(user, quiz.quizId + 1);
     expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
+      content: { error: "Quiz ID does not refer to a valid quiz" },
+      statusCode: 400,
+    });
+  });
 
   test("Quiz ID does not refer to a quiz that this user owns", () => {
     const user01 = adminAuthRegister(
@@ -61,30 +82,32 @@ describe("adminQuizRemove", () => {
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
+    ).content;
     const user02 = adminAuthRegister(
       "hanh@gmai.com",
       "2705uuwuwuwuwuwuw",
       "Hanh",
       "Han"
-    )
+    ).content;
     const quiz01 = adminQuizCreate(
-      user01.authUserId,
+      user01,
       "Hihihihihih",
       "This is my quiz"
-    )
-    const quiz02 = adminQuizCreate(
-      user02.authUserId,
-      "Hiiii",
-      "This is my quiz"
-    )
-    expect(adminQuizRemove(user01.authUserId, quiz02.quizId)).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
-    })
-    expect(adminQuizRemove(user02.authUserId, quiz01.quizId)).toStrictEqual({
-      error: "Quiz ID does not refer to a quiz that this user owns",
-    })
-  })
+    ).content;
+    const quiz02 = adminQuizCreate(user02, "Hiiii", "This is my quiz").content;
+    expect(adminQuizRemove(user01, quiz02.quizId)).toStrictEqual({
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
+      statusCode: 403,
+    });
+    expect(adminQuizRemove(user02, quiz01.quizId)).toStrictEqual({
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
+      statusCode: 403,
+    });
+  });
 
   test("Successful case: delete 1 quiz from a user who has 2 quizzes", () => {
     const user = adminAuthRegister(
@@ -92,17 +115,22 @@ describe("adminQuizRemove", () => {
       "2705uwuwuwuwuwuw",
       "Han",
       "Hanh"
-    )
-    adminQuizCreate(
-      user.authUserId,
-      "Hihihihihih",
-      "This is my quiz"
-    )
-    const quiz02 = adminQuizCreate(user.authUserId, "Hiiii", "This is my quiz")
-    expect(adminQuizRemove(user.authUserId, quiz02.quizId)).toStrictEqual({})
-    const result = adminQuizInfo(user.authUserId, quiz02.quizId)
+    ).content;
+
+    adminQuizCreate(user, "Hihihihihih", "This is my quiz");
+
+    const quiz02 = adminQuizCreate(user, "Hiiii", "This is my quiz").content;
+
+    let quizRemoved = adminQuizRemove(user, quiz02.quizId);
+    expect(quizRemoved).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    const result = adminQuizInfo(user, quiz02.quizId);
     expect(result).toStrictEqual({
-      error: "Quiz ID does not refer to a valid quiz",
-    })
-  })
-})
+      content: { error: "Quiz ID does not refer to a valid quiz" },
+      statusCode: 400,
+    });
+  });
+});

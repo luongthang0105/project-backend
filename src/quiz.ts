@@ -1,8 +1,5 @@
 import { getData, setData } from "./dataStore";
-import {
-  alphanumericAndSpaceCheck,
-  getCurrentTimestamp,
-} from "./quizHelper";
+import { alphanumericAndSpaceCheck, getCurrentTimestamp } from "./quizHelper";
 import {
   EmptyObject,
   ErrorObject,
@@ -20,18 +17,20 @@ import {
  * @returns {QuizList | ErrorObject}
  * } - An object with "quizzes" as the key and an array of quiz information objects as the value.
  */
-const adminQuizList = (authUserId: number): QuizList | ErrorObject => {
+const adminQuizList = (token: string): QuizList | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validId = data.users.find((user: UserObject) => user.authUserId === authUserId);
+  const validSession = data.sessions.find( (currSession) => currSession.identifier === token)
 
-  // If authUserId is invalid, return an error object
-  if (!validId) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === '' || !validSession) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401
+    }
   }
 
+  let authUserId = validSession.authUserId
   // Initialize an empty array to store the user's owned quizzes
   let quizList = [];
 
@@ -62,36 +61,40 @@ const adminQuizList = (authUserId: number): QuizList | ErrorObject => {
  *   If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizCreate = (
-  authUserId: number,
+  token: string,
   name: string,
   description: string
 ): Quiz | ErrorObject => {
   // Retrieve the current data
   const currData = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(
-    (user: UserObject) => user.authUserId === authUserId
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
   );
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === "" || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
+
+  let authUserId = validSession.authUserId;
 
   // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
-    return { error: "Name contains invalid characters" };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Check if the name is less than 3 characters long
   if (name.length < 3) {
-    return { error: "Name is less than 3 characters long" };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Check if the name is more than 30 characters long
   if (name.length > 30) {
-    return { error: "Name is more than 30 characters long" };
+    return { statusCode: 400, error: "Name is more than 30 characters long" };
   }
 
   // Check if the name is already used by the current logged-in user for another quiz
@@ -100,13 +103,17 @@ const adminQuizCreate = (
   );
   if (quizNameUsed)
     return {
+      statusCode: 400,
       error:
         "Name is already used by the current logged in user for another quiz",
     };
 
   // Check if the description is more than 100 characters in length
   if (description.length > 100) {
-    return { error: "Description is more than 100 characters in length" };
+    return {
+      statusCode: 400,
+      error: "Description is more than 100 characters in length",
+    };
   }
 
   // Get the current timestamp
@@ -122,14 +129,14 @@ const adminQuizCreate = (
     description: description,
     questions: [] as any,
     numQuestions: 0,
-    duration: 0
+    duration: 0,
   };
 
   // Increment the nextQuizId and add the new quiz to the data
   currData.nextQuizId++;
   currData.quizzes.push(newQuiz);
 
-  setData(currData)
+  setData(currData);
   // Return an object containing the quizId of the newly created quiz
   return { quizId: newQuiz.quizId };
 };
@@ -145,37 +152,51 @@ const adminQuizCreate = (
  *      If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizDescriptionUpdate = (
-  authUserId: number,
+  token: string,
   quizId: number,
   description: string
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find((user: UserObject) => user.authUserId === authUserId);
+  const session = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserID is not a valid user" };
+  if (token === "" || !session) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
 
+  let authUserId = session.authUserId
+
   // Find the quiz with the specified quizId and check if it exists
-  const existingQuiz = data.quizzes.find((quiz: QuizObject) => quiz.quizId === quizId);
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
 
   // Return an error message if the quiz with the given quizId does not exist
   if (!existingQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId) {
-    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+    return {
+      statusCode: 403,
+      error: "Valid token is provided, but user is not an owner of this quiz",
+    };
   }
 
   // Check if the description is more than 100 characters in length
   if (description.length > 100) {
-    return { error: "Description is more than 100 characters in length" };
+    return {
+      statusCode: 400,
+      error: "Description is more than 100 characters in length",
+    };
   }
 
   // Get the current timestamp
@@ -185,7 +206,7 @@ const adminQuizDescriptionUpdate = (
   existingQuiz.description = description;
   existingQuiz.timeLastEdited = timestamp;
 
-  setData(data)
+  setData(data);
 
   // Return an empty object to indicate a successful update
   return {};
@@ -201,34 +222,42 @@ const adminQuizDescriptionUpdate = (
  *     If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizRemove = (
-  authUserId: number,
+  token: string,
   quizId: number
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const currData = getData();
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validUser = currData.users.find(
-    (user: UserObject) => user.authUserId === authUserId
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
   );
 
   // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (!validSession) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
 
+  const authUserId = validSession.authUserId;
+
   // Check if quizId is valid by searching for it in the list of quizzes
-  const existingQuiz = currData.quizzes.find((quiz: QuizObject) => quiz.quizId === quizId);
+  const existingQuiz = currData.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
 
   // If quizId is not valid, return an error object
   if (!existingQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId)
     return {
-      error: "Quiz ID does not refer to a quiz that this user owns",
+      statusCode: 403, error: "Valid token is provided, but user is not an owner of this quiz",
     };
 
   // Remove the quiz from the data
@@ -238,7 +267,7 @@ const adminQuizRemove = (
     }
   }
 
-  setData(currData)
+  setData(currData);
 
   // Return an empty object to indicate a successful removal
   return {};
@@ -256,43 +285,55 @@ const adminQuizRemove = (
  */
 // DONT FORGET TO UPDATE THE RETURNED TYPE TO QuizObject AFTER FINISHED EDITING THIS FUNCTION
 const adminQuizInfo = (
-  authUserId: number,
+  token: string,
   quizId: number
 ):
-  {
-    quizId: number,
-    name: string,
-    description: string,
-    timeCreated: number,
-    timeLastEdited: number,
-    questions: Question[],
-    numQuestions: number,
-    duration: number
-  } | ErrorObject => {
+  | {
+      quizId: number;
+      name: string;
+      description: string;
+      timeCreated: number;
+      timeLastEdited: number;
+      questions: Question[];
+      numQuestions: number;
+      duration: number;
+    }
+  | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find((user: UserObject) => user.authUserId === authUserId);
+  const validSession = data.sessions.find(
+    (currToken) => currToken.identifier === token
+  );
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserID is not a valid user" };
+  if (!validSession) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
   }
 
+  let authUserId = validSession.authUserId;
+
   // Find the quiz with the specified quizId and check if it exists
-  const existingQuiz = data.quizzes.find((quiz: QuizObject) => quiz.quizId === quizId);
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
 
   // Return an error message if the quiz with the given quizId does not exist
   if (!existingQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
   const timeCreated = existingQuiz.timeCreated;
   const timeLastEdited = existingQuiz.timeLastEdited;
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId) {
-    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+    return {
+      statusCode: 403,
+      error: "Valid token is provided, but user is not an owner of this quiz",
+    };
   }
 
   // Return object with relevant information about the quiz
@@ -304,7 +345,7 @@ const adminQuizInfo = (
     description: existingQuiz.description,
     questions: existingQuiz.questions,
     numQuestions: existingQuiz.numQuestions,
-    duration: existingQuiz.duration
+    duration: existingQuiz.duration,
   };
 };
 
@@ -319,47 +360,52 @@ const adminQuizInfo = (
  *     If any validation errors occur, it returns an error object with a message.
  */
 const adminQuizNameUpdate = (
-  authUserId: number,
+  token: string,
   quizId: number,
   name: string
 ): ErrorObject | EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find((user: UserObject) => user.authUserId === authUserId);
+  let validSession = data.sessions.find( (currSession) => currSession.identifier === token)
 
-  // If authUserId is not valid, return an error object
-  if (!validUser) {
-    return { error: "AuthUserId is not a valid user" };
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)'
+    }
   }
 
+  let authUserId = validSession.authUserId
+
   // Check if quizId is valid by searching for it in the list of quizzes
-  const validQuiz = data.quizzes.find((quiz: QuizObject) => quiz.quizId === quizId);
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
 
   // If quizId is not valid, return an error object
   if (!validQuiz) {
-    return { error: "Quiz ID does not refer to a valid quiz" };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (validQuiz.quizAuthorId !== authUserId) {
-    return { error: "Quiz ID does not refer to a quiz that this user owns" };
+    return { statusCode: 403, error: "Valid token is provided, but user is not an owner of this quiz" };
   }
 
   // Check if the new name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
-    return { error: "Name contains invalid characters" };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Checks if name is less than 3 characters
   if (name.length < 3) {
-    return { error: "Name is less than 3 characters long" };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Checks if name is greater than 30 characters
   if (name.length > 30) {
-    return { error: "Name is greater than 30 characters long" };
+    return { statusCode: 400, error: "Name is greater than 30 characters long" };
   }
 
   // If the given name is the same as the current name of the quiz, update the last edited timestamp
@@ -368,11 +414,13 @@ const adminQuizNameUpdate = (
   } else {
     // Check if the new name is already used by the user for another quiz
     let quizNameUsed = data.quizzes.find(
-      (quiz: QuizObject) => quiz.quizAuthorId === authUserId && quiz.name === name
+      (quiz: QuizObject) =>
+        quiz.quizAuthorId === authUserId && quiz.name === name
     );
 
     if (quizNameUsed)
       return {
+        statusCode: 400,
         error:
           "Name is already used by the current logged in user for another quiz",
       };
@@ -382,7 +430,7 @@ const adminQuizNameUpdate = (
     validQuiz.timeLastEdited = getCurrentTimestamp();
   }
 
-  setData(data)
+  setData(data);
 
   // Return an empty object to indicate a successful update
   return {};

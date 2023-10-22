@@ -102,7 +102,7 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
 app.put(
   "/v1/admin/quiz/:quizid/description",
   (req: Request, res: Response) => {
-    const quizId = parseInt(req.params.quizId);
+    const quizId = parseInt(req.params.quizid);
 
     const token = req.body.token as string;
 

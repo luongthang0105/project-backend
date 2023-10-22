@@ -117,22 +117,15 @@ describe("adminQuizRemove", () => {
       "Hanh"
     ).content;
 
-    // console.log("1");
-
     adminQuizCreate(user, "Hihihihihih", "This is my quiz");
-    // console.log("2");
 
     const quiz02 = adminQuizCreate(user, "Hiiii", "This is my quiz").content;
-    // console.log("3");
 
-    console.log(user);
-    console.log(quiz02.quizId);
     let quizRemoved = adminQuizRemove(user, quiz02.quizId);
     expect(quizRemoved).toStrictEqual({
       content: {},
       statusCode: 200,
     });
-    console.log("4");
 
     const result = adminQuizInfo(user, quiz02.quizId);
     expect(result).toStrictEqual({

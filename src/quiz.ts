@@ -159,10 +159,11 @@ const adminQuizDescriptionUpdate = (
   // Retrieve the current data
   const data = getData();
 
-  const authUserId = data.sessions.find(
-    (currToken) => currToken.identifier === token
-  ).authUserId;
-  if (token === "" || !authUserId) {
+  const session = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === "" || !session) {
     return {
       statusCode: 401,
       error:
@@ -170,10 +171,7 @@ const adminQuizDescriptionUpdate = (
     };
   }
 
-  // Check if authUserId is valid by searching for it in the list of users
-  const validUser = data.users.find(
-    (user: UserObject) => user.authUserId === authUserId
-  );
+  let authUserId = session.authUserId
 
   // Find the quiz with the specified quizId and check if it exists
   const existingQuiz = data.quizzes.find(

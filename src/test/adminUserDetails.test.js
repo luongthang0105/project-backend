@@ -2,21 +2,21 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
+  clear
 } from "../testWrappers"
 
-import { clear } from "../testWrappers"
-
 describe("adminUserDetails", () => {
+  let user1
+
   beforeEach(() => {
     clear()
+    user1 = adminAuthRegister(
+      "javascript@gmail.com",
+      "aikfnrg7",
+      "Java",
+      "Script"
+    ).content
   })
-
-  const user1 = adminAuthRegister(
-    "javascript@gmail.com",
-    "aikfnrg7",
-    "Java",
-    "Script"
-  ).content
 
   let invalidToken = {
     token: "-1"

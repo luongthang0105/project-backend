@@ -5,6 +5,7 @@ import {
   adminAuthRegister,
   clear
 } from '../testWrappers';
+import { EmptyObject, Quiz, QuizObject, ReturnedToken } from '../types';
 
 describe('adminQuizNameUpdate', () => {
   beforeEach(() => {
@@ -27,7 +28,7 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(adminQuizNameUpdate(user, -1, 'name')).toStrictEqual({
       content: { error: 'Quiz ID does not refer to a valid quiz' },
       statusCode: 400
@@ -40,18 +41,18 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const user02 = adminAuthRegister(
       'hanh@gmai.com',
       '270555uwuwuwuwuwuw',
       'Hanh',
       'Haanh'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'quiz',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
     expect(
       adminQuizNameUpdate(user02, quiz01.quizId, 'name')
     ).toStrictEqual({
@@ -73,12 +74,12 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'quiz',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
     expect(
       adminQuizNameUpdate(user01, quiz01.quizId, name)
     ).toStrictEqual({
@@ -93,12 +94,12 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'quiz',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
     expect(
       adminQuizNameUpdate(user01, quiz01.quizId, 'na')
     ).toStrictEqual({
@@ -113,12 +114,12 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'quiz',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
     expect(
       adminQuizNameUpdate(
         user01,
@@ -137,19 +138,19 @@ describe('adminQuizNameUpdate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'quiz01',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
 
     // eslint-disable-next-line
     adminQuizCreate(
       user01,
       'quiz02',
       'This is my quiz'
-    ).content;
+    ).content as Quiz;
     expect(
       adminQuizNameUpdate(user01, quiz01.quizId, 'quiz02')
     ).toStrictEqual(
@@ -160,12 +161,12 @@ describe('adminQuizNameUpdate', () => {
   });
 
   test('Success: Returns {} if no error, 1 user', () => {
-    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content;
-    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content;
+    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
+    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content as Quiz;
 
-    expect(adminQuizNameUpdate(user01, quiz01.quizId, 'name').content).toStrictEqual({});
+    expect(adminQuizNameUpdate(user01, quiz01.quizId, 'name').content as EmptyObject).toStrictEqual({});
 
-    const quizInfo = adminQuizInfo(user01, quiz01.quizId).content;
+    const quizInfo = adminQuizInfo(user01, quiz01.quizId).content as QuizObject;
     expect(quizInfo.name).toStrictEqual('name');
     expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(
       quizInfo.timeCreated
@@ -173,27 +174,27 @@ describe('adminQuizNameUpdate', () => {
   });
 
   test('Success: Returns {} if no error, 2 different users', () => {
-    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content;
+    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
     // eslint-disable-next-line
-    adminQuizCreate(user01, 'quiz01', 'This is my quiz').content;
+    adminQuizCreate(user01, 'quiz01', 'This is my quiz').content as Quiz;
 
-    const user02 = adminAuthRegister('han222@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content;
-    const quiz02 = adminQuizCreate(user02, 'quiz02', 'This is my quiz 2').content;
+    const user02 = adminAuthRegister('han222@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
+    const quiz02 = adminQuizCreate(user02, 'quiz02', 'This is my quiz 2').content as Quiz;
 
-    expect(adminQuizNameUpdate(user02, quiz02.quizId, 'name').content).toStrictEqual({});
+    expect(adminQuizNameUpdate(user02, quiz02.quizId, 'name').content as EmptyObject).toStrictEqual({});
 
-    const quizInfo = adminQuizInfo(user02, quiz02.quizId).content;
+    const quizInfo = adminQuizInfo(user02, quiz02.quizId).content as QuizObject;
     expect(quizInfo.name).toStrictEqual('name');
     expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(quizInfo.timeCreated);
   });
 
   test('Success: Returns {} if no error, updating same name', () => {
-    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content;
-    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content;
+    const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
+    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content as Quiz;
     expect(
-      adminQuizNameUpdate(user01, quiz01.quizId, 'quiz01').content
+      adminQuizNameUpdate(user01, quiz01.quizId, 'quiz01').content as EmptyObject
     ).toStrictEqual({});
-    const quizInfo = adminQuizInfo(user01, quiz01.quizId).content;
+    const quizInfo = adminQuizInfo(user01, quiz01.quizId).content as QuizObject;
     expect(quizInfo.name).toStrictEqual('quiz01');
     expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(
       quizInfo.timeCreated

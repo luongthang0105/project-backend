@@ -4,9 +4,11 @@ import {
   adminAuthRegister,
   clear,
 } from '../testWrappers';
+import { Quiz, ReturnedToken } from '../types';
 
 describe('adminQuizInfo', () => {
-  let user, quiz;
+  let user: ReturnedToken;
+  let quiz: Quiz;
   beforeEach(() => {
     clear();
     user = adminAuthRegister(
@@ -14,13 +16,13 @@ describe('adminQuizInfo', () => {
       '2705uwuwuwu',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
 
     quiz = adminQuizCreate(
       user,
       'New Quiz',
       'description'
-    ).content;
+    ).content as Quiz;
   });
   test('Token is empty or invalid (does not refer to valid logged in user session)', () => {
     const invalidToken = {
@@ -52,12 +54,12 @@ describe('adminQuizInfo', () => {
       '0105uwuwuw',
       'Thomas',
       'Nguyen'
-    ).content;
+    ).content as ReturnedToken;
     const quiz2 = adminQuizCreate(
       user2,
       'New Quiz 2',
       'long description'
-    ).content;
+    ).content as Quiz;
 
     const result = adminQuizInfo(user, quiz2.quizId);
     expect(result).toStrictEqual({
@@ -89,12 +91,12 @@ describe('adminQuizInfo', () => {
       '0105uwuwuw',
       'Thomas',
       'Nguyen'
-    ).content;
+    ).content as ReturnedToken;
     const quiz2 = adminQuizCreate(
       user2,
       'New Quiz 2',
       'long description'
-    ).content;
+    ).content as Quiz;
     const result = adminQuizInfo(user2, quiz2.quizId);
     expect(result.content).toStrictEqual({
       quizId: quiz2.quizId,

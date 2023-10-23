@@ -1,5 +1,6 @@
 import { adminQuizCreate, adminAuthRegister } from '../testWrappers';
 import { clear } from '../other';
+import { ReturnedToken } from '../types';
 beforeEach(() => {
   clear();
 });
@@ -27,7 +28,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
     ).toStrictEqual({
@@ -46,7 +47,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
 
     // eslint-disable-next-line
     adminAuthRegister(
@@ -54,7 +55,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuwuu',
       'Hanh',
       'Han'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
     ).toStrictEqual({
@@ -72,7 +73,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(adminQuizCreate(user, 'Han Hanh!', 'This is my quiz')).toStrictEqual(
       {
         content: { error: 'Name contains invalid characters' },
@@ -87,7 +88,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, '----', 'This is my quiz')
     ).toStrictEqual({
@@ -102,7 +103,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, '1234+', 'This is my quiz')
     ).toStrictEqual({
@@ -117,7 +118,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, 'Hi', 'This is my quiz')
     ).toStrictEqual({
@@ -133,7 +134,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, '1', 'This is my quiz')
     ).toStrictEqual({
@@ -150,7 +151,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, '1H', 'This is my quiz')
     ).toStrictEqual({
@@ -167,7 +168,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, '', 'This is my quiz')
     ).toStrictEqual({
@@ -184,7 +185,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(
         user,
@@ -205,7 +206,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     adminQuizCreate(user, 'quiz', 'This is my quiz');
     expect(
       adminQuizCreate(user, 'quiz', 'This is my quiz')
@@ -226,7 +227,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(
         user,
@@ -247,7 +248,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, 'Han', 'This is my quiz')
     ).toStrictEqual({
@@ -263,7 +264,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, 'Han123', 'This is my quiz')
     ).toStrictEqual({
@@ -280,7 +281,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(
       adminQuizCreate(user, 'Han 34 uwu', 'This is my quiz')
     ).toStrictEqual({
@@ -297,7 +298,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     expect(adminQuizCreate(user, 'Han', '')).toStrictEqual({
 
       content: { quizId: expect.any(Number) },
@@ -312,7 +313,7 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     adminQuizCreate(user, 'Huhu', '');
     expect(adminQuizCreate(user, 'Han', '')).toStrictEqual({
 
@@ -328,13 +329,13 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const user02 = adminAuthRegister(
       'hanh@gmai.com',
       '2705uwuwuwuwuwuwu',
       'Hanh',
       'Han'
-    ).content;
+    ).content as ReturnedToken;
     adminQuizCreate(user01, 'Huhu', '');
     expect(adminQuizCreate(user02, 'Han', '')).toStrictEqual({
 
@@ -350,13 +351,13 @@ describe('adminQuizCreate', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const user02 = adminAuthRegister(
       'hanh@gmai.com',
       '2705uwuwuwuwuwuwu',
       'Hanh',
       'Han'
-    ).content;
+    ).content as ReturnedToken;
     adminQuizCreate(user01, 'Han', '');
     expect(adminQuizCreate(user02, 'Han', '')).toStrictEqual({
       content: { quizId: expect.any(Number) },

@@ -4,9 +4,10 @@ import {
   adminUserDetails,
   clear
 } from '../testWrappers';
+import { ReturnedToken } from '../types';
 
 describe('adminUserDetails', () => {
-  let user1;
+  let user1: ReturnedToken;
 
   beforeEach(() => {
     clear();
@@ -15,7 +16,7 @@ describe('adminUserDetails', () => {
       'aikfnrg7',
       'Java',
       'Script'
-    ).content;
+    ).content as ReturnedToken;
   });
 
   const invalidToken = {

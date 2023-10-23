@@ -5,6 +5,7 @@ import {
   adminAuthRegister,
   clear,
 } from '../testWrappers';
+import { Quiz, ReturnedToken } from '../types';
 
 beforeEach(() => {
   clear();
@@ -31,11 +32,11 @@ describe('adminQuizRemove', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const invalidToken = {
       token: '-1',
     };
-    const quiz = adminQuizCreate(user, 'Quiz01', 'myQuiz').content;
+    const quiz = adminQuizCreate(user, 'Quiz01', 'myQuiz').content as Quiz;
     const result = adminQuizRemove(invalidToken, quiz.quizId);
     expect(result).toStrictEqual({
       content: {
@@ -52,7 +53,7 @@ describe('adminQuizRemove', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const result = adminQuizRemove(user, 1);
     expect(result).toStrictEqual({
       content: { error: 'Quiz ID does not refer to a valid quiz' },
@@ -66,8 +67,8 @@ describe('adminQuizRemove', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
-    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content;
+    ).content as ReturnedToken;
+    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
     const result = adminQuizRemove(user, quiz.quizId + 1);
     expect(result).toStrictEqual({
       content: { error: 'Quiz ID does not refer to a valid quiz' },
@@ -81,19 +82,19 @@ describe('adminQuizRemove', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
     const user02 = adminAuthRegister(
       'hanh@gmai.com',
       '2705uuwuwuwuwuwuw',
       'Hanh',
       'Han'
-    ).content;
+    ).content as ReturnedToken;
     const quiz01 = adminQuizCreate(
       user01,
       'Hihihihihih',
       'This is my quiz'
-    ).content;
-    const quiz02 = adminQuizCreate(user02, 'Hiiii', 'This is my quiz').content;
+    ).content as Quiz;
+    const quiz02 = adminQuizCreate(user02, 'Hiiii', 'This is my quiz').content as Quiz;
     expect(adminQuizRemove(user01, quiz02.quizId)).toStrictEqual({
       content: {
         error: 'Valid token is provided, but user is not an owner of this quiz',
@@ -114,11 +115,11 @@ describe('adminQuizRemove', () => {
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
-    ).content;
+    ).content as ReturnedToken;
 
     adminQuizCreate(user, 'Hihihihihih', 'This is my quiz');
 
-    const quiz02 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content;
+    const quiz02 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
 
     const quizRemoved = adminQuizRemove(user, quiz02.quizId);
     expect(quizRemoved).toStrictEqual({

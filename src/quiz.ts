@@ -284,22 +284,10 @@ const adminQuizRemove = (
  *   by the authenticated user.
  *   If any validation errors occur, it returns an error object with a message.
  */
-// DONT FORGET TO UPDATE THE RETURNED TYPE TO QuizObject AFTER FINISHED EDITING THIS FUNCTION
 const adminQuizInfo = (
   token: string,
   quizId: number
-):
-  | {
-      quizId: number;
-      name: string;
-      description: string;
-      timeCreated: number;
-      timeLastEdited: number;
-      questions: Question[];
-      numQuestions: number;
-      duration: number;
-    }
-  | ErrorObject => {
+): QuizObject | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 

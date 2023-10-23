@@ -3,14 +3,15 @@ type ErrorObject = {
   error: string
 }
 
-type EmptyObject = {}
+// Typescript recommends assigning Record<string, never> instead of {}
+type EmptyObject = Record<string, never>
 
 type Token = {
   identifier: string,
   authUserId: number
 }
 
-//parameter for adminAuthRegister and adminAuthLogin
+// parameter for adminAuthRegister and adminAuthLogin
 type LoginInfo = {
   email: string,
   password: string,
@@ -18,7 +19,7 @@ type LoginInfo = {
   nameLast?: string
 }
 
-//response for adminUserDetails
+// response for adminUserDetails
 type UserDetails = {
   user: {
     userId: number,
@@ -29,20 +30,20 @@ type UserDetails = {
   }
 }
 
-//response for adminQuizList and adminQuizCreate
+// response for adminQuizList and adminQuizCreate
 type Quiz = {quizId: number, name?: string};
 type QuizList = {
   quizzes: Quiz[]
 }
 
-//parameter for adminQuizCreate
+// parameter for adminQuizCreate
 type QuizCreate = {
   token: string,
   name: string,
   description: string
 }
 
-type Colour = 
+type Colour =
   | 'red'
   | 'blue'
   | 'green'
@@ -66,19 +67,17 @@ type Question = {
   answers: Answer[]
 }
 
-
-//parameter for adminQuizNameUpdate
+// parameter for adminQuizNameUpdate
 type NameUpdate = {
   token: string,
   name: string
 }
 
-//parameter for adminQuizDescriptionUpdate
+// parameter for adminQuizDescriptionUpdate
 type DescriptionUpdate = {
   token: string,
   name: string
 }
-
 
 type UserObject = {
   authUserId: number,
@@ -115,20 +114,18 @@ type DataStore = {
 export {
   EmptyObject,
   ErrorObject,
-  Token, 
-  LoginInfo, 
-  UserDetails, 
-  Quiz, 
-  QuizList, 
-  QuizCreate, 
-  Colour, 
-  Answer, 
-  Question,  
-  NameUpdate, 
+  Token,
+  LoginInfo,
+  UserDetails,
+  Quiz,
+  QuizList,
+  QuizCreate,
+  Colour,
+  Answer,
+  Question,
+  NameUpdate,
   DescriptionUpdate,
   UserObject,
   QuizObject,
   DataStore
-}
-
-
+};

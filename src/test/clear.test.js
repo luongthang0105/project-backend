@@ -1,25 +1,28 @@
-import { adminAuthRegister, adminAuthLogin, clear } from "../testWrappers";
+import { adminAuthRegister, adminAuthLogin, clear } from '../testWrappers';
 
-describe("clear", () => {
+describe('clear', () => {
   beforeEach(() => {
     clear();
   });
 
   test("Success: Can't login after clear", () => {
-    const userId1 = adminAuthRegister(
-      "javascript@gmail.com",
-      "aikfnrg7",
-      "Java",
-      "Script"
+    // eslint-disable-next-line
+    adminAuthRegister(
+      'javascript@gmail.com',
+      'aikfnrg7',
+      'Java',
+      'Script'
     ).content;
-    const success = adminAuthLogin("javascript@gmail.com", "aikfnrg7").content;
-    let result = clear();
+
+    // eslint-disable-next-line
+    adminAuthLogin('javascript@gmail.com', 'aikfnrg7').content;
+    const result = clear();
     expect(result.content).toStrictEqual({});
     expect(result.statusCode).toBe(200);
     expect(
-      adminAuthLogin("javascript@gmail.com", "aikfnrg7")
+      adminAuthLogin('javascript@gmail.com', 'aikfnrg7')
     ).toStrictEqual({
-      content: {error: "Email adress does not exist"},
+      content: { error: 'Email adress does not exist' },
       statusCode: 400
     });
   });

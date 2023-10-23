@@ -1,359 +1,365 @@
-import { adminQuizCreate, adminAuthRegister } from "../testWrappers";
-import { clear } from "../other";
+import { adminQuizCreate, adminAuthRegister } from '../testWrappers';
+import { clear } from '../other';
 beforeEach(() => {
   clear();
 });
 
-describe("adminQuizCreate", () => {
-  let invalidToken = {
-    token: "-1",
+describe('adminQuizCreate', () => {
+  const invalidToken = {
+    token: '-1',
   };
-  test("AuthUserId is not a valid user: dataStore is empty", () => {
+  test('AuthUserId is not a valid user: dataStore is empty', () => {
     expect(
-      adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
+      adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
     ).toStrictEqual({
       content: {
         error:
-          "Token is empty or invalid (does not refer to valid logged in user session)",
+          'Token is empty or invalid (does not refer to valid logged in user session)',
       },
       statusCode: 401,
     });
   });
 
-  test("AuthUserId is not a valid user: dataStore has 1 user", () => {
+  test('AuthUserId is not a valid user: dataStore has 1 user', () => {
+    // eslint-disable-next-line
+    adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content;
+    expect(
+      adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
+    ).toStrictEqual({
+      content: {
+        error:
+          'Token is empty or invalid (does not refer to valid logged in user session)',
+      },
+      statusCode: 401,
+    });
+  });
+
+  test('Token is empty or invalid (does not refer to valid logged in user session): dataStore has 2 users', () => {
+    // eslint-disable-next-line
+    adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content;
+
+    // eslint-disable-next-line
+    adminAuthRegister(
+      'hanh@gmai.com',
+      '2705uwuwuwuwuwuwuu',
+      'Hanh',
+      'Han'
+    ).content;
+    expect(
+      adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
+    ).toStrictEqual({
+      content: {
+        error:
+          'Token is empty or invalid (does not refer to valid logged in user session)',
+      },
+      statusCode: 401,
+    });
+  });
+
+  test('Name contains invalid characters: mixed with letters and special character', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
-    expect(
-      adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
-    ).toStrictEqual({
-      content: {
-        error:
-          "Token is empty or invalid (does not refer to valid logged in user session)",
-      },
-      statusCode: 401,
-    });
-  });
-
-  test("Token is empty or invalid (does not refer to valid logged in user session): dataStore has 2 users", () => {
-    const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    ).content;
-    const user02 = adminAuthRegister(
-      "hanh@gmai.com",
-      "2705uwuwuwuwuwuwuu",
-      "Hanh",
-      "Han"
-    ).content;
-    expect(
-      adminQuizCreate(invalidToken, "Hayden", "This is my quiz")
-    ).toStrictEqual({
-      content: {
-        error:
-          "Token is empty or invalid (does not refer to valid logged in user session)",
-      },
-      statusCode: 401,
-    });
-  });
-
-  test("Name contains invalid characters: mixed with letters and special character", () => {
-    const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    ).content;
-    expect(adminQuizCreate(user, "Han Hanh!", "This is my quiz")).toStrictEqual(
+    expect(adminQuizCreate(user, 'Han Hanh!', 'This is my quiz')).toStrictEqual(
       {
-        content: { error: "Name contains invalid characters" },
+        content: { error: 'Name contains invalid characters' },
         statusCode: 400,
       }
     );
   });
 
-  test("Name contains invalid characters: only special characters", () => {
+  test('Name contains invalid characters: only special characters', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "----", "This is my quiz")
+      adminQuizCreate(user, '----', 'This is my quiz')
     ).toStrictEqual({
-      content: { error: "Name contains invalid characters" },
+      content: { error: 'Name contains invalid characters' },
       statusCode: 400,
     });
   });
 
-  test("Name contains invalid characters: mixed with numbers and special characters", () => {
+  test('Name contains invalid characters: mixed with numbers and special characters', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "1234+", "This is my quiz")
+      adminQuizCreate(user, '1234+', 'This is my quiz')
     ).toStrictEqual({
-      content: { error: "Name contains invalid characters" },
+      content: { error: 'Name contains invalid characters' },
       statusCode: 400,
     });
   });
 
-  test("Name is less than 3 characters long: with only letters", () => {
+  test('Name is less than 3 characters long: with only letters', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "Hi", "This is my quiz")
+      adminQuizCreate(user, 'Hi', 'This is my quiz')
     ).toStrictEqual({
       content:
-      {error: "Name is less than 3 characters long"},
+      { error: 'Name is less than 3 characters long' },
       statusCode: 400
     });
   });
 
-  test("Name is less than 3 characters long: with only number", () => {
+  test('Name is less than 3 characters long: with only number', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "1", "This is my quiz")
+      adminQuizCreate(user, '1', 'This is my quiz')
     ).toStrictEqual({
 
-      content: {error: "Name is less than 3 characters long"},
+      content: { error: 'Name is less than 3 characters long' },
       statusCode: 400
 
     });
   });
 
-  test("Name is less than 3 characters long: mixed with number and letter", () => {
+  test('Name is less than 3 characters long: mixed with number and letter', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "1H", "This is my quiz")
-    ).toStrictEqual({
-      content:
-      {error: "Name is less than 3 characters long"},
-      statusCode: 400
-
-    });
-  });
-
-  test("Name is less than 3 characters long: empty string", () => {
-    const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
-    ).content;
-    expect(
-      adminQuizCreate(user, "", "This is my quiz")
+      adminQuizCreate(user, '1H', 'This is my quiz')
     ).toStrictEqual({
       content:
-      {error: "Name is less than 3 characters long"},
+      { error: 'Name is less than 3 characters long' },
       statusCode: 400
 
     });
   });
 
-  test("Name is more than 30 characters long", () => {
+  test('Name is less than 3 characters long: empty string', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content;
+    expect(
+      adminQuizCreate(user, '', 'This is my quiz')
+    ).toStrictEqual({
+      content:
+      { error: 'Name is less than 3 characters long' },
+      statusCode: 400
+
+    });
+  });
+
+  test('Name is more than 30 characters long', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
       adminQuizCreate(
         user,
-        "okiokiokiokiokiokiokiokiokiokioki",
-        "This is my quiz"
+        'okiokiokiokiokiokiokiokiokiokioki',
+        'This is my quiz'
       )
     ).toStrictEqual({
       content:
-      {error: "Name is more than 30 characters long"},
+      { error: 'Name is more than 30 characters long' },
       statusCode: 400
 
     });
   });
 
-  test("Name is already used by the current logged in user for another quiz", () => {
+  test('Name is already used by the current logged in user for another quiz', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
-    adminQuizCreate(user, "quiz", "This is my quiz");
+    adminQuizCreate(user, 'quiz', 'This is my quiz');
     expect(
-      adminQuizCreate(user, "quiz", "This is my quiz")
+      adminQuizCreate(user, 'quiz', 'This is my quiz')
     ).toStrictEqual({
       content:
-      {error:
-        "Name is already used by the current logged in user for another quiz"},
+      {
+        error:
+        'Name is already used by the current logged in user for another quiz'
+      },
       statusCode: 400
 
     });
   });
 
-  test("Description is more than 100 characters in length", () => {
+  test('Description is more than 100 characters in length', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
       adminQuizCreate(
         user,
-        "Han",
-        "Llllorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu"
+        'Han',
+        'Llllorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu'
       )
     ).toStrictEqual({
 
-      content: {error: "Description is more than 100 characters in length"},
+      content: { error: 'Description is more than 100 characters in length' },
       statusCode: 400
 
     });
   });
 
-  test("Success: case01: name contains only letters", () => {
+  test('Success: case01: name contains only letters', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "Han", "This is my quiz")
+      adminQuizCreate(user, 'Han', 'This is my quiz')
     ).toStrictEqual({
 
-      content: {quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
     });
   });
 
-  test("Success: case02: name is mixed with letters and numbers", () => {
+  test('Success: case02: name is mixed with letters and numbers', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "Han123", "This is my quiz")
+      adminQuizCreate(user, 'Han123', 'This is my quiz')
     ).toStrictEqual({
 
-      content: {quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
 
     });
   });
 
-  test("Success: case03: name is mixed with letters, numbers and spaces", () => {
+  test('Success: case03: name is mixed with letters, numbers and spaces', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     expect(
-      adminQuizCreate(user, "Han 34 uwu", "This is my quiz")
+      adminQuizCreate(user, 'Han 34 uwu', 'This is my quiz')
     ).toStrictEqual({
 
-      content: {quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
 
     });
   });
 
-  test("Success: case04: description is an empty string", () => {
+  test('Success: case04: description is an empty string', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
-    expect(adminQuizCreate(user, "Han", "")).toStrictEqual({
+    expect(adminQuizCreate(user, 'Han', '')).toStrictEqual({
 
-      content: {quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
 
     });
   });
 
-  test("Success: case05: one user with 2 quizzes", () => {
+  test('Success: case05: one user with 2 quizzes', () => {
     const user = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
-    adminQuizCreate(user, "Huhu", "");
-    expect(adminQuizCreate(user, "Han", "")).toStrictEqual({
+    adminQuizCreate(user, 'Huhu', '');
+    expect(adminQuizCreate(user, 'Han', '')).toStrictEqual({
 
-      content: {quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
 
     });
   });
 
-  test("Success: case06: 2 users, with one 1 quiz for each", () => {
+  test('Success: case06: 2 users, with one 1 quiz for each', () => {
     const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     const user02 = adminAuthRegister(
-      "hanh@gmai.com",
-      "2705uwuwuwuwuwuwu",
-      "Hanh",
-      "Han"
+      'hanh@gmai.com',
+      '2705uwuwuwuwuwuwu',
+      'Hanh',
+      'Han'
     ).content;
-    adminQuizCreate(user01, "Huhu", "");
-    expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
+    adminQuizCreate(user01, 'Huhu', '');
+    expect(adminQuizCreate(user02, 'Han', '')).toStrictEqual({
 
-      content: { quizId: expect.any(Number)},
+      content: { quizId: expect.any(Number) },
       statusCode: 200
 
     });
   });
 
-  test("Success: case07: 2 users, 1 quiz for each (with the same name, same description)", () => {
+  test('Success: case07: 2 users, 1 quiz for each (with the same name, same description)', () => {
     const user01 = adminAuthRegister(
-      "han@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Han",
-      "Hanh"
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
     ).content;
     const user02 = adminAuthRegister(
-      "hanh@gmai.com",
-      "2705uwuwuwuwuwuwu",
-      "Hanh",
-      "Han"
+      'hanh@gmai.com',
+      '2705uwuwuwuwuwuwu',
+      'Hanh',
+      'Han'
     ).content;
-    adminQuizCreate(user01, "Han", "");
-    expect(adminQuizCreate(user02, "Han", "")).toStrictEqual({
-      content: {quizId: expect.any(Number)},
+    adminQuizCreate(user01, 'Han', '');
+    expect(adminQuizCreate(user02, 'Han', '')).toStrictEqual({
+      content: { quizId: expect.any(Number) },
       statusCode: 200
     });
   });

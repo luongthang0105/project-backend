@@ -1,6 +1,6 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-import fs from 'fs'
-import { DataStore } from "./types"
+import fs from 'fs';
+import { DataStore } from './types';
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -20,11 +20,11 @@ Example usage
 */
 
 // Use get() to access the data
-const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')))
+const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')));
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: DataStore) {
-  fs.writeFileSync('./data.json', JSON.stringify(newData))
+  fs.writeFileSync('./data.json', JSON.stringify(newData));
 }
 
-export { getData, setData }
+export { getData, setData };

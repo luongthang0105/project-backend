@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { emailUsed, validName, securedPassword } from './authHelper';
-import { ErrorObject, Token, UserDetails } from './types';
+import { ErrorObject, ReturnedToken, Token, UserDetails } from './types';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -19,7 +19,7 @@ const adminAuthRegister = (
   password: string,
   nameFirst: string,
   nameLast: string
-): { token: string } | ErrorObject => {
+): ReturnedToken | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -132,7 +132,7 @@ const adminAuthRegister = (
 const adminAuthLogin = (
   email: string,
   password: string
-): { token: string } | ErrorObject => {
+): ReturnedToken | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 

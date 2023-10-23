@@ -91,7 +91,7 @@ type UserObject = {
 
 type QuizObject = {
   quizId: number,
-  quizAuthorId: number,
+  quizAuthorId?: number,
   name: string,
   description: string,
   timeCreated: number,

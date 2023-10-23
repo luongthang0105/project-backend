@@ -6,9 +6,15 @@ type ErrorObject = {
 // Typescript recommends assigning Record<string, never> instead of {}
 type EmptyObject = Record<string, never>
 
+// The Token type we use to store sessions in data.json
 type Token = {
   identifier: string,
   authUserId: number
+}
+
+// The token type we received from adminAuthRegister and adminAuthLogin (as well as their routes)
+type ReturnedToken = {
+  token: string
 }
 
 // parameter for adminAuthRegister and adminAuthLogin
@@ -115,6 +121,7 @@ export {
   EmptyObject,
   ErrorObject,
   Token,
+  ReturnedToken,
   LoginInfo,
   UserDetails,
   Quiz,

@@ -101,7 +101,7 @@ describe('adminQuizDescriptionUpdate', () => {
       adminQuizDescriptionUpdate(user, quiz.quizId, 'New description')
     ).toStrictEqual({ content: {}, statusCode: 200 });
 
-    let quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
+    const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
     expect(quizInfo.description).toStrictEqual('New description');
     expect(quizInfo.timeCreated).toBeLessThanOrEqual(
       quizInfo.timeLastEdited

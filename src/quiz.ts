@@ -3,7 +3,6 @@ import { alphanumericAndSpaceCheck, getCurrentTimestamp } from './quizHelper';
 import {
   EmptyObject,
   ErrorObject,
-  Question,
   Quiz,
   QuizList,
   QuizObject,

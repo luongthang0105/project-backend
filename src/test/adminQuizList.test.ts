@@ -94,82 +94,82 @@ describe('adminQuizList', () => {
     });
   });
 
-  test("SUCCESS: Quiz list after deleting the 1st element of 3 elements list", () => {
-    const quiz1 = (adminQuizCreate(user1, "Quiz1", "good quiz").content as Quiz).quizId
-    const quiz2 = (adminQuizCreate(user1, "Quiz2", "little quiz").content as Quiz).quizId
-    const quiz3 = (adminQuizCreate(user1, "Quiz3", "").content as Quiz).quizId
-    adminQuizRemove(user1, quiz1)
-    const success1 = adminQuizList(user1).content as QuizList
+  test('SUCCESS: Quiz list after deleting the 1st element of 3 elements list', () => {
+    const quiz1 = (adminQuizCreate(user1, 'Quiz1', 'good quiz').content as Quiz).quizId;
+    const quiz2 = (adminQuizCreate(user1, 'Quiz2', 'little quiz').content as Quiz).quizId;
+    const quiz3 = (adminQuizCreate(user1, 'Quiz3', '').content as Quiz).quizId;
+    adminQuizRemove(user1, quiz1);
+    const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({
       quizzes: [
         {
           quizId: quiz2,
-          name: "Quiz2",
+          name: 'Quiz2',
         },
         {
           quizId: quiz3,
-          name: "Quiz3",
+          name: 'Quiz3',
         },
       ],
-    })
-  })
-  test("SUCCESS: Quiz list after deleting the 2nd element of 3 elements list", () => {
-    const quiz1 = (adminQuizCreate(user1, "Quiz1", "good quiz").content as Quiz).quizId
-    const quiz2 = (adminQuizCreate(user1, "Quiz2", "little quiz").content as Quiz).quizId
-    const quiz3 = (adminQuizCreate(user1, "Quiz3", "").content as Quiz).quizId
-    adminQuizRemove(user1, quiz2)
-    const success1 = adminQuizList(user1).content as QuizList
+    });
+  });
+  test('SUCCESS: Quiz list after deleting the 2nd element of 3 elements list', () => {
+    const quiz1 = (adminQuizCreate(user1, 'Quiz1', 'good quiz').content as Quiz).quizId;
+    const quiz2 = (adminQuizCreate(user1, 'Quiz2', 'little quiz').content as Quiz).quizId;
+    const quiz3 = (adminQuizCreate(user1, 'Quiz3', '').content as Quiz).quizId;
+    adminQuizRemove(user1, quiz2);
+    const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({
       quizzes: [
         {
           quizId: quiz1,
-          name: "Quiz1",
+          name: 'Quiz1',
         },
         {
           quizId: quiz3,
-          name: "Quiz3",
+          name: 'Quiz3',
         },
       ],
-    })
-  })
-  test("SUCCESS: Quiz list after deleting the 3rd element of 3 elements list", () => {
-    const quiz1 = (adminQuizCreate(user1, "Quiz1", "good quiz").content as Quiz).quizId
-    const quiz2 = (adminQuizCreate(user1, "Quiz2", "little quiz").content as Quiz).quizId
-    const quiz3 = (adminQuizCreate(user1, "Quiz3", "").content as Quiz).quizId
+    });
+  });
+  test('SUCCESS: Quiz list after deleting the 3rd element of 3 elements list', () => {
+    const quiz1 = (adminQuizCreate(user1, 'Quiz1', 'good quiz').content as Quiz).quizId;
+    const quiz2 = (adminQuizCreate(user1, 'Quiz2', 'little quiz').content as Quiz).quizId;
+    const quiz3 = (adminQuizCreate(user1, 'Quiz3', '').content as Quiz).quizId;
 
-    let quizRemove = adminQuizRemove(user1, quiz3)
-    expect(quizRemove.statusCode).toBe(200)
+    const quizRemove = adminQuizRemove(user1, quiz3);
+    expect(quizRemove.statusCode).toBe(200);
 
-    const success1 = adminQuizList(user1).content as QuizList
+    const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({
       quizzes: [
         {
           quizId: quiz1,
-          name: "Quiz1",
+          name: 'Quiz1',
         },
         {
           quizId: quiz2,
-          name: "Quiz2",
+          name: 'Quiz2',
         },
       ],
-    })
-  })
-  test("SUCCESS: Empty quiz list after deleting all the elements of 3 elements list", () => {
-    const quiz1 = (adminQuizCreate(user1, "Quiz1", "good quiz").content as Quiz).quizId
-    const quiz2 = (adminQuizCreate(user1, "Quiz2", "little quiz").content as Quiz).quizId
-    const quiz3 = (adminQuizCreate(user1, "Quiz3", "").content as Quiz).quizId
+    });
+  });
+  test('SUCCESS: Empty quiz list after deleting all the elements of 3 elements list', () => {
+    const quiz1 = (adminQuizCreate(user1, 'Quiz1', 'good quiz').content as Quiz).quizId;
+    const quiz2 = (adminQuizCreate(user1, 'Quiz2', 'little quiz').content as Quiz).quizId;
+    const quiz3 = (adminQuizCreate(user1, 'Quiz3', '').content as Quiz).quizId;
 
-    let quizRemove = adminQuizRemove(user1, quiz1)
+    let quizRemove = adminQuizRemove(user1, quiz1);
 
-    expect(quizRemove.statusCode).toBe(200)
-    quizRemove = adminQuizRemove(user1, quiz2)
-    expect(quizRemove.statusCode).toBe(200)
-    quizRemove = adminQuizRemove(user1, quiz3)
-    expect(quizRemove.statusCode).toBe(200)
+    expect(quizRemove.statusCode).toBe(200);
+    quizRemove = adminQuizRemove(user1, quiz2);
+    expect(quizRemove.statusCode).toBe(200);
+    quizRemove = adminQuizRemove(user1, quiz3);
+    expect(quizRemove.statusCode).toBe(200);
 
-    const success1 = adminQuizList(user1).content as QuizList
+    const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({
       quizzes: [],
-    })
-  })
+    });
+  });
 });

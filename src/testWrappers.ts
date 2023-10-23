@@ -1,6 +1,6 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
-import { EmptyObject, ErrorObject, Question, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from './types';
+import { EmptyObject, ErrorObject, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 

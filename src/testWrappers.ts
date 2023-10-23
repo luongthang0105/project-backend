@@ -1,6 +1,6 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
-import { EmptyObject, ErrorObject, Question, Quiz, QuizList, UserDetails } from './types';
+import { EmptyObject, ErrorObject, Question, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -9,7 +9,7 @@ export const adminAuthRegister = (
   password: string,
   nameFirst: string,
   nameLast: string
-): { content: { token: string } | ErrorObject; statusCode: number } => {
+): { content: ReturnedToken | ErrorObject; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
     json: {
       email: email,
@@ -26,7 +26,7 @@ export const adminAuthRegister = (
 export const adminAuthLogin = (
   email: string,
   password: string
-): { content: { token: string } | ErrorObject; statusCode: number } => {
+): { content: ReturnedToken | ErrorObject; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/login', {
     json: {
       email: email,
@@ -91,7 +91,7 @@ export const adminQuizCreate = (
 };
 
 export const adminQuizRemove = (
-  tokenObject: { token: string },
+  tokenObject: ReturnedToken,
   quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId;
@@ -109,21 +109,11 @@ export const adminQuizRemove = (
 };
 
 export const adminQuizInfo = (
-  tokenObject: { token: string },
+  tokenObject: ReturnedToken,
   quizId: number
 ): {
   content:
-    | {
-        quizId: number;
-        name: string;
-        description: string;
-        timeCreated: number;
-        timeLastEdited: number;
-        questions: Question[];
-        numQuestions: number;
-        duration: number;
-      }
-    | ErrorObject;
+    QuizObject | ErrorObject;
   statusCode: number;
 } => {
   const route = '/v1/admin/quiz/' + quizId;
@@ -141,7 +131,7 @@ export const adminQuizInfo = (
 };
 
 export const adminQuizNameUpdate = (
-  tokenObject: { token: string },
+  tokenObject: ReturnedToken,
   quizId: number,
   name: string
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
@@ -161,7 +151,7 @@ export const adminQuizNameUpdate = (
 };
 
 export const adminQuizDescriptionUpdate = (
-  tokenObject: { token: string },
+  tokenObject: ReturnedToken,
   quizId: number,
   description: string
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {

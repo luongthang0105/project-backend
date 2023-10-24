@@ -577,4 +577,5 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
+  adminQuizCreateQuestion
 }

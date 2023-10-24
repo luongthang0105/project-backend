@@ -54,7 +54,7 @@ describe("adminUserPassword", () => {
 
 	test("New Password has already been used before by this user", () => {
     expect(
-      adminUserPassword(validToken, "Password2314", "password3294")
+      adminUserPassword(validToken, "Password2156", "password3294")
     ).toStrictEqual({
       content: {
         error:

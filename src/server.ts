@@ -140,13 +140,13 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 
   const result = adminQuizDescriptionUpdate(token, quizId, description);
 
-    if ('error' in result) {
-      res.status(result.statusCode as number).json({ error: result.error });
-      return;
-    }
-
-    res.json(result);
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
   }
+
+  res.json(result);
+}
 );
 
 // adminQuizVewTrash
@@ -172,10 +172,10 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
 
-    if ('error' in result) {
-      res.status(result.statusCode as number).json({ error: result.error });
-      return;
-    }
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
 
   res.json(result);
 });
@@ -262,7 +262,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
 
   // Add a data.json file as database
-  clear()
+  clear();
 });
 
 // For coverage, handle Ctrl+C gracefully

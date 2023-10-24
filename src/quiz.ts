@@ -693,4 +693,5 @@ export {
   adminQuizDescriptionUpdate,
   adminQuizCreateQuestion,
   adminQuizViewTrash,
+  adminQuizDeleteQuestion
 }

@@ -223,3 +223,32 @@ export const adminQuizCreateQuestion = (
     statusCode: res.statusCode
   };
 };
+
+export const adminQuizQuestionUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[]
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers
+      }
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

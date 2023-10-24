@@ -66,7 +66,7 @@ type Answer = {
 }
 
 type Question = {
-  questionId: number,
+  questionId?: number,
   question: string,
   duration: number,
   points: number,

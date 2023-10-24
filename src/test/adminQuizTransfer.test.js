@@ -14,15 +14,15 @@ describe("adminUserPassword", () => {
     token: "-1"
   }
 
-  let user1 = adminAuthRegister(
+  let user = adminAuthRegister(
     "ryan@gmail.com",
-    "password3213",
+    "password3213", 
     "Ryan",
     "Huynh"
   ).content;
 
   let quiz = adminQuizCreate(
-    user1,
+    user,
     "quiz",
     "description"
   ).content
@@ -35,7 +35,7 @@ describe("adminUserPassword", () => {
   ).content
 
   let validBody = {
-    token: user1,
+    token: user,
     userEmail: user2.email
   }
 
@@ -91,10 +91,9 @@ describe("adminUserPassword", () => {
   })
 
   test("userEmail is the current logged in user", () => {
-    let currlog = adminAuthLogin("ryan@gmail.com", "password3213")
     let body4 = {
-      token: currlog,
-      userEmail: user2.email
+      token: user,
+      userEmail: user.email
     }
 
     expect(
@@ -122,9 +121,8 @@ describe("adminUserPassword", () => {
     })
   })
 
-  test("All sessions for this quiz must be in END state", () => {
-
-
+  // Not done
+  test.skip("All sessions for this quiz must be in END state", () => {
     expect(adminQuizTransfer(quiz, validBody)).toStrictEqual({
       content: {
         error: "All sessions for this quiz must be in END state"

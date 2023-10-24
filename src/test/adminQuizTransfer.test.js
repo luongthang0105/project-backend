@@ -1,6 +1,7 @@
 import {
   adminQuizTransfer,
   adminAuthRegister,
+  adminAuthLogin,
   adminQuizCreate
 } from "../testWrappers";
 import { clear } from "../other";
@@ -13,30 +14,38 @@ describe("adminUserPassword", () => {
     token: "-1"
   }
 
-  let user = adminAuthRegister(
+  let user1 = adminAuthRegister(
     "ryan@gmail.com",
     "password3213",
     "Ryan",
     "Huynh"
   ).content;
 
-  let quiz = adminQuizCreate(user, "quiz", "description").content;
-
-  const validToken = adminAuthRegister(
-    "ryan@gmail.com",
-    "Password2156",
-    "Ryan",
-    "Huynh"
+  let quiz = adminQuizCreate(
+    user1,
+    "quiz",
+    "description"
   ).content
 
-  let body = {
-    token: validToken,
-    description: "description"
+  let user2 = adminAuthRegister(
+    "oth@gmail.com",
+    "password4876",
+    "oth",
+    "other"
+  ).content
+
+  let validBody = {
+    token: user1,
+    userEmail: user2.email
   }
-  
+
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
+    let body = {
+      token: invalidToken,
+      userEmail: user2.email
+    }
     expect(
-      adminUserPassword(invalidToken, "Password2314", "password3294")
+      adminQuizTransfer(quiz, body)
     ).toStrictEqual({
     content: {
       error:
@@ -47,19 +56,18 @@ describe("adminUserPassword", () => {
   })
 
   test("Valid token is provided, but user is not an owner of this quiz", () => {
-    let user2 = adminAuthRegister(
+    let user3 = adminAuthRegister(
       "ran@mail.com",
       "dsadsadsa321",
       "Ran",
       "Huy"
     ).content;
-    let quiz2 = adminQuizCreate(
-      user2,
-      "quiz",
-      "description"
-    ).content;
+    let body2 = {
+      token: user3,
+      userEmail: user2.email
+    }
 
-    expect(adminQuizTransfer(quiz, body)).toStrictEqual({
+    expect(adminQuizTransfer(quiz, body2)).toStrictEqual({
       content: {
         error: "Valid token is provided, but user is not an owner of this quiz",
       },
@@ -67,24 +75,66 @@ describe("adminUserPassword", () => {
     });
   });
 
-  test("Description is more than 100 characters in length (note: empty strings are OK)", () => {
-    let body2 = {
-      token: validToken,
-      description: "longlonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglonglong"
+  test("userEmail is not a real user", () => {
+  let body3 = {
+    token: user1,
+    userEmail: "no@gmail.com"
+  }
+    expect(
+      adminQuizTransfer(quiz, body3)
+    ).toStrictEqual({
+      content: {
+        error: "userEmail is not a real user"
+      },
+      statusCode: 400,
+    })
+  })
+
+  test("userEmail is the current logged in user", () => {
+    let currlog = adminAuthLogin("ryan@gmail.com", "password3213")
+    let body4 = {
+      token: currlog,
+      userEmail: user2.email
     }
 
     expect(
-      adminQuizTransfer(quiz, body2)
+      adminQuizTransfer(quiz, body4)
     ).toStrictEqual({
       content: {
-        error: "Description is more than 100 characters in length"
+        error: "userEmail is the current logged in user"
+      },
+      statusCode: 400,
+    })
+  })
+
+  test("Quiz ID refers to a quiz that has a name that is already used by the target user", () => {
+    let quiz2 = adminQuizCreate(
+      user2,
+      "quiz",
+      "description"
+    ).content
+
+    expect(adminQuizTransfer(quiz2, validBody)).toStrictEqual({
+      content: {
+        error: "Quiz ID refers to a quiz that has a name that is already used by the target user"
+      },
+      statusCode: 400,
+    })
+  })
+
+  test("All sessions for this quiz must be in END state", () => {
+
+
+    expect(adminQuizTransfer(quiz, validBody)).toStrictEqual({
+      content: {
+        error: "All sessions for this quiz must be in END state"
       },
       statusCode: 400,
     })
   })
 
   test("Success", () => {
-    expect(adminQuizTransfer(quiz, body)).toStrictEqual({
+    expect(adminQuizTransfer(quiz, validBody)).toStrictEqual({
       content: {},
       statusCode: 200
     })

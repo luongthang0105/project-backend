@@ -123,12 +123,11 @@ describe("adminQuizCreateQuestion", () => {
   )
 
   test.each([
-    { duration: 180, times: 1 },
+    { duration: 181, times: 1 },
     { duration: 91, times: 2 },
     { duration: 61, times: 3 },
-    { duration: 60, times: 3 },
     { duration: 70, times: 4 },
-    { duration: 40, times: 5 },
+    { duration: 37, times: 5 },
   ])(
     "Error: The sum of the question durations in the quiz exceeds 3 minutes",
     ({ duration, times }) => {

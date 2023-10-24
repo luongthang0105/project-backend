@@ -635,7 +635,7 @@ const adminQuizQuestionUpdate = (
     (currSession) => currSession.identifier === token
   );
 
-  // Error: 	Token is empty or invalid (does not refer to valid logged in user session)
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
   if (token === '' || !validSession) {
     return {
       statusCode: 401,
@@ -656,13 +656,13 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: Question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find( (currQuestion) => currQuestion.questionId === questionId)
-  
+  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+
   if (!validQuestion) {
     return {
-      statusCode: 400, 
-      error: "Question Id does not refer to a valid question within this quiz"
-    }
+      statusCode: 400,
+      error: 'Question Id does not refer to a valid question within this quiz'
+    };
   }
 
   // Error: Question string is less than 5 characters in length or greater than 50 characters in length
@@ -692,7 +692,7 @@ const adminQuizQuestionUpdate = (
 
   // Error: The sum of the question durations (after updating this question) in the quiz exceeds 3 minutes === 180 secs
   const currTotalDuration = validQuiz.duration;
-  let oldQuestionDuration = validQuestion.duration
+  const oldQuestionDuration = validQuestion.duration;
   if (currTotalDuration - oldQuestionDuration + duration > 180) {
     return {
       statusCode: 400,
@@ -761,15 +761,15 @@ const adminQuizQuestionUpdate = (
       correct: currAnswer.correct
     };
   });
-  
+
   // update quiz duration by subtracting it by the old duration and adding the new duration
   validQuiz.duration = validQuiz.duration - oldQuestionDuration + duration;
 
   // update the info of this question
-  validQuestion.answers = updatedAnswerList
-  validQuestion.duration = duration
-  validQuestion.points = points
-  validQuestion.question = question
+  validQuestion.answers = updatedAnswerList;
+  validQuestion.duration = duration;
+  validQuestion.points = points;
+  validQuestion.question = question;
 
   // update the last edited timestamp
   validQuiz.timeLastEdited = getCurrentTimestamp();
@@ -778,7 +778,6 @@ const adminQuizQuestionUpdate = (
 
   return {};
 };
-
 
 export {
   adminQuizCreate,

@@ -10,7 +10,7 @@ describe('adminQuizList', () => {
     clear();
     user1 = adminAuthRegister(
       'sasaki@gmail.com',
-      'hdngied3,',
+      'hdngied3',
       'Mutsuki',
       'Sasaki'
     ).content as ReturnedToken;

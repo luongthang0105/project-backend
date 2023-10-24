@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { emailUsed, validName, securedPassword } from './authHelper';
-import { ErrorObject, ReturnedToken, Token, UserDetails } from './types';
+import { ErrorObject, ReturnedToken, Token, UserDetails, UserObject } from './types';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -203,7 +203,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
     return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
   }
 
-  const userInfo = data.users.find((user) => user.authUserId === session.authUserId);
+  const userInfo = data.users.find((user) => user.authUserId === session.authUserId) as UserObject
 
   // Concatenate the first name and last name to form the full name
   const fullname = userInfo.nameFirst.concat(' ', userInfo.nameLast);

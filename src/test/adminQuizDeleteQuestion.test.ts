@@ -5,6 +5,7 @@ import {
   clear,
   adminQuizCreateQuestion,
   adminQuizInfo,
+  adminQuizDeleteQuestion,
 } from '../testWrappers';
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 
@@ -104,8 +105,8 @@ describe("adminQuizDeleteQuestion", () => {
   })
 
   test("Success: Successfully delete a question, 2 questions, delete first one", () => {
-    let question2 = (
-      adminQuizCreateQuestion(
+    let questionId2 = (
+      (adminQuizCreateQuestion(
         user,
         quizId,
         "What dat pokemon",
@@ -117,8 +118,7 @@ describe("adminQuizDeleteQuestion", () => {
           { answer: 'Charmander', correct: false },
         ]
       )
-    )
-    expect(question2.statusCode).toBe(200)
+    ).content as {questionId: number}).questionId
 
     let currentTime = getCurrentTimestamp()
     const result = adminQuizDeleteQuestion(user, quizId, questionId)
@@ -135,6 +135,7 @@ describe("adminQuizDeleteQuestion", () => {
     expect(quizInfo.numQuestions).toBe(1)
     expect(quizInfo.questions).toStrictEqual([
       {
+        questionId: questionId2,
         question: "What dat pokemon",
         duration: 50,
         points: 1,
@@ -179,6 +180,7 @@ describe("adminQuizDeleteQuestion", () => {
     expect(quizInfo.numQuestions).toBe(1)
     expect(quizInfo.questions).toStrictEqual([
       {
+        questionId: questionId,
         question: "What is that pokemon",
         duration: 4,
         points: 5,
@@ -207,7 +209,7 @@ describe("adminQuizDeleteQuestion", () => {
       ).content as { questionId: number }
     ).questionId;
 
-    const result = adminQuizDeleteQuestion(user, quizId, questionId1)
+    const result = adminQuizDeleteQuestion(user, quizId, questionId)
 
     let currentTime = getCurrentTimestamp()
 
@@ -253,7 +255,7 @@ describe("adminQuizDeleteQuestion", () => {
 
     let currentTime = getCurrentTimestamp()
 
-    const result2 = adminQuizDeleteQuestion(user, quizId, questionId1)
+    const result2 = adminQuizDeleteQuestion(user, quizId, questionId)
 
     expect(result).toStrictEqual({
       statusCode: 200,
@@ -274,4 +276,5 @@ describe("adminQuizDeleteQuestion", () => {
     expect(quizInfo.questions).toStrictEqual([])
     expect(quizInfo.duration).toBe(0)
   })
+  
 })

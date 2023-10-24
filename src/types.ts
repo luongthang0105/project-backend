@@ -59,9 +59,9 @@ type Colour =
   | 'orange'
 
 type Answer = {
-  answerId: number,
+  answerId?: number,
   answer: string,
-  colour: Colour,
+  colour?: Colour,
   correct: boolean
 }
 

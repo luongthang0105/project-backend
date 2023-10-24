@@ -223,3 +223,22 @@ export const adminQuizCreateQuestion = (
     statusCode: res.statusCode
   };
 };
+
+export const adminQuizDeleteQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

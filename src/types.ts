@@ -114,7 +114,9 @@ type DataStore = {
   sessions: Token[],
   nextTokenId: number,
   nextUserId: number,
-  nextQuizId: number
+  nextQuizId: number,
+  nextQuestionId: number,
+  nextAnswerId: number
 }
 
 export {

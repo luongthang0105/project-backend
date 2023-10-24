@@ -222,4 +222,61 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
-export { adminAuthRegister, adminAuthLogin, adminUserDetails };
+// This function is responsible for updating the User Details (the token, the email, first and last name), not the password
+function adminAuthLogout (token : string): ErrorObject {
+  const data = getData()
+  const token
+  if (!token) {
+    return {statusCode: 401, error: "Token is empty"}
+  }
+  const sessionNumber = data.sessions.findIndex((session) => session.identifier === token)
+
+  let sessionNumber = -1
+  for (let i = 0; i < data.sessions.length; i++) {
+    if (data.sessions[i].identifier === token) {
+      sessionNumber = i
+      return
+    }
+  }
+  if (sessionNumber = -1) {
+    return {statusCode: 401, error: "Token is invalid"}
+  }
+  clear()
+}
+
+function adminUserDetailsUpdate (token: string, email: string, nameFirst: string, nameLast: string) {
+  const data = getData()
+
+  function validNameFormat(name: string): boolean {
+    const validCharacters = /^[a-zA-Z\s\-']+$/;
+    return validCharacters.test(name);
+  }
+  if (!token) {
+    return {statusCode: 401, error: "Token is empty or invalid"}
+  }
+  const userUpdate = data.users.find((user)=> user.token === token)
+  const emailAlreadyUsed = data.users.some((user) => user.email === email && user.email !== userUpdate.email)
+  if (emailAlreadyUsed) {
+    return {statusCode: 400, error: "Email already used by another user"}
+  }
+  if (!validator.isEmail(email)) {
+    return {statusCode: 400, error: "Email is invalid"}
+  }
+  if (!validNameFormat(nameFirst) || !validNameFormat(nameLast)) {
+    return {statusCode: 400, error: "Name is not in correct format"}
+  }
+  if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return {statusCode: 400, error: "First Name is too short or too long"}
+  }
+  if (nameLast.length < 2 || nameLast.length > 20) {
+    return {statusCode: 400, error: "Last Name is too short or too long"}
+  }
+  if (!userUpdate) {
+    return {statusCode: 401, error: "token is empty or invalid"}
+  }
+  userUpdate.token = token
+  userUpdate.email = email;
+  userUpdate.nameFirst = nameFirst
+  userUpdate.nameLast = nameLast
+}
+export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminAuthLogout, adminUserDetailsUpdate };

@@ -5,6 +5,7 @@ import {
   clear,
   adminQuizCreateQuestion,
   adminQuizInfo,
+  adminQuizQuestionUpdate,
 } from "../testWrappers"
 import { Question, Quiz, QuizObject, ReturnedToken } from "../types"
 
@@ -54,8 +55,8 @@ describe("adminQuizQuestionUpdate", () => {
   test("Question Id does not refer to a valid question within this quiz", () => {
     const result = adminQuizQuestionUpdate(
       user,
-      quizId + 1,
-      questionId,
+      quizId,
+      questionId + 1,
       questInfo.question,
       questInfo.duration,
       questInfo.points,
@@ -162,34 +163,46 @@ describe("adminQuizQuestionUpdate", () => {
   )
 
   test.each([
-    { duration: 181, times: 1 },
-    { duration: 91, times: 2 },
-    { duration: 61, times: 3 },
-    { duration: 70, times: 4 },
-    { duration: 37, times: 5 },
+    // Since we already have one question which has a duration of 4s when running beforeEach, we need to take that into account when considering the parameters for this test.
+
+    // 4 + 10 * 9 + 100 = 194
+    { initialDuration: 10, updatedDurationOnLastQuestion: 100, numQuestions: 10 },
+    
+    // 4 + 85 * 1 + 92 = 181 
+    { initialDuration: 85, updatedDurationOnLastQuestion: 92, numQuestions: 2 },
+    
+    // 4 + 25 * 5 + 52 = 181
+    { initialDuration: 25, updatedDurationOnLastQuestion: 52, numQuestions: 6 },
+    
+    // 4 + 30 * 4 + 70 = 194
+    { initialDuration: 30, updatedDurationOnLastQuestion: 70, numQuestions: 5 },
+    
+    // 4 + 176 * 0 + 177 = 181
+    { initialDuration: 176, updatedDurationOnLastQuestion: 177, numQuestions: 1 },
   ])(
     "Error: The sum of the question durations in the quiz exceeds 3 minutes",
-    ({ duration, times }) => {
-      questInfo.duration = duration
+    ({ initialDuration, updatedDurationOnLastQuestion, numQuestions }) => {
+      questInfo.duration = initialDuration
 
-      for (let i = 0; i < times - 1; ++i) {
-        adminQuizQuestionUpdate(
+      let lastQuestionId;
+
+      for (let i = 0; i < numQuestions; ++i) {
+        lastQuestionId = (adminQuizCreateQuestion(
           user,
           quizId,
-          questionId,
           questInfo.question,
           questInfo.duration,
           questInfo.points,
           questInfo.answers,
-        )
+        ).content as { questionId: number}).questionId
       }
 
       const result = adminQuizQuestionUpdate(
         user,
         quizId,
-        questionId,
+        lastQuestionId,
         questInfo.question,
-        questInfo.duration,
+        updatedDurationOnLastQuestion,
         questInfo.points,
         questInfo.answers,
       )
@@ -481,15 +494,17 @@ describe("adminQuizQuestionUpdate", () => {
   test("Success: Successfully update a question, 2 questions in the quiz", () => {
     const currTimeStamp = getCurrentTimestamp()
 
-    const questionId2 = adminQuizCreateQuestion(
-      user,
-      quizId,
-      questInfo.question,
-      questInfo.duration,
-      questInfo.points,
-      questInfo.answers
-    );
-      
+    const questionId2 = (
+      adminQuizCreateQuestion(
+        user,
+        quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers,
+      ).content as { questionId: number }
+    ).questionId
+
     const result = adminQuizQuestionUpdate(
       user,
       quizId,
@@ -519,26 +534,26 @@ describe("adminQuizQuestionUpdate", () => {
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: "Description",
-        numQuestions: 1,
+        numQuestions: 2,
         duration: 174,
         questions: [
           {
             questionId: questionId,
-            question: 'What is that pokemon',
+            question: "What is that pokemon",
             duration: 4,
             points: 5,
             answers: [
               {
-                answer: 'Pikachu',
+                answer: "Pikachu",
                 correct: true,
                 colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
+                answerId: expect.any(Number),
               },
               {
-                answer: 'Thomas',
+                answer: "Thomas",
                 correct: false,
                 colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
+                answerId: expect.any(Number),
               },
             ],
           },
@@ -582,6 +597,3 @@ describe("adminQuizQuestionUpdate", () => {
     expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1)
   })
 })
-
-  
-

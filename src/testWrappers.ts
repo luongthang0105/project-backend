@@ -1,6 +1,6 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
-import { EmptyObject, ErrorObject, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from './types';
+import { Answer, EmptyObject, ErrorObject, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -180,3 +180,31 @@ export const clear = (): { content: EmptyObject; statusCode: number } => {
     statusCode: res.statusCode,
   };
 };
+
+export const adminQuizCreateQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[],
+): {content: { questionId: number } | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/question'
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers
+      }
+    }
+  })
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  }
+}

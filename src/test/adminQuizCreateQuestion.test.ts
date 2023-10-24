@@ -4,6 +4,7 @@ import {
   adminAuthLogin,
   adminQuizInfo,
   clear,
+  adminQuizCreateQuestion,
 } from "../testWrappers"
 import { Question, Quiz, ReturnedToken } from "../types"
 

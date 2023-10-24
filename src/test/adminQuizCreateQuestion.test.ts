@@ -18,7 +18,7 @@ describe("adminQuizCreateQuestion", () => {
     quiz = adminQuizCreate(user, "Quiz 1", "Description").content as Quiz
     questInfo = {
       question: "What is that pokemon",
-      duration: 60,
+      duration: 4,
       points: 5,
       answers: [
         {
@@ -178,7 +178,6 @@ describe("adminQuizCreateQuestion", () => {
         questInfo.answers,
       )
 
-      // Each question has a duration of 60s, so three of them added up to 180s = 3 mins
       expect(result).toStrictEqual({
         statusCode: 400,
         content: {
@@ -217,7 +216,6 @@ describe("adminQuizCreateQuestion", () => {
         questInfo.answers,
       )
 
-      // Each question has a duration of 60s, so three of them added up to 180s = 3 mins
       expect(result).toStrictEqual({
         statusCode: 400,
         content: {
@@ -257,7 +255,6 @@ describe("adminQuizCreateQuestion", () => {
         questInfo.answers,
       )
 
-      // Each question has a duration of 60s, so three of them added up to 180s = 3 mins
       expect(result).toStrictEqual({
         statusCode: 400,
         content: {
@@ -297,12 +294,87 @@ describe("adminQuizCreateQuestion", () => {
       questInfo.answers,
     )
 
-    // Each question has a duration of 60s, so three of them added up to 180s = 3 mins
     expect(result).toStrictEqual({
       statusCode: 400,
       content: {
         error: "There are no correct answers",
       },
     })
+  })
+
+  test.each([
+    {
+      invalidToken: {
+        token: "-1",
+      },
+    },
+    {
+      invalidToken: {
+        token: "",
+      },
+    },
+  ])(
+    "Error: Token is empty or invalid (does not refer to valid logged in user session)",
+    ({ invalidToken }) => {
+      let result = adminQuizCreateQuestion(
+        invalidToken,
+        quiz.quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers,
+      )
+
+      expect(result).toStrictEqual({
+        statusCode: 401,
+        content: {
+          error:
+            "Token is empty or invalid (does not refer to valid logged in user session)",
+        },
+      })
+    },
+  )
+
+  test("Error: Valid token is provided, but user is not an owner of this quiz", () => {
+    let user2 = adminAuthRegister(
+      "thangthongthai@gmai.com",
+      "2705uwuwuwu",
+      "Thomas",
+      "Hanh",
+    ).content as ReturnedToken
+    let result = adminQuizCreateQuestion(
+      user2,
+      quiz.quizId,
+      questInfo.question,
+      questInfo.duration,
+      questInfo.points,
+      questInfo.answers,
+    )
+
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      content: {
+        error: "Valid token is provided, but user is not an owner of this quiz",
+      },
+    })
+  })
+
+  test("Success: Successfully create new question", () => {
+    let result = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo.question,
+      questInfo.duration,
+      questInfo.points,
+      questInfo.answers,
+    )
+    expect(result).toStrictEqual(
+      {
+        statusCode: 200,
+        content: {
+          questionId: expect.any(Number)
+        }
+      }
+    )
   })
 })

@@ -244,39 +244,5 @@ function adminAuthLogout (token : string): ErrorObject {
   clear()
 }
 
-function adminUserDetailsUpdate (token: string, email: string, nameFirst: string, nameLast: string) {
-  const data = getData()
 
-  function validNameFormat(name: string): boolean {
-    const validCharacters = /^[a-zA-Z\s\-']+$/;
-    return validCharacters.test(name);
-  }
-  if (!token) {
-    return {statusCode: 401, error: "Token is empty or invalid"}
-  }
-  const userUpdate = data.users.find((user)=> user.token === token)
-  const emailAlreadyUsed = data.users.some((user) => user.email === email && user.email !== userUpdate.email)
-  if (emailAlreadyUsed) {
-    return {statusCode: 400, error: "Email already used by another user"}
-  }
-  if (!validator.isEmail(email)) {
-    return {statusCode: 400, error: "Email is invalid"}
-  }
-  if (!validNameFormat(nameFirst) || !validNameFormat(nameLast)) {
-    return {statusCode: 400, error: "Name is not in correct format"}
-  }
-  if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return {statusCode: 400, error: "First Name is too short or too long"}
-  }
-  if (nameLast.length < 2 || nameLast.length > 20) {
-    return {statusCode: 400, error: "Last Name is too short or too long"}
-  }
-  if (!userUpdate) {
-    return {statusCode: 401, error: "token is empty or invalid"}
-  }
-  userUpdate.token = token
-  userUpdate.email = email;
-  userUpdate.nameFirst = nameFirst
-  userUpdate.nameLast = nameLast
-}
 export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminAuthLogout, adminUserDetailsUpdate };

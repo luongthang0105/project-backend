@@ -30,7 +30,7 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
 
   const authUserId = validSession.authUserId;
   // Initialize an empty array to store the user's owned quizzes
-  let quizList = [];
+  
 
   // Filter quizzes owned by the authenticated user
   const ownedQuizzes = data.quizzes.filter(
@@ -38,7 +38,7 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   );
 
   // Map the filtered quizzes to a simplified format, containing quizId and name
-  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+  const quizList = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
     name: quiz.name,
   }));
@@ -259,6 +259,20 @@ const adminQuizRemove = (
       statusCode: 403, error: 'Valid token is provided, but user is not an owner of this quiz',
     };
   }
+
+  const removedQuiz: QuizObject = {
+    quizId: existingQuiz.quizId,
+    quizAuthorId: existingQuiz.quizAuthorId,
+    name: existingQuiz.name,
+    description: existingQuiz.description,
+    timeCreated: existingQuiz.timeCreated,
+    timeLastEdited: existingQuiz.timeLastEdited,
+    questions: existingQuiz.questions,
+    numQuestions: existingQuiz.numQuestions,
+    duration: existingQuiz.duration
+  }
+
+  currData.trash.push(removedQuiz)
 
   // Remove the quiz from the data
   for (let i = 0; i < currData.quizzes.length; i++) {

@@ -447,16 +447,14 @@ const adminQuizViewTrash = (
   const currData = getData();
 
   // Check if authUserId is valid by searching for it in the list of users
-  const validSession = currData.sessions.find(
-    (session) => session.identifier === token
-  );
+  const data = getData();
 
-  // If authUserId is not valid, return an error object
-  if (!validSession) {
+  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+
+  if (token === '' || !validSession) {
     return {
-      statusCode: 401,
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401
     };
   }
 

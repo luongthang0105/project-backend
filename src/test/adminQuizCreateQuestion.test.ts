@@ -275,9 +275,6 @@ describe("adminQuizCreateQuestion", () => {
       ],
     },
     {
-      answers: [{ answer: "Thomas", correct: false }],
-    },
-    {
       answers: [
         { answer: "Thomas", correct: false },
         { answer: "Han", correct: false },

@@ -1,5 +1,5 @@
-import {expect} from '@jest/globals';
-import type {MatcherFunction} from 'expect';
+import { expect } from '@jest/globals';
+import type { MatcherFunction } from 'expect';
 import { Colour } from '../types';
 
 const toHaveValidColour: MatcherFunction<[]> =
@@ -8,18 +8,18 @@ const toHaveValidColour: MatcherFunction<[]> =
   function (actual) {
     if (
       typeof actual !== 'string'
-	) {
+    ) {
       throw new Error('These must be of type string!');
     }
 
-	const colours: Colour[] = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+    const colours: Colour[] = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
     const pass = colours.includes(actual as Colour);
     if (pass) {
       return {
         message: () =>
           // `this` context will have correct typings
           `expected ${this.utils.printReceived(
-            actual,
+            actual
           )} not to be within ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange']`,
         pass: true,
       };
@@ -27,7 +27,7 @@ const toHaveValidColour: MatcherFunction<[]> =
       return {
         message: () =>
           `expected ${this.utils.printReceived(
-            actual,
+            actual
           )} to be within ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange']`,
         pass: false,
       };

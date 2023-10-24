@@ -16,7 +16,7 @@ import {
       const unavailableToken = {
         token: '0',
       };
-      const result = adminQuizViewTrash(unavailableToken, 1);
+      const result = adminQuizViewTrash(unavailableToken)
       expect(result).toStrictEqual({
         content: {
           error:
@@ -37,7 +37,7 @@ import {
         token: '-1',
       };
       const quiz = adminQuizCreate(user, 'Quiz01', 'myQuiz').content as Quiz;
-      const result = adminQuizViewTrash(invalidToken, quiz.quizId);
+      const result = adminQuizViewTrash(invalidToken);
       expect(result).toStrictEqual({
         content: {
           error:
@@ -47,39 +47,6 @@ import {
       });
     });
   
-  
-    test('Quiz ID does not refer to a quiz that this user owns', () => {
-      const user01 = adminAuthRegister(
-        'han@gmai.com',
-        '2705uwuwuwuwuwuw',
-        'Han',
-        'Hanh'
-      ).content as ReturnedToken;
-      const user02 = adminAuthRegister(
-        'hanh@gmai.com',
-        '2705uuwuwuwuwuwuw',
-        'Hanh',
-        'Han'
-      ).content as ReturnedToken;
-      const quiz01 = adminQuizCreate(
-        user01,
-        'Hihihihihih',
-        'This is my quiz'
-      ).content as Quiz;
-      const quiz02 = adminQuizCreate(user02, 'Hiiii', 'This is my quiz').content as Quiz;
-      expect(adminQuizViewTrash(user01, quiz02.quizId)).toStrictEqual({
-        content: {
-          error: 'Valid token is provided, but user is not an owner of this quiz',
-        },
-        statusCode: 403,
-      });
-      expect(adminQuizViewTrash(user02, quiz01.quizId)).toStrictEqual({
-        content: {
-          error: 'Valid token is provided, but user is not an owner of this quiz',
-        },
-        statusCode: 403,
-      });
-    });
   
     test('Successful case: delete 1 quiz from a user who has 2 quizzes', () => {
       const user = adminAuthRegister(
@@ -179,6 +146,24 @@ import {
                     name: quiz02.name
                 }
               ]
+           },
+          statusCode: 200,
+        });
+      });
+      test('Successful case: empty trash ', () => {
+        const user1 = adminAuthRegister(
+          'han@gmai.com',
+          '2705uwuwuwuwuwuw',
+          'Han',
+          'Hanh'
+        ).content as ReturnedToken;
+    
+        const quiz01 = adminQuizCreate(user1, 'Hihihihihih', 'This is my quiz').content as Quiz
+    
+        const result = adminQuizViewTrash(user1);
+        expect(result).toStrictEqual({
+          content: { 
+              quizzes: []
            },
           statusCode: 200,
         });

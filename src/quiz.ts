@@ -30,7 +30,7 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
 
   const authUserId = validSession.authUserId;
   // Initialize an empty array to store the user's owned quizzes
-  
+  let quizList: Quiz[]
 
   // Filter quizzes owned by the authenticated user
   const ownedQuizzes = data.quizzes.filter(
@@ -38,13 +38,14 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   );
 
   // Map the filtered quizzes to a simplified format, containing quizId and name
-  const quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
     name: quiz.name,
   }));
 
   // Return an object containing the user's quizzes
   return { quizzes: quizList };
+
 };
 
 /**
@@ -439,6 +440,40 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+const adminQuizViewTrash = (
+    token: string
+  ): ErrorObject | QuizList => {
+      // Retrieve the current data
+  const currData = getData();
+
+  // Check if authUserId is valid by searching for it in the list of users
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  // If authUserId is not valid, return an error object
+  if (!validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  let quizList: Quiz[];
+  // Filter quizzes owned by the authenticated user
+  const ownedQuizzes = currData.trash.filter(
+    (quiz: QuizObject) => quiz.quizAuthorId === validSession.authUserId
+  );
+
+  // Map the filtered quizzes to a simplified format, containing quizId and name
+  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+    quizId: quiz.quizId,
+    name: quiz.name
+  }));
+  return { quizzes: quizList}
+}
+
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -446,4 +481,5 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
+  adminQuizViewTrash
 };

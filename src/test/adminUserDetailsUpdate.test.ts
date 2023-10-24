@@ -10,12 +10,18 @@ describe('adminUserDetailsUpdate', () => {
   let user: ReturnedToken;
   beforeEach(() => {
     clear();
-    user = adminAuthRegister(
+    user = adminAuthRegister (
       '23748',
       'javascript@gmail.com',
       'Java',
       'Script'
     ).content as ReturnedToken;
+    user2 = adminAuthRegister (
+      '25181',
+      'javascript1@yahoo.com',
+      'Jay',
+      'Ess'
+    ).content as ReturnedToken
   })
   test ('should successfully update user details', () => {
     const email = 'newjavascript@gmail.com'
@@ -26,25 +32,25 @@ describe('adminUserDetailsUpdate', () => {
     expect(result).toStrictEqual({})
   })
   test ('The email is already used by another user', () => {
-    const email = 'javascript@gmail.com'
+    const email2 = 'javascript1@yahoo.com'
     const nameFirst = 'NewJava'
     const nameLast = 'NewScript'
-    const token = user.token;
-    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-
-    expect(error.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    const token = user.token
+    const result = adminUserDetailsUpdate(token, email2, nameFirst, nameLast)
+    expect(result.statusCode).toBe(400);
+    expect(result.content).toEqual("error")
   })
   test ('The email is invalid', () => {
     const email = 'javascript@'
     const nameFirst = 'NewJava'
     const nameLast = 'NewScript'
     const token = user.token
-    if (!validator.isEmail(email)) {
-      const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-      expect(result.statusCode).toBe(400)
-      expect(error.content).toEqual("error")
-    }
+    const isEmailValid = validator.isEmail(email);
+    expect(isEmailValid).toBe(false);
+    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+    expect(result.statusCode).toBe(400)
+    expect(result.content).toEqual("error")
+
   })
   test ('First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophe', () => {
     const email = 'newjavascript@gmail.com'
@@ -53,23 +59,23 @@ describe('adminUserDetailsUpdate', () => {
     const token = user.token
     const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
     
-    expect(error.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.statusCode).toBe(400);
+    expect(result.content).toEqual("error")
   })
-  test ('Last name is less than 2 characters or more than 20 characters', () => {
+  test ('First name is less than 2 characters or more than 20 characters', () => {
     const email = 'newjavascript@gmail.com'
-    const nameFirstTooShort = 'Ja' 
+    const nameFirstTooShort = 'J' 
     const nameFirstTooLong = 'Javahefuehfehfaklwnfsjehf'
     const nameLast = 'Script'
     const token = user.token
 
     let result = adminUserDetailsUpdate(token, email, nameFirstTooShort, nameLast);
     expect(result.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.content).toEqual("error")
 
     let result2 = adminUserDetailsUpdate(token, email, nameFirstLong, nameLast);
-    expect(error.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.statusCode).toBe(400);
+    expect(result.content).toEqual("error")
   })
   test ('Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophe', () => {
     const email = 'newjavascript@gmail.com'
@@ -78,23 +84,23 @@ describe('adminUserDetailsUpdate', () => {
     const token = user.token
     const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
     
-    expect(error.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.statusCode).toBe(400);
+    expect(result.content).toEqual("error")
   })
   test ('Last name is less than 2 characters or more than 20 characters', () => {
     const email = 'newjavascript@gmail.com'
     const nameFirst = 'Java'
-    const nameLastTooShort = 'Sc'
+    const nameLastTooShort = 'S'
     const nameLastTooLong = 'Scekfhjoeuwheowthweoufthqd'
     const token = user.token
 
     let result = adminUserDetailsUpdate(token, email, nameLastTooShort, nameLast);
     expect(result.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.content).toEqual("error")
 
     let result2 = adminUserDetailsUpdate(token, email, nameLastTooLong, nameLast);
-    expect(error.statusCode).toBe(400);
-    expect(error.content).toEqual("error")
+    expect(result.statusCode).toBe(400);
+    expect(result.content).toEqual("error")
   })
   test ('token is invalid or empty', () => {
     const invalidToken = ''

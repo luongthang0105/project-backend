@@ -140,13 +140,13 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 
   const result = adminQuizDescriptionUpdate(token, quizId, description);
 
-    if ('error' in result) {
-      res.status(result.statusCode as number).json({ error: result.error });
-      return;
-    }
-
-    res.json(result);
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
   }
+
+  res.json(result);
+}
 );
 
 // adminQuizVewTrash
@@ -172,10 +172,10 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
 
-    if ('error' in result) {
-      res.status(result.statusCode as number).json({ error: result.error });
-      return;
-    }
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
 
   res.json(result);
 });
@@ -241,7 +241,7 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 // adminQuizDeleteQuestion
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid)
+  const questionId = parseInt(req.params.questionid);
 
   const token = req.query.token as string;
 
@@ -258,7 +258,6 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
 
   res.json(result);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

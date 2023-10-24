@@ -227,7 +227,7 @@ export const adminQuizCreateQuestion = (
 export const adminQuizDeleteQuestion = (
   tokenObject: ReturnedToken,
   quizId: number,
-  questionId: number,
+  questionId: number
 ): {content: EmptyObject | ErrorObject, statusCode: number} => {
   const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
 

@@ -1,5 +1,5 @@
 import { getData, setData } from "./dataStore"
-import { alphanumericAndSpaceCheck, getCurrentTimestamp } from "./quizHelper"
+import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour } from "./quizHelper"
 import {
   Answer,
   EmptyObject,
@@ -556,16 +556,33 @@ const adminQuizCreateQuestion = (
     }
   }
 
+  let newAnswerList: Answer[] = answers.map( (currAnswer) => {
+    let newAnswerId = data.nextAnswerId
+    data.nextAnswerId += 1
+    return  {
+      answerId: newAnswerId,
+      answer: currAnswer.answer,
+      colour: getQuestionColour(),
+      correct: currAnswer.correct
+    }
+  })
   const newQuestion: Question = {
     questionId: data.nextQuestionId,
     question: question,
     duration: duration,
     points: points,
-    answers: answers
+    answers: newAnswerList
   }
 
   data.nextQuestionId += 1
+
   validQuiz.questions.push(newQuestion)
+
+  validQuiz.duration += duration
+
+  validQuiz.numQuestions += 1
+
+  validQuiz.timeLastEdited = getCurrentTimestamp()
 
   setData(data)
 

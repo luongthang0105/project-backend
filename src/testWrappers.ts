@@ -187,9 +187,9 @@ export const adminQuizCreateQuestion = (
   question: string,
   duration: number,
   points: number,
-  answers: Answer[],
+  answers: Answer[]
 ): {content: { questionId: number } | ErrorObject, statusCode: number} => {
-  const route = '/v1/admin/quiz/' + quizId + '/question'
+  const route = '/v1/admin/quiz/' + quizId + '/question';
 
   const res = request('POST', SERVER_URL + route, {
     json: {
@@ -201,10 +201,10 @@ export const adminQuizCreateQuestion = (
         answers: answers
       }
     }
-  })
+  });
 
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode
-  }
-}
+  };
+};

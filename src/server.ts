@@ -202,10 +202,10 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
 app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid)
 
-  const { tokenObject, questionBody } = req.body
+  const { token, questionBody } = req.body
 
   const result = adminQuizCreateQuestion(
-    tokenObject.token,
+    token,
     quizId,
     questionBody.question,
     questionBody.duration,

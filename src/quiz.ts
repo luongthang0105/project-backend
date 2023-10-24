@@ -515,7 +515,8 @@ const adminQuizCreateQuestion = (
   }
 
   // The length of any answer is shorter than 1 character long, or longer than 30 characters long
-  if (answers.length < 1 || answers.length > 30) {
+  let invalidLengthAnswers = answers.filter( ({answer}) => answer.length < 1 || answer.length > 30)
+  if (invalidLengthAnswers.length !== 0) {
     return {
       statusCode: 400,
       error:

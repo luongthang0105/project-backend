@@ -34,18 +34,9 @@ describe("adminUserPassword", () => {
     "other"
   ).content
 
-  let validBody = {
-    token: user,
-    userEmail: user2.email
-  }
-
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
-    let body = {
-      token: invalidToken,
-      userEmail: user2.email
-    }
     expect(
-      adminQuizTransfer(quiz, body)
+      adminQuizTransfer(quiz, invalidToken, user2.email)
     ).toStrictEqual({
     content: {
       error:
@@ -62,12 +53,7 @@ describe("adminUserPassword", () => {
       "Ran",
       "Huy"
     ).content;
-    let body2 = {
-      token: user3,
-      userEmail: user2.email
-    }
-
-    expect(adminQuizTransfer(quiz, body2)).toStrictEqual({
+    expect(adminQuizTransfer(quiz, user3, user2.email)).toStrictEqual({
       content: {
         error: "Valid token is provided, but user is not an owner of this quiz",
       },
@@ -76,12 +62,8 @@ describe("adminUserPassword", () => {
   });
 
   test("userEmail is not a real user", () => {
-  let body3 = {
-    token: user1,
-    userEmail: "no@gmail.com"
-  }
     expect(
-      adminQuizTransfer(quiz, body3)
+      adminQuizTransfer(quiz, user, userEmail)
     ).toStrictEqual({
       content: {
         error: "userEmail is not a real user"
@@ -91,13 +73,8 @@ describe("adminUserPassword", () => {
   })
 
   test("userEmail is the current logged in user", () => {
-    let body4 = {
-      token: user,
-      userEmail: user.email
-    }
-
     expect(
-      adminQuizTransfer(quiz, body4)
+      adminQuizTransfer(quiz, user, user.email)
     ).toStrictEqual({
       content: {
         error: "userEmail is the current logged in user"
@@ -113,7 +90,7 @@ describe("adminUserPassword", () => {
       "description"
     ).content
 
-    expect(adminQuizTransfer(quiz2, validBody)).toStrictEqual({
+    expect(adminQuizTransfer(quiz2, user, user2.email)).toStrictEqual({
       content: {
         error: "Quiz ID refers to a quiz that has a name that is already used by the target user"
       },
@@ -123,7 +100,7 @@ describe("adminUserPassword", () => {
 
   // Not done
   test.skip("All sessions for this quiz must be in END state", () => {
-    expect(adminQuizTransfer(quiz, validBody)).toStrictEqual({
+    expect(adminQuizTransfer(quiz, user, user2.email)).toStrictEqual({
       content: {
         error: "All sessions for this quiz must be in END state"
       },
@@ -132,7 +109,7 @@ describe("adminUserPassword", () => {
   })
 
   test("Success", () => {
-    expect(adminQuizTransfer(quiz, validBody)).toStrictEqual({
+    expect(adminQuizTransfer(quiz, user, user2.email)).toStrictEqual({
       content: {},
       statusCode: 200
     })

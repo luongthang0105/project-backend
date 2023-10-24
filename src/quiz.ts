@@ -788,5 +788,6 @@ export {
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizCreateQuestion,
-  adminQuizViewTrash
+  adminQuizViewTrash,
+  adminQuizQuestionUpdate
 };

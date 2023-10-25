@@ -226,47 +226,59 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 function adminAuthLogout (token : string): ErrorObject {
   const data = getData()
   const token
+  // if token does not exist, return 401 error
   if (!token) {
     return {statusCode: 401, error: "Token is empty"}
   }
+  // find the relevant session index to remove in order to log out
   const sessionIndex = data.sessions.findIndex((session) => session.identifier === token)
   data.sessions.splice(sessionIndex, 1);
-  }
+  // if session number (token)is invalid 
   if (sessionNumber = -1) {
     return {statusCode: 401, error: "Token is invalid"}
+    // persistence
+    setData()
   }
 
 }
 function adminUserDetailsUpdate (token: string, email: string, nameFirst: string, nameLast: string) {
   const data = getData()
-
+  // creates a function for valid name
   function validNameFormat(name: string): boolean {
     const validCharacters = /^[a-zA-Z\s\-']+$/;
     return validCharacters.test(name);
   }
+  // if there is no token, print error
   if (!token) {
     return {statusCode: 401, error: "Token is empty or invalid"}
   }
+  // find the user to update and let the token for the user, be updated 
   const userUpdate = data.users.find((user)=> user.token === token)
+  // checks if the email is already used by another user and is not the email of the current user
   const emailAlreadyUsed = data.users.some((user) => user.email === email && user.email !== userUpdate.email)
   if (emailAlreadyUsed) {
     return {statusCode: 400, error: "Email already used by another user"}
   }
+  // uses validator to check if the email is invalid
   if (!validator.isEmail(email)) {
     return {statusCode: 400, error: "Email is invalid"}
   }
+  // checks validity of first and last name 
   if (!validNameFormat(nameFirst) || !validNameFormat(nameLast)) {
     return {statusCode: 400, error: "Name is not in correct format"}
   }
+  // checks the length of first and last name and if it is less than 2 or more than 20
   if (nameFirst.length < 2 || nameFirst.length > 20) {
     return {statusCode: 400, error: "First Name is too short or too long"}
   }
   if (nameLast.length < 2 || nameLast.length > 20) {
     return {statusCode: 400, error: "Last Name is too short or too long"}
   }
+  // if the user does not update, print error 
   if (!userUpdate) {
     return {statusCode: 401, error: "token is empty or invalid"}
   }
+  // update user
   userUpdate.token = token
   userUpdate.email = email;
   userUpdate.nameFirst = nameFirst

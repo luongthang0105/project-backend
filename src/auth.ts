@@ -229,19 +229,13 @@ function adminAuthLogout (token : string): ErrorObject {
   if (!token) {
     return {statusCode: 401, error: "Token is empty"}
   }
-  const sessionNumber = data.sessions.findIndex((session) => session.identifier === token)
-
-  let sessionNumber = -1
-  for (let i = 0; i < data.sessions.length; i++) {
-    if (data.sessions[i].identifier === token) {
-      sessionNumber = i
-      return
-    }
+  const sessionIndex = data.sessions.findIndex((session) => session.identifier === token)
+  data.sessions.splice(sessionIndex, 1);
   }
   if (sessionNumber = -1) {
     return {statusCode: 401, error: "Token is invalid"}
   }
-  clear()
+
 }
 function adminUserDetailsUpdate (token: string, email: string, nameFirst: string, nameLast: string) {
   const data = getData()
@@ -277,6 +271,8 @@ function adminUserDetailsUpdate (token: string, email: string, nameFirst: string
   userUpdate.email = email;
   userUpdate.nameFirst = nameFirst
   userUpdate.nameLast = nameLast
+
+  setData()
 }
 
 export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminAuthLogout, adminUserDetailsUpdate };

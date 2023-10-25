@@ -258,19 +258,7 @@ const adminQuizRemove = (
     };
   }
 
-  const removedQuiz: QuizObject = {
-    quizId: existingQuiz.quizId,
-    quizAuthorId: existingQuiz.quizAuthorId,
-    name: existingQuiz.name,
-    description: existingQuiz.description,
-    timeCreated: existingQuiz.timeCreated,
-    timeLastEdited: existingQuiz.timeLastEdited,
-    questions: existingQuiz.questions,
-    numQuestions: existingQuiz.numQuestions,
-    duration: existingQuiz.duration
-  };
-
-  currData.trash.push(removedQuiz);
+  currData.trash.push(existingQuiz);
 
   // Remove the quiz from the data
   for (let i = 0; i < currData.quizzes.length; i++) {

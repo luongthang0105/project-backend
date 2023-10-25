@@ -179,7 +179,6 @@ export const clear = (): { content: EmptyObject; statusCode: number } => {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
   };
-
 };
 
 export const adminQuizViewTrash = (tokenObject: {

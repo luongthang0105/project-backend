@@ -29,8 +29,6 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   }
 
   const authUserId = validSession.authUserId;
-  // Initialize an empty array to store the user's owned quizzes
-  let quizList: Quiz[]
 
   // Filter quizzes owned by the authenticated user
   const ownedQuizzes = data.quizzes.filter(
@@ -38,14 +36,13 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   );
 
   // Map the filtered quizzes to a simplified format, containing quizId and name
-  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+  const quizList: Quiz[] = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
     name: quiz.name,
   }));
 
   // Return an object containing the user's quizzes
   return { quizzes: quizList };
-
 };
 
 /**
@@ -271,9 +268,9 @@ const adminQuizRemove = (
     questions: existingQuiz.questions,
     numQuestions: existingQuiz.numQuestions,
     duration: existingQuiz.duration
-  }
+  };
 
-  currData.trash.push(removedQuiz)
+  currData.trash.push(removedQuiz);
 
   // Remove the quiz from the data
   for (let i = 0; i < currData.quizzes.length; i++) {
@@ -441,9 +438,9 @@ const adminQuizNameUpdate = (
 };
 
 const adminQuizViewTrash = (
-    token: string
-  ): ErrorObject | QuizList => {
-      // Retrieve the current data
+  token: string
+): ErrorObject | QuizList => {
+  // Retrieve the current data
   const currData = getData();
 
   // Check if authUserId is valid by searching for it in the list of users
@@ -458,19 +455,18 @@ const adminQuizViewTrash = (
     };
   }
 
-  let quizList: Quiz[];
   // Filter quizzes owned by the authenticated user
   const ownedQuizzes = currData.trash.filter(
     (quiz: QuizObject) => quiz.quizAuthorId === validSession.authUserId
   );
 
   // Map the filtered quizzes to a simplified format, containing quizId and name
-  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+  const quizList: Quiz[] = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
     name: quiz.name
   }));
-  return { quizzes: quizList}
-}
+  return { quizzes: quizList };
+};
 
 export {
   adminQuizCreate,

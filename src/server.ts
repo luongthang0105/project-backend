@@ -64,7 +64,7 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
-  
+
   if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
@@ -150,8 +150,8 @@ app.put(
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
-  
-  console.log(result)
+
+  console.log(result);
   if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
@@ -214,8 +214,6 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
-
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

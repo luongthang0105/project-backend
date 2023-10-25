@@ -59,14 +59,14 @@ type Colour =
   | 'orange'
 
 type Answer = {
-  answerId: number,
+  answerId?: number,
   answer: string,
-  colour: Colour,
+  colour?: Colour,
   correct: boolean
 }
 
 type Question = {
-  questionId: number,
+  questionId?: number,
   question: string,
   duration: number,
   points: number,
@@ -114,7 +114,9 @@ type DataStore = {
   sessions: Token[],
   nextTokenId: number,
   nextUserId: number,
-  nextQuizId: number
+  nextQuizId: number,
+  nextQuestionId: number,
+  nextAnswerId: number
 }
 
 export {

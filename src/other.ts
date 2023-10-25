@@ -10,6 +10,8 @@ function clear() {
     nextTokenId: 0,
     nextUserId: 0,
     nextQuizId: 0,
+    nextQuestionId: 0,
+    nextAnswerId: 0
   });
   return {};
 }

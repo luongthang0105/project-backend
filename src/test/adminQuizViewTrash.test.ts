@@ -150,7 +150,7 @@ import {
           statusCode: 200,
         });
       });
-      test('Successful case: empty trash ', () => {
+      test.only('Successful case: empty trash ', () => {
         const user1 = adminAuthRegister(
           'han@gmai.com',
           '2705uwuwuwuwuwuw',
@@ -158,7 +158,7 @@ import {
           'Hanh'
         ).content as ReturnedToken;
     
-        const quiz01 = adminQuizCreate(user1, 'Hihihihihih', 'This is my quiz').content as Quiz
+        adminQuizCreate(user1, 'Hihihihihih', 'This is my quiz').content as Quiz
     
         const result = adminQuizViewTrash(user1);
         expect(result).toStrictEqual({

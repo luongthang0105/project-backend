@@ -59,7 +59,6 @@ describe('adminQuizViewTrash', () => {
 
     const quiz02 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
 
-
     adminQuizRemove(user, quiz02.quizId);
     const result = adminQuizViewTrash(user);
     expect(result).toStrictEqual({

@@ -29,8 +29,6 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   }
 
   const authUserId = validSession.authUserId;
-  // Initialize an empty array to store the user's owned quizzes
-  let quizList = [];
 
   // Filter quizzes owned by the authenticated user
   const ownedQuizzes = data.quizzes.filter(
@@ -38,7 +36,7 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
   );
 
   // Map the filtered quizzes to a simplified format, containing quizId and name
-  quizList = ownedQuizzes.map((quiz: QuizObject) => ({
+  const quizList: Quiz[] = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
     name: quiz.name,
   }));
@@ -260,6 +258,8 @@ const adminQuizRemove = (
     };
   }
 
+  currData.trash.push(existingQuiz);
+
   // Remove the quiz from the data
   for (let i = 0; i < currData.quizzes.length; i++) {
     if (currData.quizzes[i].quizId === quizId) {
@@ -425,6 +425,37 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+const adminQuizViewTrash = (
+  token: string
+): ErrorObject | QuizList => {
+  // Retrieve the current data
+  const currData = getData();
+
+  // Check if authUserId is valid by searching for it in the list of users
+  const data = getData();
+
+  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+
+  if (token === '' || !validSession) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401
+    };
+  }
+
+  // Filter quizzes owned by the authenticated user
+  const ownedQuizzes = currData.trash.filter(
+    (quiz: QuizObject) => quiz.quizAuthorId === validSession.authUserId
+  );
+
+  // Map the filtered quizzes to a simplified format, containing quizId and name
+  const quizList: Quiz[] = ownedQuizzes.map((quiz: QuizObject) => ({
+    quizId: quiz.quizId,
+    name: quiz.name
+  }));
+  return { quizzes: quizList };
+};
+
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -432,4 +463,5 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
+  adminQuizViewTrash
 };

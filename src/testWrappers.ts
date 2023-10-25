@@ -180,3 +180,18 @@ export const clear = (): { content: EmptyObject; statusCode: number } => {
     statusCode: res.statusCode,
   };
 };
+
+export const adminQuizViewTrash = (tokenObject: {
+  token: string
+}): { content: QuizList | ErrorObject; statusCode: number } => {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
+    qs: {
+      token: tokenObject.token
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

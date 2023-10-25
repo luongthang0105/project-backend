@@ -222,6 +222,14 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
+/**
+ * Given details relating to a password change, update the password of a logged in user.
+ * 
+ * @param {string} token - Token of the logged in user
+ * @param {string} oldPassword - Current password of user
+ * @param {string} newPassword - New password that the password will changed to
+ * @returns 
+ */
 const adminUserPassword = (
   token: string,
   oldPassword: string,

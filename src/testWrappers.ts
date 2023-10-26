@@ -94,7 +94,7 @@ export const adminQuizRestore = (
   tokenObject: ReturnedToken,
   quizId: number,
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz' + quizId + '/restore', {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
     json: {
       token: tokenObject.token
     },

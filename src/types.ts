@@ -86,8 +86,9 @@ type UserObject = {
   nameLast: string,
   email: string,
   password: string
+  usedPasswords: string[]
   numSuccessfulLogins: number,
-  numFailedPasswordsSinceLastLogin: number
+  numFailedPasswordsSinceLastLogin: number,
 }
 
 type QuizObject = {

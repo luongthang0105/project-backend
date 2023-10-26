@@ -1,5 +1,5 @@
-import { Colour } from "./types";
-import { Question } from "./types";
+import { Colour } from './types';
+import { Question } from './types';
 // Helper function to check if a string contains alphanumeric characters or spaces
 const alphanumericAndSpaceCheck = (str: string): boolean =>
   /^[A-Za-z\s\d]*$/.test(str);
@@ -10,13 +10,13 @@ const getCurrentTimestamp = (): number => Math.floor(Date.now() / 1000);
 // Helper function to randomly get a colour for a question
 const getQuestionColour = (): Colour => {
   const colours: Colour[] = [
-    "red",
-    "blue",
-    "green",
-    "yellow",
-    "purple",
-    "brown",
-    "orange",
+    'red',
+    'blue',
+    'green',
+    'yellow',
+    'purple',
+    'brown',
+    'orange',
   ];
   const randomIndex = Math.floor(Math.random() * (colours.length - 1));
   return colours[randomIndex];

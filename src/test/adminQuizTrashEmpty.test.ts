@@ -13,6 +13,7 @@ beforeEach(() => {
 });
 
 describe('adminQuizTrashEmpty', () => {
+  
   test('Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty', () => {
     const unavailableToken = {
       token: '0',
@@ -108,7 +109,6 @@ describe('adminQuizTrashEmpty', () => {
       statusCode: 403,
     });
   });
-
   test('Successful case: delete 1 quiz', () => {
     const user = adminAuthRegister(
       'han@gmai.com',
@@ -150,7 +150,7 @@ describe('adminQuizTrashEmpty', () => {
 
     adminQuizRemove(user, quiz01.quizId);
     adminQuizRemove(user, quiz02.quizId);
-    const result = adminQuizTrashEmpty(user, `[${quiz01.quizId, quiz02.quizId}]`);
+    const result = adminQuizTrashEmpty(user, `[${quiz01.quizId}, ${quiz02.quizId}]`);
     expect(result).toStrictEqual({
       content: {},
       statusCode: 200,

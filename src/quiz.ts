@@ -977,25 +977,25 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
 
 const adminQuizTransfer = (
   quizId: number,
-  Token: string,
+  token: string,
   userEmail: string
 ): EmptyObject | ErrorObject => {
   const data = getData()
 
   // Find the logged in user
   const validSession = data.sessions.find(
-    (currSession) => currSession.identifier === Token
+    (currSession) => currSession.identifier === token
   );
 
-  const authUserId = validSession.authUserId
-
-  if (Token === "" || !validSession) {
+  
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        "Token is empty or invalid (does not refer to valid logged in user session)",
+      "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
+  const authUserId = validSession.authUserId
 
   // Find the quizObject of the quizId
   const validQuiz = data.quizzes.find(
@@ -1010,12 +1010,12 @@ const adminQuizTransfer = (
     }
   }
 
-  // Finds the targeted email in the data store
-  const userEmailExist = data.users.find(
+    // Finds the user object of the targeted email
+  const targetUser = data.users.find(
     (targetEmail) => targetEmail.email === userEmail
   )
 
-  if (!userEmailExist) {
+  if (!targetUser) {
     return {
       statusCode: 400,
       error:
@@ -1023,12 +1023,13 @@ const adminQuizTransfer = (
     }
   }
 
-  // Finds the userId of the token
-  const userToken = data.users.find(
+  // Finds the user that owns this token
+  const currentUser = data.users.find(
     (curr) => curr.authUserId === authUserId
   )
 
-  if (userToken.email === userEmail) {
+  // If this user has the same email as the targeted email, then throw error
+  if (currentUser.email === userEmail) {
     return {
       statusCode: 400,
       error:
@@ -1036,16 +1037,15 @@ const adminQuizTransfer = (
     }
   }
 
-  // Finds the userId of the targeted email
-  const emailUserId = data.users.find(
-    (curr) => curr.email === userEmail
+  // Filters an array of quizzes that this target user owns
+  const quizzesFromTargetedUsers = data.quizzes.filter(
+    (curr) => curr.quizAuthorId === targetUser.authUserId
   )
+  
+  // Finds a quiz owned by the target user that has the same name of the transferred quiz
+  const quizSameName = quizzesFromTargetedUsers.find( (quiz) => quiz.name === validQuiz.name)
 
-  const quizOwnedByUser = data.quizzes.find(
-    (curr) => curr.quizAuthorId === emailUserId.authUserId
-  )
-
-  if (validQuiz.name === quizOwnedByUser.name) {
+  if (quizSameName) {
     return {
       statusCode: 400,
       error:
@@ -1053,12 +1053,14 @@ const adminQuizTransfer = (
     }
   }
 
-  // Check if all sessions had ended
+  // Check if all sessions had ended (not yet to be implemented until It3)
 
 
-  validQuiz.quizAuthorId = emailUserId.authUserId
+  validQuiz.quizAuthorId = targetUser.authUserId
+
   setData(data)
-  return
+
+  return {}
 }
 
 export {

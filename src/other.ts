@@ -1,4 +1,4 @@
-import { setData } from "./dataStore"  
+import { setData } from './dataStore';
 
 // This function resets the state of the application back to the start.
 function clear() {
@@ -10,9 +10,10 @@ function clear() {
     nextTokenId: 0,
     nextUserId: 0,
     nextQuizId: 0,
-  })
-  return {}
+    nextQuestionId: 0,
+    nextAnswerId: 0
+  });
+  return {};
 }
 
-export { clear }
-
+export { clear };

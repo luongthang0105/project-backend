@@ -115,9 +115,7 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
 //adminQuizTrashEmpty
 app.delete("/v1/admin/quiz/trash/empty", (req: Request, res: Response) => {
   let quizIds: number[] = JSON.parse(req.query.quizIds as string)
-  console.log("new quizIds is")
 
-  console.log(quizIds)
   const token = req.query.token as string;
   const result = adminQuizTrashEmpty(token, quizIds);
   if ("error" in result) {
@@ -188,7 +186,6 @@ app.get("/v1/admin/quiz/trash", (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
 
-  console.log(result);
   if ("error" in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
@@ -377,7 +374,6 @@ app.put("/v1/admin/user/details", (req: Request, res: Response) => {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
-  console.log(result);
   res.json(result);
 });
 
@@ -389,7 +385,6 @@ app.put("/v1/admin/user/details", (req: Request, res: Response) => {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
-  console.log(result);
   res.json(result);
 });
 

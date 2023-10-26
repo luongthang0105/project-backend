@@ -22,6 +22,7 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
+  adminQuizDuplicateQuestion
 } from "./quiz";
 // Set up web app
 const app = express();
@@ -267,6 +268,29 @@ app.put(
   }
 );
 
+app.post(
+  "/v1/admin/quiz/:quizid/question/:questionid/duplicate",
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token } = req.body;
+
+    const result = adminQuizDuplicateQuestion(
+      token,
+      quizId,
+      questionId,
+    );
+
+    if ("error" in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
@@ -299,3 +323,5 @@ const server = app.listen(PORT, HOST, () => {
 process.on("SIGINT", () => {
   server.close(() => console.log("Shutting down server gracefully."));
 });
+
+

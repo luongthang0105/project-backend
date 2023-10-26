@@ -40,11 +40,11 @@ export const adminAuthLogin = (
 };
 
 export const adminUserDetails = (tokenObject: {
-  token: string
+  token: string;
 }): { content: UserDetails | ErrorObject; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
     qs: {
-      token: tokenObject.token
+      token: tokenObject.token,
     },
   });
 
@@ -55,7 +55,7 @@ export const adminUserDetails = (tokenObject: {
 };
 
 export const adminQuizList = (tokenObject: {
-  token: string
+  token: string;
 }): { content: QuizList | ErrorObject; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
     qs: {
@@ -71,7 +71,7 @@ export const adminQuizList = (tokenObject: {
 
 export const adminQuizCreate = (
   tokenObject: {
-    token: string
+    token: string;
   },
   name: string,
   description: string
@@ -80,7 +80,7 @@ export const adminQuizCreate = (
     json: {
       token: tokenObject.token,
       name: name,
-      description: description
+      description: description,
     },
   });
 
@@ -128,8 +128,7 @@ export const adminQuizInfo = (
   tokenObject: ReturnedToken,
   quizId: number
 ): {
-  content:
-    QuizObject | ErrorObject;
+  content: QuizObject | ErrorObject;
   statusCode: number;
 } => {
   const route = '/v1/admin/quiz/' + quizId;
@@ -197,6 +196,26 @@ export const clear = (): { content: EmptyObject; statusCode: number } => {
   };
 };
 
+export const adminQuizMoveQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  newPosition: number
+): { content: EmptyObject | ErrorObject; statusCode: number } => {
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      newPosition: newPosition,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const adminQuizViewTrash = (tokenObject: {
   token: string
 }): { content: QuizList | ErrorObject; statusCode: number } => {
@@ -231,6 +250,54 @@ export const adminQuizCreateQuestion = (
         points: points,
         answers: answers
       }
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
+export const adminQuizQuestionUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[]
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers
+      }
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
+export const adminQuizDeleteQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
     }
   });
 

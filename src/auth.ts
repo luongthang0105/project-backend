@@ -197,7 +197,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 
   // Find user information based on the provided authUserId
   const session = data.sessions.find((currSession) => currSession.identifier === token);
-  console.log(token);
+
   // If token is empty or no session with given token is found
   if (token === '' || !session) {
     return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
@@ -221,69 +221,80 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
-// This function is responsible for updating the User Details (the token, the email, first and last name), not the password
-function adminAuthLogout (token : string): ErrorObject {
-  const data = getData()
-  // const token
-  // if token does not exist, return 401 error
-  if (!token) {
-    return {statusCode: 401, error: "Token is empty"}
-  }
-  // find the relevant session index to remove in order to log out
-  const sessionIndex = data.sessions.findIndex((session) => session.identifier === token)
-  data.sessions.splice(sessionIndex, 1);
-  // if session number (token)is invalid 
-  if (sessionNumber = -1) {
-    return {statusCode: 401, error: "Token is invalid"}
-    // persistence
-    setData()
-  }
-
-}
 function adminUserDetailsUpdate (token: string, email: string, nameFirst: string, nameLast: string) {
-  const data = getData()
-  // creates a function for valid name
-  function validNameFormat(name: string): boolean {
-    const validCharacters = /^[a-zA-Z\s\-']+$/;
-    return validCharacters.test(name);
-  }
-  // if there is no token, print error
-  if (!token) {
-    return {statusCode: 401, error: "Token is empty or invalid"}
-  }
-  // find the user to update and let the token for the user, be updated 
-  const userUpdate = data.users.find((user)=> user.token === token)
-  // checks if the email is already used by another user and is not the email of the current user
-  const emailAlreadyUsed = data.users.some((user) => user.email === email && user.email !== userUpdate.email)
-  if (emailAlreadyUsed) {
-    return {statusCode: 400, error: "Email already used by another user"}
-  }
-  // uses validator to check if the email is invalid
-  if (!validator.isEmail(email)) {
-    return {statusCode: 400, error: "Email is invalid"}
-  }
-  // checks validity of first and last name 
-  if (!validNameFormat(nameFirst) || !validNameFormat(nameLast)) {
-    return {statusCode: 400, error: "Name is not in correct format"}
-  }
-  // checks the length of first and last name and if it is less than 2 or more than 20
-  if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return {statusCode: 400, error: "First Name is too short or too long"}
-  }
-  if (nameLast.length < 2 || nameLast.length > 20) {
-    return {statusCode: 400, error: "Last Name is too short or too long"}
-  }
-  // if the user does not update, print error 
-  if (!userUpdate) {
-    return {statusCode: 401, error: "token is empty or invalid"}
-  }
-  // update user
-  userUpdate.token = token
-  userUpdate.email = email;
-  userUpdate.nameFirst = nameFirst
-  userUpdate.nameLast = nameLast
+  const data = getData();
 
-  setData()
+  // Find user information based on the provided authUserId
+  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+
+  // if there is no token, print error
+  if (token === '' || !validSession) {
+    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // find the user to update and let the token for the user, be updated
+  const userToBeUpdated = data.users.find((user) => user.authUserId === authUserId);
+
+  // Check if the email address is used by another user
+  if (emailUsed(email, data)) {
+    return {
+      statusCode: 400,
+      error: 'Email is currently used by another user (excluding the current authorised user)',
+    };
+  }
+
+  // Check if the email address is valid
+  if (!validator.isEmail(email)) {
+    return {
+      error: 'Invalid email address',
+      statusCode: 400
+    };
+  }
+
+  // Check if the first name is valid
+  if (!validName(nameFirst)) {
+    return {
+      error:
+        'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  }
+
+  // Check the length of the first name
+  if (nameFirst.length > 20 || nameFirst.length < 2) {
+    return {
+      error: 'First name is less than 2 characters or more than 20 characters',
+      statusCode: 400
+    };
+  }
+
+  // Check if the last name is valid
+  if (!validName(nameLast)) {
+    return {
+      error:
+        'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  }
+
+  // Check the length of the last name
+  if (nameLast.length > 20 || nameLast.length < 2) {
+    return {
+      statusCode: 400,
+      error: 'Last name is less than 2 characters or more than 20 characters',
+    };
+  }
+
+  // update user
+  userToBeUpdated.email = email;
+  userToBeUpdated.nameFirst = nameFirst;
+  userToBeUpdated.nameLast = nameLast;
+
+  setData(data);
+
+  return {};
 }
 
-export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminAuthLogout, adminUserDetailsUpdate };
+export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate };

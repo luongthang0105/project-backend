@@ -1063,17 +1063,11 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
-function findCommonElements3(arr1: number[], arr2: number[]) {
-  return arr1.some((item) => arr2.includes(item));
-}
+
 const adminQuizTrashEmpty = (
   token: string,
   quizIds: number[]
 ): EmptyObject | ErrorObject => {
-  
-  console.log("quizIds ban da ne");
-  console.log(quizIds);
-
   const currData = getData();
 
   const validSession = currData.sessions.find(
@@ -1087,37 +1081,32 @@ const adminQuizTrashEmpty = (
         "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
-  const trashIds = new Set(currData.trash.map((quiz) => quiz.quizId));
-  // console.log("trash Id is");
-  // console.log(trashIds);
 
-  const isAnyQuizNotInTrash = quizIds.some(
-    (quizId: number) => !trashIds.has(quizId)
+  let authUserId = validSession.authUserId
+  
+  // Error :"Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own"
+  const quizInTrashNotOwnedByUser = currData.trash.find( (quizInTrash) => quizIds.includes(quizInTrash.quizId) && quizInTrash.quizAuthorId !== authUserId)
+  if (quizInTrashNotOwnedByUser) {
+    return {
+      statusCode: 403,
+      error: "Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own"
+    }
+  }
+
+  const isAnyQuizNotInTrash = quizIds.filter(
+    (quizId: number) => currData.trash.find( (quizInTrash) => quizInTrash.quizId == quizId)
   );
 
-  if (isAnyQuizNotInTrash) {
+  if (isAnyQuizNotInTrash.length !== quizIds.length) {
     return {
       statusCode: 400,
       error: "One or more of the Quiz IDs is not currently in the trash",
     };
   }
 
-  for (const quiz of currData.trash) {
-    if (
-      !(
-        quizIds.includes(quiz.quizId) &&
-        quiz.quizAuthorId === validSession.authUserId
-      )
-    )
-      return {
-        statusCode: 403,
-        error:
-          "Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own",
-      };
-  }
 
   currData.trash = currData.trash.filter(
-    (quiz) => !quizIds.includes(quiz.quizId)
+    (quiz) => !(quizIds.includes(quiz.quizId))
   );
 
   setData(currData);

@@ -13,7 +13,6 @@ beforeEach(() => {
 });
 
 describe('adminQuizTrashEmpty', () => {
-  
   test('Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty', () => {
     const unavailableToken = {
       token: '0',
@@ -32,7 +31,7 @@ describe('adminQuizTrashEmpty', () => {
     const invalidToken = {
       token: '',
     };
-    const result = adminQuizTrashEmpty(invalidToken, "[3]");
+    const result = adminQuizTrashEmpty(invalidToken, '[3]');
     expect(result).toStrictEqual({
       content: {
         error:
@@ -52,7 +51,7 @@ describe('adminQuizTrashEmpty', () => {
     const quiz1 = adminQuizCreate(user, 'Quiz01', 'myQuiz').content as Quiz;
     const quiz2 = adminQuizCreate(user, 'Quiz02', 'myQuiz').content as Quiz;
     adminQuizRemove(user, quiz1.quizId);
-    const result = adminQuizTrashEmpty(user, `[${quiz1.quizId, quiz2.quizId}]`);
+    const result = adminQuizTrashEmpty(user, `[${quiz1.quizId}, ${quiz2.quizId}]`);
     expect(result).toStrictEqual({
       content: { error: 'One or more of the Quiz IDs is not currently in the trash' },
       statusCode: 400,
@@ -68,7 +67,7 @@ describe('adminQuizTrashEmpty', () => {
     ).content as ReturnedToken;
     const quiz1 = adminQuizCreate(user1, 'Quiz01', 'myQuiz').content as Quiz;
     const quiz2 = adminQuizCreate(user1, 'Quiz02', 'myQuiz').content as Quiz;
-    const result = adminQuizTrashEmpty(user1, `[${quiz1.quizId, quiz2.quizId}]`);
+    const result = adminQuizTrashEmpty(user1, `[${quiz1.quizId}, ${quiz2.quizId}]`);
     expect(result).toStrictEqual({
       content: { error: 'One or more of the Quiz IDs is not currently in the trash' },
       statusCode: 400,

@@ -383,7 +383,7 @@ export const adminUserDetailsUpdate = (
 
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
-  quizIds: string,
+  quizIds: string
 ): {content: EmptyObject | ErrorObject, statusCode: number} => {
   const route = '/v1/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
@@ -392,7 +392,6 @@ export const adminQuizTrashEmpty = (
       quizIds: quizIds
     }
   });
-
 
   return {
     content: JSON.parse(res.body.toString()),

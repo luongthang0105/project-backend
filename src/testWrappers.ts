@@ -190,3 +190,24 @@ export const clear = (): { content: EmptyObject; statusCode: number } => {
     statusCode: res.statusCode,
   };
 };
+
+export const adminUserPasswordUpdate = (
+  tokenObject: { token: string },
+  oldPassword: string,
+  newPassword: string,
+): { content: EmptyObject | ErrorObject; statusCode: number } => {
+  const route = "/v1/admin/user/password";
+
+  const res = request("PUT", SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

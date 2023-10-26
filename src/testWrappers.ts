@@ -226,7 +226,6 @@ export const adminQuizInfo = (
   };
 };
 
-
 /**
  * Updates the name of a quiz by sending a PUT request to the server's quiz name update endpoint.
  *

@@ -366,7 +366,7 @@ const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const currSessionPosition = data.sessions.findIndex(
     (currSession) => currSession.identifier === token
   );
-  
+
   // Delete the current session out of the session array
   data.sessions.splice(currSessionPosition, 1);
 

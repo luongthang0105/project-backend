@@ -3,14 +3,21 @@ type ErrorObject = {
   error: string
 }
 
-type EmptyObject = {}
+// Typescript recommends assigning Record<string, never> instead of {}
+type EmptyObject = Record<string, never>
 
+// The Token type we use to store sessions in data.json
 type Token = {
   identifier: string,
   authUserId: number
 }
 
-//parameter for adminAuthRegister and adminAuthLogin
+// The token type we received from adminAuthRegister and adminAuthLogin (as well as their routes)
+type ReturnedToken = {
+  token: string
+}
+
+// parameter for adminAuthRegister and adminAuthLogin
 type LoginInfo = {
   email: string,
   password: string,
@@ -18,7 +25,7 @@ type LoginInfo = {
   nameLast?: string
 }
 
-//response for adminUserDetails
+// response for adminUserDetails
 type UserDetails = {
   user: {
     userId: number,
@@ -29,20 +36,20 @@ type UserDetails = {
   }
 }
 
-//response for adminQuizList and adminQuizCreate
+// response for adminQuizList and adminQuizCreate
 type Quiz = {quizId: number, name?: string};
 type QuizList = {
   quizzes: Quiz[]
 }
 
-//parameter for adminQuizCreate
+// parameter for adminQuizCreate
 type QuizCreate = {
   token: string,
   name: string,
   description: string
 }
 
-type Colour = 
+type Colour =
   | 'red'
   | 'blue'
   | 'green'
@@ -52,33 +59,31 @@ type Colour =
   | 'orange'
 
 type Answer = {
-  answerId: number,
+  answerId?: number,
   answer: string,
-  colour: Colour,
+  colour?: Colour,
   correct: boolean
 }
 
 type Question = {
-  questionId: number,
+  questionId?: number,
   question: string,
   duration: number,
   points: number,
   answers: Answer[]
 }
 
-
-//parameter for adminQuizNameUpdate
+// parameter for adminQuizNameUpdate
 type NameUpdate = {
   token: string,
   name: string
 }
 
-//parameter for adminQuizDescriptionUpdate
+// parameter for adminQuizDescriptionUpdate
 type DescriptionUpdate = {
   token: string,
   name: string
 }
-
 
 type UserObject = {
   authUserId: number,
@@ -93,7 +98,7 @@ type UserObject = {
 
 type QuizObject = {
   quizId: number,
-  quizAuthorId: number,
+  quizAuthorId?: number,
   name: string,
   description: string,
   timeCreated: number,
@@ -110,26 +115,27 @@ type DataStore = {
   sessions: Token[],
   nextTokenId: number,
   nextUserId: number,
-  nextQuizId: number
+  nextQuizId: number,
+  nextQuestionId: number,
+  nextAnswerId: number
 }
 
 export {
   EmptyObject,
   ErrorObject,
-  Token, 
-  LoginInfo, 
-  UserDetails, 
-  Quiz, 
-  QuizList, 
-  QuizCreate, 
-  Colour, 
-  Answer, 
-  Question,  
-  NameUpdate, 
+  Token,
+  ReturnedToken,
+  LoginInfo,
+  UserDetails,
+  Quiz,
+  QuizList,
+  QuizCreate,
+  Colour,
+  Answer,
+  Question,
+  NameUpdate,
   DescriptionUpdate,
   UserObject,
   QuizObject,
   DataStore
-}
-
-
+};

@@ -16,6 +16,7 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizInfo,
   adminQuizNameUpdate,
+  adminQuizMoveQuestion,
 } from './quiz';
 // Set up web app
 const app = express();
@@ -146,8 +147,7 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   }
 
   res.json(result);
-}
-);
+});
 
 // adminQuizVewTrash
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
@@ -283,6 +283,31 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
 
   res.json(result);
 });
+
+app.put(
+  '/v1/admin/quiz/:quizid/question/:questionid/move',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, newPosition } = req.body;
+
+    const result = adminQuizMoveQuestion(
+      token,
+      quizId,
+      questionId,
+      newPosition
+    );
+
+    if ('error' in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

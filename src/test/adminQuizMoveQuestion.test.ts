@@ -9,6 +9,7 @@ import {
 import { Question, Quiz, QuizObject, ReturnedToken } from "../types";
 import "./toHaveValidColour";
 import { expect, test } from "@jest/globals";
+import { getCurrentTimestamp } from '../quizHelper';
 
 describe("adminQuizRemoveQuestion", () => {
   let user: ReturnedToken;
@@ -210,6 +211,10 @@ describe("adminQuizRemoveQuestion", () => {
 
     expect(quizInfo.questions[0].questionId).toStrictEqual(question02.questionId);
     expect(quizInfo.questions[1].questionId).toStrictEqual(question.questionId);
+
+    const currTimeStamp = getCurrentTimestamp();
+    const timeLastEdited = quizInfo.timeLastEdited;
+    expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
   });
 
   test("Success case2: order from 0-1-2 to 2-0-1", () => {
@@ -277,6 +282,10 @@ describe("adminQuizRemoveQuestion", () => {
     expect(quizInfo.questions[0].questionId).toStrictEqual(question03.questionId);
     expect(quizInfo.questions[1].questionId).toStrictEqual(question.questionId);
     expect(quizInfo.questions[2].questionId).toStrictEqual(question02.questionId);
+
+    const currTimeStamp = getCurrentTimestamp();
+    const timeLastEdited = quizInfo.timeLastEdited;
+    expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
   });
 
   test("Success case2: order from 0-1-2 to 2-0-1", () => {
@@ -319,6 +328,7 @@ describe("adminQuizRemoveQuestion", () => {
         },
       ],
     };
+
     const question03 = adminQuizCreateQuestion(
       user,
       quiz.quizId,
@@ -370,6 +380,8 @@ describe("adminQuizRemoveQuestion", () => {
     expect(quizInfo.questions[1].questionId).toStrictEqual(question04.questionId);
     expect(quizInfo.questions[2].questionId).toStrictEqual(question02.questionId);
     expect(quizInfo.questions[3].questionId).toStrictEqual(question03.questionId);
-    
+    const currTimeStamp = getCurrentTimestamp();
+    const timeLastEdited = quizInfo.timeLastEdited;
+    expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
   });
 });

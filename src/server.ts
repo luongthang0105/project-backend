@@ -323,19 +323,17 @@ app.put(
   }
 );
 
-//adminUserDetailsUpdate
-app.put("/v1/admin/user/detailsupdate/:userId", (req: Request, res: Response) => {
-  const userID = parseInt(req.params.userId)
-  const token = req.body.token as string;
-  const { email, nameFirst, nameLast } = req.body;
-  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
-  if ("error" in result) {
-    res.status(result.statusCode).json({error: result.error})
-    return
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
   }
-  console.log(result)
-  res.json(result)
-})
+  console.log(result);
+  res.json(result);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

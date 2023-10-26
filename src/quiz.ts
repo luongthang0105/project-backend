@@ -1,9 +1,5 @@
 import { getData, setData } from './dataStore';
-import {
-  alphanumericAndSpaceCheck,
-  getCurrentTimestamp,
-  getQuestionColour,
-} from './quizHelper';
+import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion } from './quizHelper';
 import {
   Answer,
   EmptyObject,
@@ -31,9 +27,8 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
 
   if (token === '' || !validSession) {
     return {
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
-      statusCode: 401,
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401
     };
   }
 
@@ -373,8 +368,7 @@ const adminQuizNameUpdate = (
   if (token === '' || !validSession) {
     return {
       statusCode: 401,
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)'
     };
   }
 
@@ -392,10 +386,7 @@ const adminQuizNameUpdate = (
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (validQuiz.quizAuthorId !== authUserId) {
-    return {
-      statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
-    };
+    return { statusCode: 403, error: 'Valid token is provided, but user is not an owner of this quiz' };
   }
 
   // Check if the new name contains invalid characters
@@ -410,7 +401,10 @@ const adminQuizNameUpdate = (
 
   // Checks if name is greater than 30 characters
   if (name.length > 30) {
-    return { statusCode: 400, error: 'Name is greater than 30 characters long' };
+    return {
+      statusCode: 400,
+      error: 'Name is greater than 30 characters long',
+    };
   }
 
   // If the given name is the same as the current name of the quiz, update the last edited timestamp
@@ -839,6 +833,82 @@ const adminQuizDeleteQuestion = (
 
   return {};
 };
+
+const adminQuizMoveQuestion = (
+  token: string,
+  quizId: number,
+  questionId: number,
+  newPosition: number
+): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // If quizId is not valid, return an error object
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
+  }
+
+  const validQuestion = validQuiz.questions.find(
+    (question: Question) => question.questionId === questionId
+  );
+
+  if (!validQuestion) {
+    return {
+      statusCode: 400,
+      error: 'Question Id does not refer to a valid question within this quiz',
+    };
+  }
+
+  if (newPosition < 0 || newPosition > validQuiz.numQuestions - 1) {
+    return {
+      statusCode: 400,
+      error:
+        'NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions',
+    };
+  }
+
+  const currPosition = validQuiz.questions.findIndex(
+    (question: Question) => question.questionId === questionId
+  );
+
+  if (newPosition === currPosition) {
+    return {
+      statusCode: 400,
+      error: 'NewPosition is the position of the current question',
+    };
+  }
+
+  moveQuestion(validQuiz.questions, currPosition, newPosition);
+
+  validQuiz.timeLastEdited = getCurrentTimestamp();
+
+  setData(data);
+
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -846,6 +916,7 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
+  adminQuizMoveQuestion,
   adminQuizCreateQuestion,
   adminQuizViewTrash,
   adminQuizDeleteQuestion,

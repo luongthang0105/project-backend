@@ -1,9 +1,10 @@
 import {   
   adminAuthRegister,
   adminAuthLogin,
-  adminUserDetails } from "../testWrappers"
+  adminUserDetails, } from "../testWrappers"
+import {adminUserDetailsUpdate} from "../auth"
 import validator from "validator";
-import { ReturnedToken } from '../types';
+import { ReturnedToken } from "../types";
 import { clear } from "../other"
 
 describe('adminUserDetailsUpdate', () => {
@@ -32,7 +33,7 @@ describe('adminUserDetailsUpdate', () => {
     expect(result).toStrictEqual({})
   })
   test ('The email is already used by another user', () => {
-    const email2 = 'javascript1@yahoo.com'
+    const email2 = user2.email
     const nameFirst = 'NewJava'
     const nameLast = 'NewScript'
     const token = user.token

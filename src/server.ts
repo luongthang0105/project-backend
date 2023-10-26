@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { adminQuizList, adminQuizRemove } from "./quiz";
 import { clear } from "./other";
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
+import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, adminAuthLogout } from "./auth";
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate } from "./quiz";
 // Set up web app
 const app = express();
@@ -198,6 +198,20 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
+
+//adminUserDetailsUpdate
+app.put("/v1/admin/user/detailsupdate/:userId", (req: Request, res: Response) => {
+  const userID = parseInt(req.params.userId)
+  const token = req.body.token as string;
+  const { email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
+  if ("error" in result) {
+    res.status(result.statusCode).json({error: result.error})
+    return
+  }
+  console.log(result)
+  res.json(result)
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

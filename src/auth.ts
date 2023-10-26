@@ -225,7 +225,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 // This function is responsible for updating the User Details (the token, the email, first and last name), not the password
 function adminAuthLogout (token : string): ErrorObject {
   const data = getData()
-  const token
+  // const token
   // if token does not exist, return 401 error
   if (!token) {
     return {statusCode: 401, error: "Token is empty"}

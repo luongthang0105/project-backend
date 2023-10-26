@@ -7,7 +7,6 @@ import {
   clear,
 } from "../testWrappers";
 import { Question, Quiz, QuizObject, ReturnedToken } from "../types";
-import { getCurrentTimestamp } from "../quizHelper";
 import "./toHaveValidColour";
 import { expect, test } from "@jest/globals";
 

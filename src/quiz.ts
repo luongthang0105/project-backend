@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour } from './quizHelper';
+import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion } from './quizHelper';
 import {
   Answer,
   EmptyObject,
@@ -617,17 +617,7 @@ const adminQuizCreateQuestion = (
 
   return { questionId: newQuestion.questionId };
 };
-export {
-  adminQuizCreate,
-  adminQuizInfo,
-  adminQuizRemove,
-  adminQuizList,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate,
-  adminQuizMoveQuestion,
-  adminQuizCreateQuestion,
-  adminQuizViewTrash
-};
+
 const adminQuizMoveQuestion = (
   token: string,
   quizId: number,
@@ -698,7 +688,7 @@ const adminQuizMoveQuestion = (
     };
   }
 
-  move(validQuiz.questions, currPosition, newPosition);
+  moveQuestion(validQuiz.questions, currPosition, newPosition);
 
   validQuiz.timeLastEdited = getCurrentTimestamp();
 
@@ -707,14 +697,14 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
-function move(input: Question[], from: number, to: number) {
-  let numberOfDeletedElm = 1;
-
-  const elm = input.splice(from, numberOfDeletedElm)[0];
-
-  numberOfDeletedElm = 0;
-
-  input.splice(to, numberOfDeletedElm, elm);
-
-  return input;
-}
+export {
+  adminQuizCreate,
+  adminQuizInfo,
+  adminQuizRemove,
+  adminQuizList,
+  adminQuizNameUpdate,
+  adminQuizDescriptionUpdate,
+  adminQuizMoveQuestion,
+  adminQuizCreateQuestion,
+  adminQuizViewTrash
+};

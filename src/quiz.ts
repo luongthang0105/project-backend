@@ -623,7 +623,7 @@ const adminQuizMoveQuestion = (
   quizId: number,
   questionId: number,
   newPosition: number
-) => {
+): EmptyObject | ErrorObject => {
   const data = getData();
 
   const validSession = data.sessions.find(
@@ -646,7 +646,6 @@ const adminQuizMoveQuestion = (
   );
 
   // If quizId is not valid, return an error object
-
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     return {

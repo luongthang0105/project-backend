@@ -1,28 +1,28 @@
-import express, { json, Request, Response } from "express";
-import { echo } from "./newecho";
-import morgan from "morgan";
-import config from "./config.json";
-import cors from "cors";
-import YAML from "yaml";
-import sui from "swagger-ui-express";
-import fs from "fs";
-import path from "path";
-import process from "process";
+import express, { json, Request, Response } from 'express';
+import { echo } from './newecho';
+import morgan from 'morgan';
+import config from './config.json';
+import cors from 'cors';
+import YAML from 'yaml';
+import sui from 'swagger-ui-express';
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
 import {
   adminQuizCreateQuestion,
   adminQuizList,
   adminQuizRemove,
   adminQuizViewTrash,
-} from "./quiz";
-import { clear } from "./other";
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
+} from './quiz';
+import { clear } from './other';
+import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
-} from "./quiz";
+} from './quiz';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -30,41 +30,41 @@ app.use(json());
 // Use middleware that allows for access from other domains
 app.use(cors());
 // for logging errors (print to terminal)
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 // for producing the docs that define the API
-const file = fs.readFileSync(path.join(process.cwd(), "swagger.yaml"), "utf8");
-app.get("/", (req: Request, res: Response) => res.redirect("/docs"));
+const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
+app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
 app.use(
-  "/docs",
+  '/docs',
   sui.serve,
   sui.setup(YAML.parse(file), {
-    swaggerOptions: { docExpansion: config.expandDocs ? "full" : "list" },
+    swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' },
   })
 );
 
 const PORT: number = parseInt(process.env.PORT || config.port);
-const HOST: string = process.env.IP || "localhost";
+const HOST: string = process.env.IP || 'localhost';
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
 // Example get request
-app.get("/echo", (req: Request, res: Response) => {
+app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
   const ret = echo(data);
-  if ("error" in ret) {
+  if ('error' in ret) {
     res.status(400);
   }
   return res.json(ret);
 });
 
 // adminQuizRemove
-app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.query.token as string;
   const result = adminQuizRemove(token, quizId);
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
@@ -72,11 +72,11 @@ app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
 });
 
 // adminAuthRegister
-app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
-  if ("error" in result) {
+  if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
     res.status(result.statusCode as number).json({ error: result.error });
@@ -87,11 +87,11 @@ app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
 });
 
 // adminAuthLogin
-app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
 
-  if ("error" in result) {
+  if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
     res.status(result.statusCode as number).json({ error: result.error });
@@ -102,11 +102,11 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
 });
 
 // adminUserDetails
-app.get("/v1/admin/user/details", (req: Request, res: Response) => {
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminUserDetails(token);
 
-  if ("error" in result) {
+  if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
     res.status(result.statusCode as number).json({ error: result.error });
@@ -116,11 +116,11 @@ app.get("/v1/admin/user/details", (req: Request, res: Response) => {
   res.json(result);
 });
 
-app.get("/v1/admin/quiz/list", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizList(token);
 
-  if ("error" in result) {
+  if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
     res.status(result.statusCode as number).json({ error: result.error });
@@ -131,13 +131,13 @@ app.get("/v1/admin/quiz/list", (req: Request, res: Response) => {
 });
 
 // clear
-app.delete("/v1/clear", (req: Request, res: Response) => {
+app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
 
 // adminQuizDescriptionUpdate
-app.put("/v1/admin/quiz/:quizid/description", (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.body.token as string;
@@ -146,7 +146,7 @@ app.put("/v1/admin/quiz/:quizid/description", (req: Request, res: Response) => {
 
   const result = adminQuizDescriptionUpdate(token, quizId, description);
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
@@ -155,12 +155,12 @@ app.put("/v1/admin/quiz/:quizid/description", (req: Request, res: Response) => {
 });
 
 // adminQuizVewTrash
-app.get("/v1/admin/quiz/trash", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
 
   console.log(result);
-  if ("error" in result) {
+  if ('error' in result) {
     // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
     // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
     res.status(result.statusCode as number).json({ error: result.error });
@@ -171,13 +171,13 @@ app.get("/v1/admin/quiz/trash", (req: Request, res: Response) => {
 });
 
 // adminQuizNameUpdate
-app.put("/v1/admin/quiz/:quizid/name", (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
@@ -186,12 +186,12 @@ app.put("/v1/admin/quiz/:quizid/name", (req: Request, res: Response) => {
 });
 
 // adminQuizCreate
-app.post("/v1/admin/quiz", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
 
   const result = adminQuizCreate(token, name, description);
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
@@ -199,14 +199,14 @@ app.post("/v1/admin/quiz", (req: Request, res: Response) => {
 });
 
 // adminQuizInfo
-app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.query.token as string;
 
   const result = adminQuizInfo(token, quizId);
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
@@ -215,13 +215,13 @@ app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
 });
 
 // clear
-app.delete("/v1/clear", (req: Request, res: Response) => {
+app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
 
 // adminQuizCreateQuestion
-app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const { token, questionBody } = req.body;
@@ -235,7 +235,7 @@ app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
     questionBody.answers
   );
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
@@ -243,7 +243,7 @@ app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
   res.json(result);
 });
 app.put(
-  "/v1/admin/quiz/:quizid/question/:questionid/move",
+  '/v1/admin/quiz/:quizid/question/:questionid/move',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
 
@@ -258,7 +258,7 @@ app.put(
       newPosition
     );
 
-    if ("error" in result) {
+    if ('error' in result) {
       res.status(result.statusCode).json({ error: result.error });
       return;
     }
@@ -296,6 +296,6 @@ const server = app.listen(PORT, HOST, () => {
 });
 
 // For coverage, handle Ctrl+C gracefully
-process.on("SIGINT", () => {
-  server.close(() => console.log("Shutting down server gracefully."));
+process.on('SIGINT', () => {
+  server.close(() => console.log('Shutting down server gracefully.'));
 });

@@ -386,22 +386,33 @@ const adminUserPasswordUpdate = (
     return { statusCode: 400, error: 'Old Password and New Password match exactly' };
   }
 
+  // Checks if new password has already been used before by this user
+  if (
+    userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)
+  ) {
+    return {
+      statusCode: 400,
+      error: 'New Password has already been used before by this user',
+    };
+  }
+
   // Checks if new password is less than 8 characters
   if (newPassword.length < 8) {
     return { statusCode: 400, error: 'New Password is less than 8 characters' };
   }
 
-  // Checks if new password contains at least one number
-  if (/\d/.test(newPassword) === false) {
-    return { statusCode: 400, error: 'New Password does not contain at least one number' };
+  // Checks if new password contains at least one number and at least one letter
+  if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+    return {
+      statusCode: 400,
+      error:
+        'New Password does not contain at least one number and at least one letter',
+    };
   }
 
-  // Checks if new password contains at least one letter
-  if (/[a-zA-Z]/.test(newPassword) === false) {
-    return { statusCode: 400, error: 'New Password does not contain at least one letter' };
-  }
-
+  userInfo.usedPasswords.push(oldPassword);
   userInfo.password = newPassword;
+
   setData(data);
   return {};
 };

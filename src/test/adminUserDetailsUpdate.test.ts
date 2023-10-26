@@ -1,112 +1,152 @@
-import {   
+import {
   adminAuthRegister,
-  adminAuthLogin,
-  adminUserDetails, } from "../testWrappers"
-import {adminUserDetailsUpdate} from "../auth"
-import validator from "validator";
-import { ReturnedToken } from "../types";
-import { clear } from "../other"
+  adminUserDetails,
+  adminUserDetailsUpdate
+} from '../testWrappers';
+import { ReturnedToken, UserDetails } from '../types';
+import { clear } from '../other';
 
 describe('adminUserDetailsUpdate', () => {
   let user: ReturnedToken;
+  let user2: ReturnedToken;
   beforeEach(() => {
     clear();
-    user = adminAuthRegister (
-      '23748',
+    user = adminAuthRegister(
       'javascript@gmail.com',
+      'luongthang0105',
       'Java',
       'Script'
     ).content as ReturnedToken;
-    user2 = adminAuthRegister (
-      '25181',
+    user2 = adminAuthRegister(
       'javascript1@yahoo.com',
+      'luongthang0105',
       'Jay',
       'Ess'
-    ).content as ReturnedToken
-  })
-  test ('should successfully update user details', () => {
-    const email = 'newjavascript@gmail.com'
-    const nameFirst = 'NewJava'
-    const nameLast = 'NewScript'
-    const token = user.token
-    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
-    expect(result).toStrictEqual({})
-  })
-  test ('The email is already used by another user', () => {
-    const email2 = user2.email
-    const nameFirst = 'NewJava'
-    const nameLast = 'NewScript'
-    const token = user.token
-    const result = adminUserDetailsUpdate(token, email2, nameFirst, nameLast)
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
-  })
-  test ('The email is invalid', () => {
-    const email = 'javascript@'
-    const nameFirst = 'NewJava'
-    const nameLast = 'NewScript'
-    const token = user.token
-    const isEmailValid = validator.isEmail(email);
-    expect(isEmailValid).toBe(false);
-    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-    expect(result.statusCode).toBe(400)
-    expect(result.content).toEqual("error")
+    ).content as ReturnedToken;
+    expect(user2.token).toStrictEqual(expect.any(String));
+  });
+  test('Success: successfully update user details', () => {
+    const email = 'newjavascript@gmail.com';
+    const nameFirst = 'NewJava';
+    const nameLast = 'NewScript';
+    const result = adminUserDetailsUpdate(user, email, nameFirst, nameLast);
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {}
+    });
 
-  })
-  test ('First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophe', () => {
-    const email = 'newjavascript@gmail.com'
-    const nameFirst = 'Jav@'
-    const nameLast = 'Script'
-    const token = user.token
-    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
-    
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
-  })
-  test ('First name is less than 2 characters or more than 20 characters', () => {
-    const email = 'newjavascript@gmail.com'
-    const nameFirstTooShort = 'J' 
-    const nameFirstTooLong = 'Javahefuehfehfaklwnfsjehf'
-    const nameLast = 'Script'
-    const token = user.token
+    const userDetails = (adminUserDetails(user).content as UserDetails).user;
+    expect(userDetails.name).toEqual('NewJava NewScript');
+    expect(userDetails.email).toEqual('newjavascript@gmail.com');
+  });
 
-    let result = adminUserDetailsUpdate(token, email, nameFirstTooShort, nameLast);
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
+  test('Error: Email is currently used by another user (excluding the current authorised user)', () => {
+    const email2 = 'javascript1@yahoo.com';
+    const nameFirst = 'NewJava';
+    const nameLast = 'NewScript';
 
-    let result2 = adminUserDetailsUpdate(token, email, nameFirstLong, nameLast);
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
-  })
-  test ('Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophe', () => {
-    const email = 'newjavascript@gmail.com'
-    const nameFirst = 'Java'
-    const nameLast = 'Scrip%2'
-    const token = user.token
-    const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
-    
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
-  })
-  test ('Last name is less than 2 characters or more than 20 characters', () => {
-    const email = 'newjavascript@gmail.com'
-    const nameFirst = 'Java'
-    const nameLastTooShort = 'S'
-    const nameLastTooLong = 'Scekfhjoeuwheowthweoufthqd'
-    const token = user.token
+    const result = adminUserDetailsUpdate(user, email2, nameFirst, nameLast);
 
-    let result = adminUserDetailsUpdate(token, email, nameLastTooShort, nameLast);
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'Email is currently used by another user (excluding the current authorised user)'
+      }
+    });
+  });
+  test('Error: Invalid email address', () => {
+    const email = 'javascript@';
+    const nameFirst = 'NewJava';
+    const nameLast = 'NewScript';
+    const result = adminUserDetailsUpdate(user, email, nameFirst, nameLast);
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'Invalid email address'
+      }
+    });
+  });
+  test('Error: First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', () => {
+    const email = 'newjavascript@gmail.com';
+    const nameFirst = 'Jav@';
+    const nameLast = 'Script';
+    const result = adminUserDetailsUpdate(user, email, nameFirst, nameLast);
 
-    let result2 = adminUserDetailsUpdate(token, email, nameLastTooLong, nameLast);
-    expect(result.statusCode).toBe(400);
-    expect(result.content).toEqual("error")
-  })
-  test ('token is invalid or empty', () => {
-    const invalidToken = ''
-    const result = adminUserDetailsUpdate(invalidToken)
-    expect(result.statusCode).toBe(401)
-    expect(result.error).toEqual("error");
-  })
-})
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'
+      }
+    });
+  });
+  test('Error: First name is less than 2 characters or more than 20 characters', () => {
+    const email = 'newjavascript@gmail.com';
+    const nameFirstTooShort = 'J';
+    const nameFirstTooLong = 'Javahefuehfehfaklwnfsjehf';
+    const nameLast = 'Script';
+
+    const result = adminUserDetailsUpdate(user, email, nameFirstTooShort, nameLast);
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'First name is less than 2 characters or more than 20 characters'
+      }
+    });
+
+    const result2 = adminUserDetailsUpdate(user, email, nameFirstTooLong, nameLast);
+    expect(result2).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'First name is less than 2 characters or more than 20 characters'
+      }
+    });
+  });
+  test('Error: Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes', () => {
+    const email = 'newjavascript@gmail.com';
+    const nameFirst = 'Java';
+    const nameLast = 'Scrip%2';
+    const result = adminUserDetailsUpdate(user, email, nameFirst, nameLast);
+
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes'
+      }
+    });
+  });
+  test('Error: Last name is less than 2 characters or more than 20 characters', () => {
+    const email = 'newjavascript@gmail.com';
+    const nameFirst = 'Java';
+    const nameLastTooShort = 'S';
+    const nameLastTooLong = 'Scekfhjoeuwheowthweoufthqd';
+
+    const result = adminUserDetailsUpdate(user, email, nameFirst, nameLastTooLong);
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'Last name is less than 2 characters or more than 20 characters'
+      }
+    });
+
+    const result2 = adminUserDetailsUpdate(user, email, nameFirst, nameLastTooShort);
+    expect(result2).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'Last name is less than 2 characters or more than 20 characters'
+      }
+    });
+  });
+
+  test('Error: Token is invalid or empty', () => {
+    const invalidToken = {
+      token: '-1'
+    };
+    const email = 'newjavascript@gmail.com';
+    const nameFirst = 'Jav';
+    const nameLast = 'Script';
+    const result = adminUserDetailsUpdate(invalidToken, email, nameFirst, nameLast);
+
+    expect(result.statusCode).toBe(401);
+    expect(result.content.error).toEqual('Token is empty or invalid (does not refer to valid logged in user session)');
+  });
+});

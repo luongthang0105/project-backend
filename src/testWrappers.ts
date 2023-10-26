@@ -306,3 +306,26 @@ export const adminQuizDeleteQuestion = (
     statusCode: res.statusCode
   };
 };
+
+export const adminUserDetailsUpdate = (
+  tokenObject: ReturnedToken,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/user/details';
+
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      email: email,
+      nameFirst: nameFirst,
+      nameLast: nameLast,
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

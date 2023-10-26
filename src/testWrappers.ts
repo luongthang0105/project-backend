@@ -90,6 +90,23 @@ export const adminQuizCreate = (
   };
 };
 
+export const adminQuizRestore = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+): { content: EmptyObject | ErrorObject; statusCode: number } => {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz' + quizId + '/restore', {
+    json: {
+      token: tokenObject.token
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+
+}
+
 export const adminQuizRemove = (
   tokenObject: ReturnedToken,
   quizId: number

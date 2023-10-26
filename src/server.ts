@@ -17,7 +17,9 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
+  adminQuizRestore
 } from './quiz';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -177,6 +179,18 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
     return;
   }
 
+  res.json(result);
+});
+
+// adminQuizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.body.token;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, quizId);
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
   res.json(result);
 });
 

@@ -909,6 +909,61 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
+const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const existingQuizinTrash = data.trash.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  if (!existingQuizinTrash) {
+    return {
+      statusCode: 400,
+      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+    };
+  }
+
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.name === existingQuizinTrash.name
+  );
+
+  if (existingQuiz) {
+    return {
+      statusCode: 400,
+      error: 'Quiz name of the restored quiz is already used by another active quiz',
+    };
+  }
+
+  if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
+  }
+
+  data.quizzes.push(existingQuizinTrash);
+  for (let i = 0; i < data.trash.length; i++) {
+    if (data.trash[i].quizId === quizId) {
+      data.trash.splice(i, 1);
+    }
+  }
+
+  setData(data);
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -919,6 +974,7 @@ export {
   adminQuizMoveQuestion,
   adminQuizCreateQuestion,
   adminQuizViewTrash,
+  adminQuizRestore,
   adminQuizDeleteQuestion,
   adminQuizQuestionUpdate
 };

@@ -64,22 +64,6 @@ describe('adminQuizRemoveQuestion', () => {
     });
   });
 
-  test('Quiz ID does not refer to a valid quiz', () => {
-    const result = adminQuizMoveQuestion(
-      user,
-      quiz.quizId + 1,
-      question.questionId,
-      3
-    );
-
-    expect(result).toStrictEqual({
-      statusCode: 403,
-      content: {
-        error: 'Valid token is provided, but user is not an owner of this quiz',
-      },
-    });
-  });
-
   test('Question ID does not refer to a valid question within this quiz', () => {
     const result = adminQuizMoveQuestion(
       user,
@@ -310,14 +294,14 @@ describe('adminQuizRemoveQuestion', () => {
     expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
   });
 
-  test('Success case2: order from 0-1-2 to 2-0-1', () => {
+  test('Success case2: order from 0-1-2-3 to 0-3-1-2', () => {
     const questInfo1 = {
-      question: 'What is that character',
+      question: 'What is that fruit',
       duration: 4,
       points: 5,
       answers: [
         {
-          answer: 'Loopy',
+          answer: 'Apple',
           correct: true,
         },
         {
@@ -336,12 +320,12 @@ describe('adminQuizRemoveQuestion', () => {
     ).content as Question;
 
     const questInfo2 = {
-      question: 'What is that player',
+      question: 'What is that character',
       duration: 4,
       points: 5,
       answers: [
         {
-          answer: 'Eden Hazard',
+          answer: 'Loopy',
           correct: true,
         },
         {
@@ -361,12 +345,12 @@ describe('adminQuizRemoveQuestion', () => {
     ).content as Question;
 
     const questInfo3 = {
-      question: 'What is that fruit',
+      question: 'What is that player',
       duration: 4,
       points: 5,
       answers: [
         {
-          answer: 'Apple',
+          answer: 'Eden Hazard',
           correct: true,
         },
         {

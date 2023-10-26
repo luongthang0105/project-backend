@@ -221,50 +221,5 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
-const adminUserPassword = (
-  token: string,
-  oldPassword: string,
-  newPassword: string
-): EmptyObject | ErrorObject => {
-  const data = getData();
 
-  const session = data.sessions.find((currSession) => currSession.identifier === token);
-
-  // Checks if token is empty or invalid
-  if (token === '' || !session) {
-    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
-  }
-
-  const userInfo = data.users.find((user) => user.authUserId === session.authUserId);
-
-  // Checks if the old password is the same as current password
-  if (userInfo.password !== oldPassword) {
-    return { statusCode: 400, error: 'Old Password is not the correct old password' };
-  }
-
-  // Checks if old password and new password are the same
-  if (oldPassword === newPassword) {
-    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
-  }
-
-  // Checks if new password is less than 8 characters
-  if (newPassword.length < 8) {
-    return { statusCode: 400, error: 'New Password is less than 8 characters' };
-  }
-
-  // Checks if new password contains at least one number
-  if (/\d/.test(newPassword) === false) {
-    return { statusCode: 400, error: 'New Password does not contain at least one number' };
-  }
-
-  // Checks if new password contains at least one letter
-  if (/[a-zA-Z]/.test(newPassword) === false) {
-    return { statusCode: 400, error: 'New Password does not contain at least one letter' };
-  }
-
-  userInfo.password = newPassword;
-  setData(data);
-  return {};
-};
-
-export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserPassword };
+export { adminAuthRegister, adminAuthLogin, adminUserDetails };

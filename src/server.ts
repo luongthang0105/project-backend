@@ -184,7 +184,7 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
 
 //adminQuizRestore
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
-  const token = req.body;
+  const token = req.body.token;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizRestore(token, quizId);
   if ('error' in result) {

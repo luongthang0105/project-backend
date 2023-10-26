@@ -1,3 +1,4 @@
+import { QuickInfo } from "typescript";
 import { emailUsed } from "./authHelper";
 import { getData, setData } from "./dataStore";
 import {
@@ -1060,11 +1061,13 @@ const adminQuizTransfer = (
   const data = getData()
 
   // Find the logged in user
-  const session = data.sessions.find(
+  const validSession = data.sessions.find(
     (currSession) => currSession.identifier === Token
   );
 
-  if (Token === "" || !session) {
+  const authUserId = validSession.authUserId
+
+  if (Token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
@@ -1073,11 +1076,11 @@ const adminQuizTransfer = (
   }
 
   // Find the quizObject of the quizId
-  const quiz = data.quizzes.find(
-    (currQuiz) => currQuiz.quizId === quizId
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
   )
 
-  if (session.authUserId !== quiz.quizAuthorId) {
+  if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
       error:
@@ -1100,7 +1103,7 @@ const adminQuizTransfer = (
 
   // Finds the userId of the token
   const userToken = data.users.find(
-    (curr) => curr.authUserId === session.authUserId
+    (curr) => curr.authUserId === authUserId
   )
 
   if (userToken.email === userEmail) {
@@ -1120,7 +1123,7 @@ const adminQuizTransfer = (
     (curr) => curr.quizAuthorId === emailUserId.authUserId
   )
 
-  if (quiz.name === quizOwnedByUser.name) {
+  if (validQuiz.name === quizOwnedByUser.name) {
     return {
       statusCode: 400,
       error:
@@ -1131,7 +1134,7 @@ const adminQuizTransfer = (
   // Check if all sessions had ended
 
 
-  quiz.quizAuthorId = emailUserId.authUserId
+  validQuiz.quizAuthorId = emailUserId.authUserId
   setData(data)
   return
 }

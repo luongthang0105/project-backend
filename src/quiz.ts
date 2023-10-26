@@ -710,6 +710,7 @@ const adminQuizMoveQuestion = (
 
   return {};
 };
+
 const adminQuizDuplicateQuestion = (
   token: string,
   quizId: number,
@@ -771,6 +772,7 @@ const adminQuizDuplicateQuestion = (
   validQuiz.timeLastEdited = getCurrentTimestamp();
   validQuiz.numQuestions++;
   validQuiz.duration += duplicateQuestion.duration;
+  data.nextQuestionId++;
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };

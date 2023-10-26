@@ -255,14 +255,14 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 app.post('/v1/admin/logout', (req: Request, res: Response) => {
   const { token } = req.body;
 
-  const result = adminAuthLogout(token)
+  const result = adminAuthLogout(token);
 
   if ('error' in result) {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
   res.json(result);
-})
+});
 
 // adminQuizQuestionUpdate
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {

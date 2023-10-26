@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore";
-import validator from "validator";
-import { emailUsed, validName, securedPassword } from "./authHelper";
+import { getData, setData } from './dataStore';
+import validator from 'validator';
+import { emailUsed, validName, securedPassword } from './authHelper';
 import {
   ErrorObject,
   ReturnedToken,
@@ -8,7 +8,7 @@ import {
   UserDetails,
   UserObject,
   EmptyObject,
-} from "./types";
+} from './types';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -34,14 +34,14 @@ const adminAuthRegister = (
   if (emailUsed(email, data)) {
     return {
       statusCode: 400,
-      error: "Email address used by another user",
+      error: 'Email address used by another user',
     };
   }
 
   // Check if the email address is valid
   if (!validator.isEmail(email)) {
     return {
-      error: "Invalid email address",
+      error: 'Invalid email address',
       statusCode: 400,
     };
   }
@@ -50,7 +50,7 @@ const adminAuthRegister = (
   if (!validName(nameFirst)) {
     return {
       error:
-        "First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
+        'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
       statusCode: 400,
     };
   }
@@ -58,7 +58,7 @@ const adminAuthRegister = (
   // Check the length of the first name
   if (nameFirst.length > 20 || nameFirst.length < 2) {
     return {
-      error: "First name length must be between 2 and 20 characters",
+      error: 'First name length must be between 2 and 20 characters',
       statusCode: 400,
     };
   }
@@ -67,7 +67,7 @@ const adminAuthRegister = (
   if (!validName(nameLast)) {
     return {
       error:
-        "Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes",
+        'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
       statusCode: 400,
     };
   }
@@ -76,14 +76,14 @@ const adminAuthRegister = (
   if (nameLast.length > 20 || nameLast.length < 2) {
     return {
       statusCode: 400,
-      error: "Last name length must be between 2 and 20 characters",
+      error: 'Last name length must be between 2 and 20 characters',
     };
   }
 
   // Check the length of the password
   if (password.length < 8) {
     return {
-      error: "Password must have at least 8 characters",
+      error: 'Password must have at least 8 characters',
       statusCode: 400,
     };
   }
@@ -92,7 +92,7 @@ const adminAuthRegister = (
   if (!securedPassword(password)) {
     return {
       error:
-        "Password must contain at least one number and at least one letter",
+        'Password must contain at least one number and at least one letter',
       statusCode: 400,
     };
   }
@@ -148,7 +148,7 @@ const adminAuthLogin = (
 
   // If the email does not exist in the database, return an error
   if (!userInfo) {
-    return { statusCode: 400, error: "Email adress does not exist" };
+    return { statusCode: 400, error: 'Email adress does not exist' };
   }
 
   // Check if the provided password matches the stored password
@@ -159,7 +159,7 @@ const adminAuthLogin = (
     setData(data);
     return {
       statusCode: 400,
-      error: "Password is not correct for the given email",
+      error: 'Password is not correct for the given email',
     };
   }
   // Reset the count of failed login attempts and update the count of successful logins
@@ -213,11 +213,11 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   );
   console.log(token);
   // If token is empty or no session with given token is found
-  if (token === "" || !session) {
+  if (token === '' || !session) {
     return {
       statusCode: 401,
       error:
-        "Token is empty or invalid (does not refer to valid logged in user session)",
+        'Token is empty or invalid (does not refer to valid logged in user session)',
     };
   }
 
@@ -226,7 +226,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   ) as UserObject;
 
   // Concatenate the first name and last name to form the full name
-  const fullname = userInfo.nameFirst.concat(" ", userInfo.nameLast);
+  const fullname = userInfo.nameFirst.concat(' ', userInfo.nameLast);
 
   // Return an object containing details about the admin user
   return {
@@ -244,15 +244,15 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 // This function is responsible for updating the User Details (the token, the email, first and last name), not the password
 const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const data = getData();
-  
+
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
 
-  if (token === "" || !validSession) {
+  if (token === '' || !validSession) {
     return {
       error:
-        "Token is empty or invalid (does not refer to valid logged in user session)",
+        'Token is empty or invalid (does not refer to valid logged in user session)',
       statusCode: 401,
     };
   }

@@ -260,7 +260,7 @@ export const adminQuizCreateQuestion = (
 };
 
 export const adminAuthLogout = (
-  tokenObject: ReturnedToken,
+  tokenObject: ReturnedToken
 ): {
   content:
     EmptyObject | ErrorObject;

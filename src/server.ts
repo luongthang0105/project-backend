@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreateQuestion, adminQuizDeleteQuestion, adminQuizList, adminQuizQuestionUpdate, adminQuizRemove, adminQuizViewTrash } from './quiz';
+import { adminQuizCreateQuestion, adminQuizDeleteQuestion, adminQuizList, adminQuizQuestionUpdate, adminQuizRemove, adminQuizTransfer, adminQuizViewTrash } from './quiz';
 import { clear } from './other';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
 import {
@@ -298,6 +298,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(result);
 });
 
+// adminQuizMoveQuestion
 app.put(
   '/v1/admin/quiz/:quizid/question/:questionid/move',
   (req: Request, res: Response) => {
@@ -322,6 +323,26 @@ app.put(
     res.json(result);
   }
 );
+
+// adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, userEmail } = req.body;
+
+  const result = adminQuizTransfer(
+    quizId,
+    token,
+    userEmail
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

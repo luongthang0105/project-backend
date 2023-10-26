@@ -128,7 +128,6 @@ describe('adminQuizDuplicateQuestion', () => {
     });
 
     const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
-    console.log(quizInfo);
     expect(quizInfo.numQuestions).toBe(2);
     expect(quizInfo.duration).toBe(8);
     expect(quizInfo.questions[0].answers).toStrictEqual(
@@ -175,7 +174,6 @@ describe('adminQuizDuplicateQuestion', () => {
       },
     });
     const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
-    console.log(quizInfo);
     expect(quizInfo.numQuestions).toBe(3);
     expect(quizInfo.duration).toBe(12);
     expect(quizInfo.questions[0].questionId).toBe(0);

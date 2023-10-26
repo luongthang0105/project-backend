@@ -418,12 +418,12 @@ app.put(
 );
 
 // adminUserPasswordUpdate
-app.put("/v1/admin/user/password", (req: Request, res: Response) => {
-  const { token, oldPassword, newPassword } = req.body
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body;
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
-  if ("error" in result) {
+  if ('error' in result) {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }

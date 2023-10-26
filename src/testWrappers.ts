@@ -310,11 +310,11 @@ export const adminQuizDeleteQuestion = (
 export const adminUserPasswordUpdate = (
   tokenObject: { token: string },
   oldPassword: string,
-  newPassword: string,
+  newPassword: string
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
-  const route = "/v1/admin/user/password";
+  const route = '/v1/admin/user/password';
 
-  const res = request("PUT", SERVER_URL + route, {
+  const res = request('PUT', SERVER_URL + route, {
     json: {
       token: tokenObject.token,
       oldPassword: oldPassword,

@@ -224,59 +224,59 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 
 /**
  * Given details relating to a password change, update the password of a logged in user.
- * 
+ *
  * @param {string} token - Token of the logged in user
  * @param {string} oldPassword - Current password of user
  * @param {string} newPassword - New password that the password will changed to
- * @returns { EmptyObject | ErrorObject} 
+ * @returns { EmptyObject | ErrorObject}
  */
 const adminUserPasswordUpdate = (
   token: string,
   oldPassword: string,
-  newPassword: string,
-): {} | ErrorObject => {
-  const data = getData()
+  newPassword: string
+): EmptyObject | ErrorObject => {
+  const data = getData();
 
-  const session = data.sessions.find((currSession) => currSession.identifier === token)
+  const session = data.sessions.find((currSession) => currSession.identifier === token);
 
   // Checks if token is empty or invalid
   if (token === '' || !session) {
-    return { statusCode: 401, error: "Token is empty or invalid (does not refer to valid logged in user session)" }
+    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
   }
 
-  const userInfo = data.users.find((user) => user.authUserId === session.authUserId)
+  const userInfo = data.users.find((user) => user.authUserId === session.authUserId);
 
   // Checks if the old password is the same as current password
   if (userInfo.password !== oldPassword) {
-    return { statusCode: 400, error: "Old Password is not the correct old password" }
+    return { statusCode: 400, error: 'Old Password is not the correct old password' };
   }
 
   // Checks if old password and new password are the same
   if (oldPassword === newPassword) {
-    return { statusCode: 400, error: "Old Password and New Password match exactly" }
+    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
   }
 
   // Checks if new password has already been used before by this user
   if (userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)) {
-    return { statusCode: 400, error: "New Password has already been used before by this user" }
+    return { statusCode: 400, error: 'New Password has already been used before by this user' };
   }
 
   // Checks if new password is less than 8 characters
   if (newPassword.length < 8) {
-    return { statusCode: 400, error: "New Password is less than 8 characters" }
+    return { statusCode: 400, error: 'New Password is less than 8 characters' };
   }
 
   // Checks if new password contains at least one number and at least one letter
   if (!(/\d/.test(newPassword)) || !(/[a-zA-Z]/.test(newPassword))) {
-    return { statusCode: 400, error: "New Password does not contain at least one number and at least one letter"}
+    return { statusCode: 400, error: 'New Password does not contain at least one number and at least one letter' };
   }
 
-  userInfo.usedPasswords.push(oldPassword)
-  userInfo.password = newPassword
-  
-  setData(data)
+  userInfo.usedPasswords.push(oldPassword);
+  userInfo.password = newPassword;
 
-  return {}
-}
+  setData(data);
+
+  return {};
+};
 
 export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserPasswordUpdate };

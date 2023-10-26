@@ -1,7 +1,7 @@
 import { getData, setData } from "./dataStore";
 import validator from "validator";
 import { emailUsed, validName, securedPassword } from "./authHelper";
-import { ErrorObject, Token, UserDetails } from "./types";
+import { EmptyObject, ErrorObject, Token, UserDetails } from "./types";
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -97,6 +97,7 @@ const adminAuthRegister = (
     nameLast: nameLast,
     email: email,
     password: password,
+    usedPasswords: [] as string[],
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
@@ -228,9 +229,9 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
  * @param {string} token - Token of the logged in user
  * @param {string} oldPassword - Current password of user
  * @param {string} newPassword - New password that the password will changed to
- * @returns 
+ * @returns { EmptyObject | ErrorObject} 
  */
-const adminUserPassword = (
+const adminUserPasswordUpdate = (
   token: string,
   oldPassword: string,
   newPassword: string,
@@ -256,25 +257,27 @@ const adminUserPassword = (
     return { statusCode: 400, error: "Old Password and New Password match exactly" }
   }
 
+  // Checks if new password has already been used before by this user
+  if (userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)) {
+    return { statusCode: 400, error: "New Password has already been used before by this user" }
+  }
+
   // Checks if new password is less than 8 characters
   if (newPassword.length < 8) {
     return { statusCode: 400, error: "New Password is less than 8 characters" }
   }
 
-  // Checks if new password contains at least one number
-  if (/\d/.test(newPassword) === false) {
-    return { statusCode: 400, error: "New Password does not contain at least one number"}
+  // Checks if new password contains at least one number and at least one letter
+  if (!(/\d/.test(newPassword)) || !(/[a-zA-Z]/.test(newPassword))) {
+    return { statusCode: 400, error: "New Password does not contain at least one number and at least one letter"}
   }
 
-  // Checks if new password contains at least one letter
-  if (/[a-zA-Z]/.test(newPassword) === false) {
-    return { statusCode: 400, error: "New Password does not contain at least one letter"}
-  }
-
+  userInfo.usedPasswords.push(oldPassword)
   userInfo.password = newPassword
+  
   setData(data)
-  return {}
 
+  return {}
 }
 
-export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserPassword };
+export { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserPasswordUpdate };

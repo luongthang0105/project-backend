@@ -1,7 +1,6 @@
 import {
   adminQuizCreate,
   adminQuizRemove,
-  adminQuizInfo,
   adminAuthRegister,
   adminQuizRestore,
   clear,
@@ -60,7 +59,7 @@ describe('adminQuizRestore', () => {
     const quiz1 = adminQuizCreate(user, 'Quiz01', 'myQuiz').content as Quiz;
     adminQuizRemove(user, quiz1.quizId);
     adminQuizCreate(user, 'Quiz01', 'myQuiz');
-    const result = adminQuizRestore(user, quiz1.quizId)
+    const result = adminQuizRestore(user, quiz1.quizId);
     expect(result).toStrictEqual({
       content: { error: 'Quiz name of the restored quiz is already used by another active quiz' },
       statusCode: 400,
@@ -83,7 +82,7 @@ describe('adminQuizRestore', () => {
     const quiz1 = adminQuizCreate(user1, 'Quiz01', 'myQuiz').content as Quiz;
     adminQuizRemove(user1, quiz1.quizId);
     adminQuizCreate(user2, 'Quiz01', 'myQuiz');
-    const result = adminQuizRestore(user1, quiz1.quizId)
+    const result = adminQuizRestore(user1, quiz1.quizId);
     expect(result).toStrictEqual({
       content: { error: 'Quiz name of the restored quiz is already used by another active quiz' },
       statusCode: 400,
@@ -168,18 +167,18 @@ describe('adminQuizRestore', () => {
     const quiz01 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
 
     adminQuizRemove(user, quiz01.quizId);
-    const result = adminQuizRestore(user, quiz01.quizId)
+    const result = adminQuizRestore(user, quiz01.quizId);
     expect(result).toStrictEqual({
       content: {},
       statusCode: 200,
     });
 
-    const trash = adminQuizViewTrash(user).content
+    const trash = adminQuizViewTrash(user).content;
     expect(trash).toStrictEqual({
       quizzes: []
     });
 
-    const quizzes = (adminQuizList(user).content as QuizList)
+    const quizzes = (adminQuizList(user).content as QuizList);
     expect(quizzes).toStrictEqual({
       quizzes: [
         {
@@ -203,13 +202,13 @@ describe('adminQuizRestore', () => {
 
     adminQuizRemove(user, quiz01.quizId);
     adminQuizRemove(user, quiz02.quizId);
-    const result = adminQuizRestore(user, quiz01.quizId)
+    const result = adminQuizRestore(user, quiz01.quizId);
     expect(result).toStrictEqual({
       content: {},
       statusCode: 200,
     });
 
-    const trash = adminQuizViewTrash(user).content
+    const trash = adminQuizViewTrash(user).content;
     expect(trash).toStrictEqual({
       quizzes: [
         {
@@ -219,7 +218,7 @@ describe('adminQuizRestore', () => {
       ]
     });
 
-    const quizzes = adminQuizList(user).content
+    const quizzes = adminQuizList(user).content;
     expect(quizzes).toStrictEqual({
       quizzes: [
         {

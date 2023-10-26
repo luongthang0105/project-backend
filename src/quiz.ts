@@ -657,7 +657,6 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
     };
   }
 
-
   if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
     return {
       statusCode: 403,
@@ -674,8 +673,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
 
   setData(data);
   return {};
-
-}
+};
 
 export {
   adminQuizCreate,

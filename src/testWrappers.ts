@@ -92,7 +92,7 @@ export const adminQuizCreate = (
 
 export const adminQuizRestore = (
   tokenObject: ReturnedToken,
-  quizId: number,
+  quizId: number
 ): { content: EmptyObject | ErrorObject; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
     json: {
@@ -104,8 +104,7 @@ export const adminQuizRestore = (
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
   };
-
-}
+};
 
 export const adminQuizRemove = (
   tokenObject: ReturnedToken,

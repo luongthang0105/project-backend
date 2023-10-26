@@ -8,7 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreateQuestion, adminQuizDeleteQuestion, adminQuizList, adminQuizQuestionUpdate, adminQuizRemove, adminQuizViewTrash, adminQuizDuplicateQuestion, adminQuizRestore } from './quiz';
+import { adminQuizCreateQuestion, adminQuizDeleteQuestion, adminQuizList, adminQuizQuestionUpdate, adminQuizRemove, adminQuizViewTrash, adminQuizDuplicateQuestion, adminQuizRestore, adminQuizTrashEmpty } from './quiz';
 import { clear } from './other';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
 import {
@@ -95,6 +95,22 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+//adminQuizTrashEmpty
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const quizIds = JSON.parse(req.query.quizIds);
+  const token = req.query.token as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
+  if ('error' in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+
+})
 
 // adminUserDetails
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {

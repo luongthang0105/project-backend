@@ -1042,6 +1042,50 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
+
+const adminQuizTrashEmpty =  (
+  token: string,
+  quizIds: number[]
+): EmptyObject | ErrorObject => {
+  const currData = getData();
+
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+  const trashIds = new Set(currData.trash.map((quiz) => quiz.quizId));
+  const isAnyQuizNotInTrash = quizIds.some((quizId) => !trashIds.has(quizId));
+  
+  if(isAnyQuizNotInTrash) {
+    return {
+      statusCode: 400,
+      error:
+        'One of the Quiz IDs is not in the trash',
+    };
+  }
+
+  for (const quiz of currData.trash) {
+    if (!(quizIds.includes(quiz.quizId) && quiz.quizAuthorId === validSession.authUserId))
+      return {
+        statusCode: 403,
+        error:
+        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
+     };
+  }
+
+  currData.trash.filter((quiz) => !quizIds.includes(quiz.quizId));
+
+  setData(currData);
+
+  return {};
+}
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -1055,5 +1099,6 @@ export {
   adminQuizDuplicateQuestion,
   adminQuizRestore,
   adminQuizDeleteQuestion,
-  adminQuizQuestionUpdate
+  adminQuizQuestionUpdate,
+  adminQuizTrashEmpty
 };

@@ -17,7 +17,7 @@ describe('adminQuizTrashEmpty', () => {
     const unavailableToken = {
       token: '0',
     };
-    const result = adminQuiTrashEmpty(unavailableToken, [1]);
+    const result = adminQuizTrashEmpty(unavailableToken, [1]);
     expect(result).toStrictEqual({
       content: {
         error:

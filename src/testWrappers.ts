@@ -336,3 +336,21 @@ export const adminQuizDeleteQuestion = (
     statusCode: res.statusCode
   };
 };
+
+export const adminQuizTrashEmpty = (
+  tokenObject: ReturnedToken,
+  quizId: number[],
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+      quizId: quizId
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

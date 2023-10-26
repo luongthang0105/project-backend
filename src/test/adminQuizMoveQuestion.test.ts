@@ -154,18 +154,223 @@ describe("adminQuizRemoveQuestion", () => {
       "Nguyen"
     ).content as ReturnedToken;
 
-    const quiz2 = adminQuizCreate(
-        user2,
-        'New Quiz 2',
-        'long description'
-      ).content as Quiz;
-  
-    const result = adminQuizMoveQuestion(user, quiz2.quizId, question.questionId, 0);
+    const quiz2 = adminQuizCreate(user2, "New Quiz 2", "long description")
+      .content as Quiz;
+
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz2.quizId,
+      question.questionId,
+      0
+    );
     expect(result).toStrictEqual({
       statusCode: 403,
       content: {
         error: "Valid token is provided, but user is not an owner of this quiz",
       },
     });
+  });
+
+  test("Success case: move the question", () => {
+    const questInfo2 = {
+      question: "What is that character",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Loopy",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question02 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo2.question,
+      questInfo2.duration,
+      questInfo2.points,
+      questInfo2.answers
+    ).content as Question;
+
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz.quizId,
+      question.questionId,
+      1
+    );
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+
+    const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
+
+    expect(quizInfo.questions[0].questionId).toStrictEqual(question02.questionId);
+    expect(quizInfo.questions[1].questionId).toStrictEqual(question.questionId);
+  });
+
+  test("Success case2: order from 0-1-2 to 2-0-1", () => {
+    const questInfo2 = {
+      question: "What is that character",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Loopy",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question02 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo2.question,
+      questInfo2.duration,
+      questInfo2.points,
+      questInfo2.answers
+    ).content as Question;
+
+    const questInfo3 = {
+      question: "What is that player",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Eden Hazard",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question03 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo3.question,
+      questInfo3.duration,
+      questInfo3.points,
+      questInfo3.answers
+    ).content as Question;
+
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz.quizId,
+      question03.questionId,
+      0
+    );
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+    
+    const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
+
+    expect(quizInfo.questions[0].questionId).toStrictEqual(question03.questionId);
+    expect(quizInfo.questions[1].questionId).toStrictEqual(question.questionId);
+    expect(quizInfo.questions[2].questionId).toStrictEqual(question02.questionId);
+  });
+
+  test("Success case2: order from 0-1-2 to 2-0-1", () => {
+    const questInfo2 = {
+      question: "What is that character",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Loopy",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question02 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo2.question,
+      questInfo2.duration,
+      questInfo2.points,
+      questInfo2.answers
+    ).content as Question;
+
+    const questInfo3 = {
+      question: "What is that player",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Eden Hazard",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question03 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo3.question,
+      questInfo3.duration,
+      questInfo3.points,
+      questInfo3.answers
+    ).content as Question;
+
+
+    const questInfo4 = {
+      question: "What is that fruit",
+      duration: 4,
+      points: 5,
+      answers: [
+        {
+          answer: "Apple",
+          correct: true,
+        },
+        {
+          answer: "Thomas",
+          correct: false,
+        },
+      ],
+    };
+    const question04 = adminQuizCreateQuestion(
+      user,
+      quiz.quizId,
+      questInfo4.question,
+      questInfo4.duration,
+      questInfo4.points,
+      questInfo4.answers
+    ).content as Question;
+
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz.quizId,
+      question04.questionId,
+      1
+    );
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+    
+    const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
+    // from 0-1-2-3 to 0-3-1-2
+    expect(quizInfo.questions[0].questionId).toStrictEqual(question.questionId);
+    expect(quizInfo.questions[1].questionId).toStrictEqual(question04.questionId);
+    expect(quizInfo.questions[2].questionId).toStrictEqual(question02.questionId);
+    expect(quizInfo.questions[3].questionId).toStrictEqual(question03.questionId);
+    
   });
 });

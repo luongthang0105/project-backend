@@ -42,7 +42,7 @@ describe("adminQuizRemoveQuestion", () => {
       questInfo.duration,
       questInfo.points,
       questInfo.answers
-    ).content;
+    ).content as Question;
   });
 
   test("Token is empty or invalid (does not refer to valid logged in user session)", () => {
@@ -76,7 +76,7 @@ describe("adminQuizRemoveQuestion", () => {
       statusCode: 400,
       content: {
         error:
-          "Question ID does not refer to a valid question within this quiz",
+          "Question Id does not refer to a valid question within this quiz",
       },
     });
   });

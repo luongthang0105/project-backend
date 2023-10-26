@@ -10,7 +10,7 @@ import path from 'path';
 import process from 'process';
 import { adminQuizCreateQuestion, adminQuizList, adminQuizRemove, adminQuizViewTrash } from './quiz';
 import { clear } from './other';
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
+import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminAuthLogout } from './auth';
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
@@ -237,6 +237,18 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+app.post('/v1/admin/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+
+  const result = adminAuthLogout(token)
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+  res.json(result);
+})
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

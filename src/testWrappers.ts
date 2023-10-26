@@ -223,3 +223,24 @@ export const adminQuizCreateQuestion = (
     statusCode: res.statusCode
   };
 };
+
+export const adminAuthLogout = (
+  tokenObject: ReturnedToken,
+): {
+  content:
+    EmptyObject | ErrorObject;
+  statusCode: number;
+} => {
+  const route = '/v1/admin/logout';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

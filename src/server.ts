@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 import { adminQuizList, adminQuizRemove } from "./quiz";
 import { clear } from "./other";
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from "./auth";
+import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserPasswordUpdate } from "./auth";
 import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate } from "./quiz";
 // Set up web app
 const app = express();
@@ -199,6 +199,19 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
   return res.json(result);
 });
 
+// adminUserPasswordUpdate
+app.put("/v1/admin/user/password", (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body
+
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+
+  if ("error" in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

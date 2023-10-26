@@ -1,5 +1,9 @@
 import { getData, setData } from './dataStore';
-import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour } from './quizHelper';
+import {
+  alphanumericAndSpaceCheck,
+  getCurrentTimestamp,
+  getQuestionColour,
+} from './quizHelper';
 import {
   Answer,
   EmptyObject,
@@ -438,21 +442,22 @@ const adminQuizNameUpdate = (
   return {};
 };
 
-const adminQuizViewTrash = (
-  token: string
-): ErrorObject | QuizList => {
+const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   // Retrieve the current data
   const currData = getData();
 
   // Check if authUserId is valid by searching for it in the list of users
   const data = getData();
 
-  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
 
   if (token === '' || !validSession) {
     return {
-      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
-      statusCode: 401
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
     };
   }
 
@@ -464,7 +469,7 @@ const adminQuizViewTrash = (
   // Map the filtered quizzes to a simplified format, containing quizId and name
   const quizList: Quiz[] = ownedQuizzes.map((quiz: QuizObject) => ({
     quizId: quiz.quizId,
-    name: quiz.name
+    name: quiz.name,
   }));
   return { quizzes: quizList };
 };
@@ -584,7 +589,7 @@ const adminQuizCreateQuestion = (
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
-      error: 'There are no correct answers'
+      error: 'There are no correct answers',
     };
   }
 
@@ -596,7 +601,7 @@ const adminQuizCreateQuestion = (
       answerId: newAnswerId,
       answer: currAnswer.answer,
       colour: getQuestionColour(),
-      correct: currAnswer.correct
+      correct: currAnswer.correct,
     };
   });
 
@@ -605,7 +610,7 @@ const adminQuizCreateQuestion = (
     question: question,
     duration: duration,
     points: points,
-    answers: newAnswerList
+    answers: newAnswerList,
   };
 
   data.nextQuestionId += 1;
@@ -779,6 +784,61 @@ const adminQuizQuestionUpdate = (
   return {};
 };
 
+const adminQuizDeleteQuestion = (
+  token: string,
+  quizId: number,
+  questionId: number
+): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (validQuiz.quizAuthorId !== authUserId) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
+  }
+
+  // Check if question Id does not refer to a valid question within this quiz
+  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  if (!validQuestion) {
+    return {
+      statusCode: 400,
+      error: 'Question Id does not refer to a valid question within this quiz'
+    };
+  }
+
+  // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
+  // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
+  const indexOfDeletedQuestion = validQuiz.questions.map((currQuestion) => currQuestion.questionId).indexOf(questionId);
+  validQuiz.questions.splice(indexOfDeletedQuestion, 1);
+
+  validQuiz.numQuestions -= 1;
+  validQuiz.duration -= validQuestion.duration;
+
+  setData(data);
+
+  return {};
+};
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -788,5 +848,6 @@ export {
   adminQuizDescriptionUpdate,
   adminQuizCreateQuestion,
   adminQuizViewTrash,
+  adminQuizDeleteQuestion,
   adminQuizQuestionUpdate
 };

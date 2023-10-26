@@ -11,7 +11,7 @@ import process from 'process';
 import { adminQuizList, adminQuizRemove } from './quiz';
 import { clear } from './other';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
-import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate } from './quiz';
+import { adminQuizCreate, adminQuizDescriptionUpdate, adminQuizInfo, adminQuizNameUpdate, adminQuizMoveQuestion } from './quiz';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -228,3 +228,22 @@ const server = app.listen(PORT, HOST, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
+app.put(
+  "/v1/admin/quiz/:quizid/question/:questionid/move",
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, newPosition } = req.body;
+
+  const result = adminQuizMoveQuestion(token, quizId, questionId, newPosition);
+
+    if ("error" in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+  
+    res.json(result);
+  }
+);

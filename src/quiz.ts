@@ -439,6 +439,15 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+export {
+  adminQuizCreate,
+  adminQuizInfo,
+  adminQuizRemove,
+  adminQuizList,
+  adminQuizNameUpdate,
+  adminQuizDescriptionUpdate,
+  adminQuizMoveQuestion,
+};
 const adminQuizMoveQuestion = (
   token: string,
   quizId: number,
@@ -526,16 +535,6 @@ function move(input: Question[], from: number, to: number) {
   numberOfDeletedElm = 0;
 
   input.splice(to, numberOfDeletedElm, elm);
-  
+
   return input;
 }
-
-export {
-  adminQuizCreate,
-  adminQuizInfo,
-  adminQuizRemove,
-  adminQuizList,
-  adminQuizNameUpdate,
-  adminQuizDescriptionUpdate,
-  adminQuizMoveQuestion,
-};

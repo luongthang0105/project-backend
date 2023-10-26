@@ -650,7 +650,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
     (quiz: QuizObject) => quiz.name === existingQuizinTrash.name
   );
 
-  if (!existingQuiz) {
+  if (existingQuiz) {
     return {
       statusCode: 400,
       error: 'Quiz name of the restored quiz is already used by another active quiz',

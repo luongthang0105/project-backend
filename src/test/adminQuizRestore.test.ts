@@ -8,7 +8,7 @@ import {
   adminQuizViewTrash,
   adminQuizList,
 } from '../testWrappers';
-import { Quiz, ReturnedToken } from '../types';
+import { Quiz, QuizList, ReturnedToken } from '../types';
 
 beforeEach(() => {
   clear();
@@ -179,7 +179,7 @@ describe('adminQuizRestore', () => {
       quizzes: []
     });
 
-    const quizzes = adminQuizList(user)
+    const quizzes = (adminQuizList(user).content as QuizList)
     expect(quizzes).toStrictEqual({
       quizzes: [
         {

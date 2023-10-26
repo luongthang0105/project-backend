@@ -1,5 +1,3 @@
-import { QuickInfo } from "typescript";
-import { emailUsed } from "./authHelper";
 import { getData, setData } from './dataStore';
 import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion } from './quizHelper';
 import {
@@ -968,11 +966,11 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
 
 /**
  * Transfer ownership of a quiz to a different user based on their email
- * 
+ *
  * @param {number} quizId - ID of the quiz
  * @param {string} Token - Token of the quiz owner
  * @param {string} userEmail - The email of the targeted user
- * @returns 
+ * @returns
  */
 
 const adminQuizTransfer = (
@@ -980,88 +978,86 @@ const adminQuizTransfer = (
   token: string,
   userEmail: string
 ): EmptyObject | ErrorObject => {
-  const data = getData()
+  const data = getData();
 
   // Find the logged in user
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
 
-  
-  if (token === "" || !validSession) {
+  if (token === '' || !validSession) {
     return {
       statusCode: 401,
       error:
-      "Token is empty or invalid (does not refer to valid logged in user session)",
+      'Token is empty or invalid (does not refer to valid logged in user session)',
     };
   }
-  const authUserId = validSession.authUserId
+  const authUserId = validSession.authUserId;
 
   // Find the quizObject of the quizId
   const validQuiz = data.quizzes.find(
     (quiz: QuizObject) => quiz.quizId === quizId
-  )
+  );
 
   if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
       error:
-        "Valid token is provided, but user is not an owner of this quiz"
-    }
+        'Valid token is provided, but user is not an owner of this quiz'
+    };
   }
 
-    // Finds the user object of the targeted email
+  // Finds the user object of the targeted email
   const targetUser = data.users.find(
     (targetEmail) => targetEmail.email === userEmail
-  )
+  );
 
   if (!targetUser) {
     return {
       statusCode: 400,
       error:
-        "userEmail is not a real user"
-    }
+        'userEmail is not a real user'
+    };
   }
 
   // Finds the user that owns this token
   const currentUser = data.users.find(
     (curr) => curr.authUserId === authUserId
-  )
+  );
 
   // If this user has the same email as the targeted email, then throw error
   if (currentUser.email === userEmail) {
     return {
       statusCode: 400,
       error:
-        "userEmail is the current logged in user"
-    }
+        'userEmail is the current logged in user'
+    };
   }
 
   // Filters an array of quizzes that this target user owns
   const quizzesFromTargetedUsers = data.quizzes.filter(
     (curr) => curr.quizAuthorId === targetUser.authUserId
-  )
-  
+  );
+
   // Finds a quiz owned by the target user that has the same name of the transferred quiz
-  const quizSameName = quizzesFromTargetedUsers.find( (quiz) => quiz.name === validQuiz.name)
+  const quizSameName = quizzesFromTargetedUsers.find((quiz) => quiz.name === validQuiz.name);
 
   if (quizSameName) {
     return {
       statusCode: 400,
       error:
-        "Quiz ID refers to a quiz that has a name that is already used by the target user"
-    }
+        'Quiz ID refers to a quiz that has a name that is already used by the target user'
+    };
   }
 
   // Check if all sessions had ended (not yet to be implemented until It3)
 
+  validQuiz.quizAuthorId = targetUser.authUserId;
 
-  validQuiz.quizAuthorId = targetUser.authUserId
+  setData(data);
 
-  setData(data)
-
-  return {}
-}
+  return {};
+};
 
 export {
   adminQuizCreate,

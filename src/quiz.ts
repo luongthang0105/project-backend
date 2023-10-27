@@ -1,4 +1,5 @@
-import { getData, setData } from './dataStore';
+import { emailUsed } from "./authHelper";
+import { getData, setData } from "./dataStore";
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -1042,20 +1043,28 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
+/**
+ * Transfer ownership of a quiz to a different user based on their email
+ * 
+ * @param {number} quizId - ID of the quiz
+ * @param {string} Token - Token of the quiz owner
+ * @param {string} userEmail - The email of the targeted user
+ * @returns 
+ */
+
 const adminQuizTransfer = (
   quizId: number,
-  body: {
-    token: string,
-    userEmail: string
-  }
+  Token: string,
+  userEmail: string
 ): EmptyObject | ErrorObject => {
   const data = getData()
 
+  // Find the logged in user
   const session = data.sessions.find(
-    (currSession) => currSession.identifier === body.token
+    (currSession) => currSession.identifier === Token
   );
 
-  if (body.token === "" || !session) {
+  if (Token === "" || !session) {
     return {
       statusCode: 401,
       error:
@@ -1063,6 +1072,67 @@ const adminQuizTransfer = (
     };
   }
 
+  // Find the quizObject of the quizId
+  const quiz = data.quizzes.find(
+    (currQuiz) => currQuiz.quizId === quizId
+  )
+
+  if (session.authUserId !== quiz.quizAuthorId) {
+    return {
+      statusCode: 403,
+      error:
+        "Valid token is provided, but user is not an owner of this quiz"
+    }
+  }
+
+  // Finds the targeted email in the data store
+  const userEmailExist = data.users.find(
+    (targetEmail) => targetEmail.email === userEmail
+  )
+
+  if (!userEmailExist) {
+    return {
+      statusCode: 400,
+      error:
+        "userEmail is not a real user"
+    }
+  }
+
+  // Finds the userId of the token
+  const userToken = data.users.find(
+    (curr) => curr.authUserId === session.authUserId
+  )
+
+  if (userToken.email === userEmail) {
+    return {
+      statusCode: 400,
+      error:
+        "userEmail is the current logged in user"
+    }
+  }
+
+  // Finds the userId of the targeted email
+  const emailUserId = data.users.find(
+    (curr) => curr.email === userEmail
+  )
+
+  const quizOwnedByUser = data.quizzes.find(
+    (curr) => curr.quizAuthorId === emailUserId.authUserId
+  )
+
+  if (quiz.name === quizOwnedByUser.name) {
+    return {
+      statusCode: 400,
+      error:
+        "Quiz ID refers to a quiz that has a name that is already used by the target user"
+    }
+  }
+
+  // Check if all sessions had ended
+
+
+  quiz.quizAuthorId = emailUserId.authUserId
+  setData(data)
   return
 }
 
@@ -1079,5 +1149,6 @@ export {
   adminQuizDuplicateQuestion,
   adminQuizRestore,
   adminQuizDeleteQuestion,
-  adminQuizQuestionUpdate
+  adminQuizQuestionUpdate,
+  adminQuizTransfer
 };

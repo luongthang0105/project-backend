@@ -120,7 +120,7 @@ const adminAuthRegister = (
   data.sessions.push(newToken);
   data.nextTokenId += 1;
 
-  // update dataStore by calling setData which will save it to data.json
+  // Update dataStore by calling setData which will save it to data.json
   setData(data);
 
   // Return an object containing the authUserId of the registered user
@@ -163,6 +163,7 @@ const adminAuthLogin = (
       error: 'Password is not correct for the given email',
     };
   }
+
   // Reset the count of failed login attempts and update the count of successful logins
   userInfo.numFailedPasswordsSinceLastLogin = 0;
   userInfo.numSuccessfulLogins += 1;
@@ -177,7 +178,7 @@ const adminAuthLogin = (
 
   data.sessions.push(newToken);
 
-  // update dataStore by calling setData which will save it to dataStore.json
+  // Update dataStore by calling setData which will save it to dataStore.json
   setData(data);
 
   // Return an object containing the authUserId of the authenticated user
@@ -208,7 +209,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   // Retrieve the current data
   const data = getData();
 
-  // Find user information based on the provided authUserId
+  // Find the session based on the provided token
   const session = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
@@ -222,6 +223,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
     };
   }
 
+  // Find the user associated with the session
   const userInfo = data.users.find(
     (user) => user.authUserId === session.authUserId
   ) as UserObject;
@@ -242,20 +244,31 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
+/**
+ * Updates user details for the authorized user.
+ *
+ * @param token - The authentication token for authorization.
+ * @param email - The new email address for the user.
+ * @param nameFirst - The new first name for the user.
+ * @param nameLast - The new last name for the user.
+ *
+ * @returns An empty object if the update is successful, or an error object with a status code and error message if there are validation issues.
+ */
 const adminUserDetailsUpdate = (
   token: string,
   email: string,
   nameFirst: string,
   nameLast: string
 ): EmptyObject | ErrorObject => {
+  // Retrieve the current data
   const data = getData();
 
-  // Find user information based on the provided authUserId
+  // Find the session based on the provided token
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
 
-  // if there is no token, print error
+  // Check if there is no token
   if (token === '' || !validSession) {
     return {
       statusCode: 401,
@@ -263,10 +276,10 @@ const adminUserDetailsUpdate = (
         'Token is empty or invalid (does not refer to valid logged in user session)',
     };
   }
-
+  // Find authUserId with the associated session
   const authUserId = validSession.authUserId;
 
-  // find the user to update and let the token for the user, be updated
+  // Find the user to update and let the token for the user, be updated
   const userToBeUpdated = data.users.find(
     (user) => user.authUserId === authUserId
   );
@@ -322,7 +335,7 @@ const adminUserDetailsUpdate = (
     };
   }
 
-  // update user
+  // Update user
   userToBeUpdated.email = email;
   userToBeUpdated.nameFirst = nameFirst;
   userToBeUpdated.nameLast = nameLast;
@@ -332,14 +345,23 @@ const adminUserDetailsUpdate = (
   return {};
 };
 
-// This function is responsible for updating the User Details (the token, the email, first and last name), not the password
+/**
+ * Logs out the currently authenticated user by removing their session token.
+ *
+ * @param token - The authentication token for the user's session.
+ *
+ * @returns An empty object if the logout is successful, or an error object with a status code and error message if the token is invalid.
+ */
 const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
+  // Retrieve the current data
   const data = getData();
 
+  // Find the session based on the provided token
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
 
+  // Check if there is no token
   if (token === '' || !validSession) {
     return {
       error:
@@ -347,13 +369,15 @@ const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
       statusCode: 401,
     };
   }
-
+  // Find the index of the current session in session array
   const currSessionPosition = data.sessions.findIndex(
     (currSession) => currSession.identifier === token
   );
-
+  
+  // Delete the current session out of the session array
   data.sessions.splice(currSessionPosition, 1);
 
+  // Update data
   setData(data);
 
   return {};
@@ -372,8 +396,10 @@ const adminUserPasswordUpdate = (
   oldPassword: string,
   newPassword: string
 ): EmptyObject | ErrorObject => {
+  // Retrieve the current data
   const data = getData();
 
+  // Find the session based on the provided token
   const session = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
@@ -387,6 +413,7 @@ const adminUserPasswordUpdate = (
     };
   }
 
+  // Find the user whose password needs update
   const userInfo = data.users.find(
     (user) => user.authUserId === session.authUserId
   );

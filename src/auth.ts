@@ -414,3 +414,5 @@ export {
   adminAuthLogout,
   adminUserDetailsUpdate,
 };
+
+export { adminAuthRegister, adminAuthLogin, adminUserDetails };

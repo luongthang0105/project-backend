@@ -97,13 +97,13 @@ describe('adminQuizTrashEmpty', () => {
     adminQuizRemove(user02, quiz02.quizId);
     expect(adminQuizTrashEmpty(user01, `[${quiz02.quizId}]`)).toStrictEqual({
       content: {
-        error: 'Valid token is provided, but user is not an owner of this quiz',
+        error: 'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
       },
       statusCode: 403,
     });
     expect(adminQuizTrashEmpty(user02, `[${quiz01.quizId}]`)).toStrictEqual({
       content: {
-        error: 'Valid token is provided, but user is not an owner of this quiz',
+        error: 'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
       },
       statusCode: 403,
     });

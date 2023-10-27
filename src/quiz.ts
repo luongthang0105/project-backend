@@ -445,6 +445,12 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+/**
+ * View the quizzes that are currently in the trash for the logged in user
+ *
+ * @param {string} token 
+ * @returns { ErrorObject | QuizList}
+ */
 const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   // Retrieve the current data
   const currData = getData();
@@ -979,6 +985,7 @@ const adminQuizRestore = (
       error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
+  existingQuizinTrash.timeLastEdited = getCurrentTimestamp();
 
   data.quizzes.push(existingQuizinTrash);
   for (let i = 0; i < data.trash.length; i++) {

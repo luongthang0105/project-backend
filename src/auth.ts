@@ -104,6 +104,7 @@ const adminAuthRegister = (
     nameLast: nameLast,
     email: email,
     password: password,
+    usedPasswords: [] as string[],
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
   };
@@ -208,7 +209,9 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   const data = getData();
 
   // Find user information based on the provided authUserId
-  const session = data.sessions.find((currSession) => currSession.identifier === token);
+  const session = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
 
   // If token is empty or no session with given token is found
   if (token === '' || !session) {
@@ -234,32 +237,46 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
       email: userInfo.email,
       numSuccessfulLogins: userInfo.numSuccessfulLogins,
       numFailedPasswordsSinceLastLogin:
-      userInfo.numFailedPasswordsSinceLastLogin,
+        userInfo.numFailedPasswordsSinceLastLogin,
     },
   };
 };
 
-const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string): EmptyObject | ErrorObject => {
+const adminUserDetailsUpdate = (
+  token: string,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): EmptyObject | ErrorObject => {
   const data = getData();
 
   // Find user information based on the provided authUserId
-  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
 
   // if there is no token, print error
   if (token === '' || !validSession) {
-    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
   }
 
   const authUserId = validSession.authUserId;
 
   // find the user to update and let the token for the user, be updated
-  const userToBeUpdated = data.users.find((user) => user.authUserId === authUserId);
+  const userToBeUpdated = data.users.find(
+    (user) => user.authUserId === authUserId
+  );
 
   // Check if the email address is used by another user
   if (emailUsed(email, data)) {
     return {
       statusCode: 400,
-      error: 'Email is currently used by another user (excluding the current authorised user)',
+      error:
+        'Email is currently used by another user (excluding the current authorised user)',
     };
   }
 
@@ -267,7 +284,7 @@ const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string,
   if (!validator.isEmail(email)) {
     return {
       error: 'Invalid email address',
-      statusCode: 400
+      statusCode: 400,
     };
   }
 
@@ -276,7 +293,7 @@ const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string,
     return {
       error:
         'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400
+      statusCode: 400,
     };
   }
 
@@ -284,7 +301,7 @@ const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string,
   if (nameFirst.length > 20 || nameFirst.length < 2) {
     return {
       error: 'First name is less than 2 characters or more than 20 characters',
-      statusCode: 400
+      statusCode: 400,
     };
   }
 
@@ -293,7 +310,7 @@ const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string,
     return {
       error:
         'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400
+      statusCode: 400,
     };
   }
 
@@ -342,10 +359,91 @@ const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   return {};
 };
 
+/**
+ * Given details relating to a password change, update the password of a logged in user.
+ *
+ * @param {string} token - Token of the logged in user
+ * @param {string} oldPassword - Current password of user
+ * @param {string} newPassword - New password that the password will changed to
+ * @returns { EmptyObject | ErrorObject}
+ */
+const adminUserPasswordUpdate = (
+  token: string,
+  oldPassword: string,
+  newPassword: string
+): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const session = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Checks if token is empty or invalid
+  if (token === '' || !session) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const userInfo = data.users.find(
+    (user) => user.authUserId === session.authUserId
+  );
+
+  // Checks if the old password is the same as current password
+  if (userInfo.password !== oldPassword) {
+    return {
+      statusCode: 400,
+      error: 'Old Password is not the correct old password',
+    };
+  }
+
+  // Checks if old password and new password are the same
+  if (oldPassword === newPassword) {
+    return {
+      statusCode: 400,
+      error: 'Old Password and New Password match exactly',
+    };
+  }
+
+  // Checks if new password has already been used before by this user
+  if (
+    userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)
+  ) {
+    return {
+      statusCode: 400,
+      error: 'New Password has already been used before by this user',
+    };
+  }
+
+  // Checks if new password is less than 8 characters
+  if (newPassword.length < 8) {
+    return { statusCode: 400, error: 'New Password is less than 8 characters' };
+  }
+
+  // Checks if new password contains at least one number and at least one letter
+  if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
+    return {
+      statusCode: 400,
+      error:
+        'New Password does not contain at least one number and at least one letter',
+    };
+  }
+
+  userInfo.usedPasswords.push(oldPassword);
+  userInfo.password = newPassword;
+
+  setData(data);
+
+  return {};
+};
+
 export {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
+  adminUserPasswordUpdate,
   adminAuthLogout,
-  adminUserDetailsUpdate
+  adminUserDetailsUpdate,
 };

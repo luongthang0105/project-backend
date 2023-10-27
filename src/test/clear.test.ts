@@ -5,7 +5,7 @@ describe('clear', () => {
     clear();
   });
 
-  test("Success: Can't login after clear", () => {
+  test('Success: Can not login after clear', () => {
     // eslint-disable-next-line
     adminAuthRegister(
       'javascript@gmail.com',

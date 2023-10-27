@@ -1,6 +1,4 @@
-import { QuickInfo } from "typescript";
-import { emailUsed } from "./authHelper";
-import { getData, setData } from "./dataStore";
+import { getData, setData } from './dataStore';
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,

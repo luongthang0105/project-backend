@@ -495,7 +495,14 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
-})
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
 
 // adminQuizCreateQuestion
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
@@ -547,5 +554,5 @@ const server = app.listen(PORT, HOST, () => {
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', () => {
-  server.close(() => console.log('Shutting down server gracefully.'))
+  server.close(() => console.log('Shutting down server gracefully.'));
 });

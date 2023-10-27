@@ -414,4 +414,3 @@ export {
   adminAuthLogout,
   adminUserDetailsUpdate,
 };
-

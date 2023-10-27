@@ -373,8 +373,8 @@ export const adminUserDetailsUpdate = (
       nameFirst: nameFirst,
       nameLast: nameLast,
     }
-  })
-}
+  });
+};
 
 export const adminQuizTransfer = (
   quizId: number,

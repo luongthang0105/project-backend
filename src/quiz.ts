@@ -483,6 +483,18 @@ const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   return { quizzes: quizList };
 };
 
+/**
+ * Creates a new question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz to which the question should be added.
+ * @param question - The text of the question.
+ * @param duration - The duration (in seconds) allocated for answering the question.
+ * @param points - The number of points awarded for the question.
+ * @param answers - An array of answer objects associated with the question.
+ *
+ * @returns Either the question's unique identifier (questionId) or an ErrorObject if any validation checks fail.
+ */
 const adminQuizCreateQuestion = (
   token: string,
   quizId: number,
@@ -638,6 +650,19 @@ const adminQuizCreateQuestion = (
   return { questionId: newQuestion.questionId };
 };
 
+/**
+ * Updates an existing question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be updated.
+ * @param question - The updated text of the question.
+ * @param duration - The updated duration (in seconds) for answering the question.
+ * @param points - The updated number of points awarded for the question.
+ * @param answers - An array of updated answer objects associated with the question.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizQuestionUpdate = (
   token: string,
   quizId: number,
@@ -803,6 +828,15 @@ const adminQuizQuestionUpdate = (
   return {};
 };
 
+/**
+ * Deletes a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be deleted.
+ *
+ * @returns An EmptyObject if the question is deleted successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizDeleteQuestion = (
   token: string,
   quizId: number,
@@ -863,6 +897,16 @@ const adminQuizDeleteQuestion = (
   return {};
 };
 
+/**
+ * Moves a question within a quiz to a new position.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be moved.
+ * @param newPosition - The new position for the question within the quiz.
+ *
+ * @returns An EmptyObject if the question is moved successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizMoveQuestion = (
   token: string,
   quizId: number,
@@ -938,6 +982,14 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
+/**
+ * Restores a quiz from the trash.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz to be restored from the trash.
+ *
+ * @returns An EmptyObject if the quiz is successfully restored or an ErrorObject if any validation checks fail.
+ */
 const adminQuizRestore = (
   token: string,
   quizId: number
@@ -998,6 +1050,15 @@ const adminQuizRestore = (
   return {};
 };
 
+/**
+ * Duplicates a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object with `newQuestionId` if the duplication is successful, or an ErrorObject if any validation checks fail.
+ */
 const adminQuizDuplicateQuestion = (
   token: string,
   quizId: number,
@@ -1064,6 +1125,14 @@ const adminQuizDuplicateQuestion = (
   return { newQuestionId: duplicateQuestion.questionId };
 };
 
+/**
+ * Empty the trash by permanently deleting quizzes with specified quizIds.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizIds - An array of unique identifiers for the quizzes to be permanently deleted from the trash.
+ *
+ * @returns An EmptyObject if the operation is successful, or an ErrorObject if any validation checks fail.
+ */
 const adminQuizTrashEmpty = (
   token: string,
   quizIds: number[]
@@ -1112,6 +1181,7 @@ const adminQuizTrashEmpty = (
 
   return {};
 };
+
 /**
  * Transfer ownership of a quiz to a different user based on their email
  *
@@ -1120,7 +1190,6 @@ const adminQuizTrashEmpty = (
  * @param {string} userEmail - The email of the targeted user
  * @returns
  */
-
 const adminQuizTransfer = (
   quizId: number,
   token: string,

@@ -1,10 +1,20 @@
 import { Colour } from './types';
 import { Question } from './types';
-// Helper function to check if a string contains alphanumeric characters or spaces
+
+/**
+ * Checks if a string consists of alphanumeric characters (letters and digits) and spaces only.
+ *
+ * @param str - The string to be checked.
+ * @returns True if the string contains only alphanumeric characters and spaces, false otherwise.
+ */
 const alphanumericAndSpaceCheck = (str: string): boolean =>
   /^[A-Za-z\s\d]*$/.test(str);
 
-// Helper function to get the current timestamp in seconds
+/**
+ * Returns the current timestamp in seconds since the Unix epoch.
+ *
+ * @returns The current timestamp as a number (integer) representing seconds.
+ */
 const getCurrentTimestamp = (): number => Math.floor(Date.now() / 1000);
 
 // Helper function to randomly get a colour for a question
@@ -22,6 +32,14 @@ const getQuestionColour = (): Colour => {
   return colours[randomIndex];
 };
 
+/**
+ * Moves a question within an array of questions from one index to another.
+ *
+ * @param questions - The array of questions.
+ * @param from - The index from which the question should be moved.
+ * @param to - The index to which the question should be moved.
+ * @returns A new array of questions with the question moved to the specified index.
+ */
 const moveQuestion = (questions: Question[], from: number, to: number): Question[] => {
   let numOfMovedQs = 1;
 
@@ -33,4 +51,5 @@ const moveQuestion = (questions: Question[], from: number, to: number): Question
 
   return questions;
 };
+
 export { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion };

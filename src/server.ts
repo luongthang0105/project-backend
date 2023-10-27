@@ -17,6 +17,7 @@ import {
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizRestore,
+  adminQuizTransfer,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -463,6 +464,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(result);
 });
 
+// adminQuizMoveQuestion
 app.put(
   '/v1/admin/quiz/:quizid/question/:questionid/move',
   (req: Request, res: Response) => {
@@ -493,6 +495,19 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+})
+
+// adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, userEmail } = req.body;
+
+  const result = adminQuizTransfer(
+    quizId,
+    token,
+    userEmail
+  );
 
   if ('error' in result) {
     res.status(result.statusCode).json({ error: result.error });
@@ -501,6 +516,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
@@ -531,5 +547,5 @@ const server = app.listen(PORT, HOST, () => {
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', () => {
-  server.close(() => console.log('Shutting down server gracefully.'));
+  server.close(() => console.log('Shutting down server gracefully.'))
 });

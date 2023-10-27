@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { emailUsed, validName, securedPassword } from './authHelper';
-import { ErrorObject, ReturnedToken, Token, UserDetails, UserObject } from './types';
+import { ErrorObject, ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -235,7 +235,6 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
-<<<<<<< HEAD
 const adminUserDetailsUpdate = (
   token: string,
   email: string,
@@ -416,6 +415,3 @@ export {
   adminUserDetailsUpdate,
 };
 
-=======
->>>>>>> 975a894 (run lint fix)
-export { adminAuthRegister, adminAuthLogin, adminUserDetails };

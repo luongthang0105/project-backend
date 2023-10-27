@@ -1146,12 +1146,12 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
-  adminQuizMoveQuestion,
   adminQuizCreateQuestion,
+  adminQuizDeleteQuestion,
+  adminQuizMoveQuestion,
+  adminQuizTransfer,
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizRestore,
-  adminQuizDeleteQuestion,
-  adminQuizQuestionUpdate,
-  adminQuizTransfer
+  adminQuizQuestionUpdate
 };

@@ -289,6 +289,27 @@ export const adminQuizDuplicateQuestion = (
   };
 };
 
+export const adminAuthLogout = (
+  tokenObject: ReturnedToken
+): {
+  content:
+    EmptyObject | ErrorObject;
+  statusCode: number;
+} => {
+  const route = '/v1/admin/logout';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const adminQuizQuestionUpdate = (
   tokenObject: ReturnedToken,
   quizId: number,
@@ -337,15 +358,38 @@ export const adminQuizDeleteQuestion = (
   };
 };
 
+export const adminUserDetailsUpdate = (
+  tokenObject: ReturnedToken,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/user/details';
+
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      email: email,
+      nameFirst: nameFirst,
+      nameLast: nameLast,
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
-  quizId: number[],
+  quizIds: string,
 ): {content: EmptyObject | ErrorObject, statusCode: number} => {
   const route = '/v1/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
     qs: {
       token: tokenObject.token,
-      quizId: quizId
+      quizIds: quizIds
     }
   });
 

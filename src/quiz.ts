@@ -1,10 +1,10 @@
-import { getData, setData } from './dataStore';
+import { getData, setData } from "./dataStore";
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
   getQuestionColour,
   moveQuestion,
-} from './quizHelper';
+} from "./quizHelper";
 import {
   Answer,
   EmptyObject,
@@ -13,7 +13,7 @@ import {
   Quiz,
   QuizList,
   QuizObject,
-} from './types';
+} from "./types";
 
 /**
  * Provides a list of all the quizzes owned by the logged in user
@@ -30,10 +30,10 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
       statusCode: 401,
     };
   }
@@ -78,11 +78,11 @@ const adminQuizCreate = (
     (session) => session.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -90,17 +90,17 @@ const adminQuizCreate = (
 
   // Check if the name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
-    return { statusCode: 400, error: 'Name contains invalid characters' };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Check if the name is less than 3 characters long
   if (name.length < 3) {
-    return { statusCode: 400, error: 'Name is less than 3 characters long' };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Check if the name is more than 30 characters long
   if (name.length > 30) {
-    return { statusCode: 400, error: 'Name is more than 30 characters long' };
+    return { statusCode: 400, error: "Name is more than 30 characters long" };
   }
 
   // Check if the name is already used by the current logged-in user for another quiz
@@ -111,7 +111,7 @@ const adminQuizCreate = (
     return {
       statusCode: 400,
       error:
-        'Name is already used by the current logged in user for another quiz',
+        "Name is already used by the current logged in user for another quiz",
     };
   }
 
@@ -119,7 +119,7 @@ const adminQuizCreate = (
   if (description.length > 100) {
     return {
       statusCode: 400,
-      error: 'Description is more than 100 characters in length',
+      error: "Description is more than 100 characters in length",
     };
   }
 
@@ -170,11 +170,11 @@ const adminQuizDescriptionUpdate = (
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !session) {
+  if (token === "" || !session) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -187,14 +187,14 @@ const adminQuizDescriptionUpdate = (
 
   // Return an error message if the quiz with the given quizId does not exist
   if (!existingQuiz) {
-    return { statusCode: 400, error: 'Quiz ID does not refer to a valid quiz' };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -202,7 +202,7 @@ const adminQuizDescriptionUpdate = (
   if (description.length > 100) {
     return {
       statusCode: 400,
-      error: 'Description is more than 100 characters in length',
+      error: "Description is more than 100 characters in length",
     };
   }
 
@@ -245,7 +245,7 @@ const adminQuizRemove = (
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -258,14 +258,14 @@ const adminQuizRemove = (
 
   // If quizId is not valid, return an error object
   if (!existingQuiz) {
-    return { statusCode: 400, error: 'Quiz ID does not refer to a valid quiz' };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (existingQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -309,7 +309,7 @@ const adminQuizInfo = (
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -322,7 +322,7 @@ const adminQuizInfo = (
 
   // Return an error message if the quiz with the given quizId does not exist
   if (!existingQuiz) {
-    return { statusCode: 400, error: 'Quiz ID does not refer to a valid quiz' };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
   const timeCreated = existingQuiz.timeCreated;
   const timeLastEdited = existingQuiz.timeLastEdited;
@@ -331,7 +331,7 @@ const adminQuizInfo = (
   if (existingQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -370,11 +370,11 @@ const adminQuizNameUpdate = (
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -387,32 +387,32 @@ const adminQuizNameUpdate = (
 
   // If quizId is not valid, return an error object
   if (!validQuiz) {
-    return { statusCode: 400, error: 'Quiz ID does not refer to a valid quiz' };
+    return { statusCode: 400, error: "Quiz ID does not refer to a valid quiz" };
   }
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
   // Check if the new name contains invalid characters
   if (!alphanumericAndSpaceCheck(name)) {
-    return { statusCode: 400, error: 'Name contains invalid characters' };
+    return { statusCode: 400, error: "Name contains invalid characters" };
   }
 
   // Checks if name is less than 3 characters
   if (name.length < 3) {
-    return { statusCode: 400, error: 'Name is less than 3 characters long' };
+    return { statusCode: 400, error: "Name is less than 3 characters long" };
   }
 
   // Checks if name is greater than 30 characters
   if (name.length > 30) {
     return {
       statusCode: 400,
-      error: 'Name is greater than 30 characters long',
+      error: "Name is greater than 30 characters long",
     };
   }
 
@@ -430,7 +430,7 @@ const adminQuizNameUpdate = (
       return {
         statusCode: 400,
         error:
-          'Name is already used by the current logged in user for another quiz',
+          "Name is already used by the current logged in user for another quiz",
       };
     }
 
@@ -456,10 +456,10 @@ const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
       statusCode: 401,
     };
   }
@@ -492,11 +492,11 @@ const adminQuizCreateQuestion = (
   );
 
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -507,7 +507,7 @@ const adminQuizCreateQuestion = (
   if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -516,7 +516,7 @@ const adminQuizCreateQuestion = (
     return {
       statusCode: 400,
       error:
-        'Question string is less than 5 characters in length or greater than 50 characters in length',
+        "Question string is less than 5 characters in length or greater than 50 characters in length",
     };
   }
 
@@ -524,7 +524,7 @@ const adminQuizCreateQuestion = (
   if (answers.length < 2 || answers.length > 6) {
     return {
       statusCode: 400,
-      error: 'The question has more than 6 answers or less than 2 answers',
+      error: "The question has more than 6 answers or less than 2 answers",
     };
   }
 
@@ -532,7 +532,7 @@ const adminQuizCreateQuestion = (
   if (duration <= 0) {
     return {
       statusCode: 400,
-      error: 'The question duration is not a positive number',
+      error: "The question duration is not a positive number",
     };
   }
 
@@ -541,7 +541,7 @@ const adminQuizCreateQuestion = (
   if (currTotalDuration + duration > 180) {
     return {
       statusCode: 400,
-      error: 'The sum of the question durations in the quiz exceeds 3 minutes',
+      error: "The sum of the question durations in the quiz exceeds 3 minutes",
     };
   }
 
@@ -550,7 +550,7 @@ const adminQuizCreateQuestion = (
     return {
       statusCode: 400,
       error:
-        'The points awarded for the question are less than 1 or greater than 10',
+        "The points awarded for the question are less than 1 or greater than 10",
     };
   }
 
@@ -562,7 +562,7 @@ const adminQuizCreateQuestion = (
     return {
       statusCode: 400,
       error:
-        'The length of any answer is shorter than 1 character long, or longer than 30 characters long',
+        "The length of any answer is shorter than 1 character long, or longer than 30 characters long",
     };
   }
 
@@ -585,7 +585,7 @@ const adminQuizCreateQuestion = (
     return {
       statusCode: 400,
       error:
-        'Any answer strings are duplicates of one another (within the same question)',
+        "Any answer strings are duplicates of one another (within the same question)",
     };
   }
 
@@ -596,7 +596,7 @@ const adminQuizCreateQuestion = (
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
-      error: 'There are no correct answers',
+      error: "There are no correct answers",
     };
   }
 
@@ -648,11 +648,11 @@ const adminQuizQuestionUpdate = (
   );
 
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -663,17 +663,19 @@ const adminQuizQuestionUpdate = (
   if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
   // Error: Question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
 
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: "Question Id does not refer to a valid question within this quiz",
     };
   }
 
@@ -682,7 +684,7 @@ const adminQuizQuestionUpdate = (
     return {
       statusCode: 400,
       error:
-        'Question string is less than 5 characters in length or greater than 50 characters in length',
+        "Question string is less than 5 characters in length or greater than 50 characters in length",
     };
   }
 
@@ -690,7 +692,7 @@ const adminQuizQuestionUpdate = (
   if (answers.length < 2 || answers.length > 6) {
     return {
       statusCode: 400,
-      error: 'The question has more than 6 answers or less than 2 answers',
+      error: "The question has more than 6 answers or less than 2 answers",
     };
   }
 
@@ -698,7 +700,7 @@ const adminQuizQuestionUpdate = (
   if (duration <= 0) {
     return {
       statusCode: 400,
-      error: 'The question duration is not a positive number',
+      error: "The question duration is not a positive number",
     };
   }
 
@@ -708,7 +710,7 @@ const adminQuizQuestionUpdate = (
   if (currTotalDuration - oldQuestionDuration + duration > 180) {
     return {
       statusCode: 400,
-      error: 'The sum of the question durations in the quiz exceeds 3 minutes',
+      error: "The sum of the question durations in the quiz exceeds 3 minutes",
     };
   }
 
@@ -717,17 +719,19 @@ const adminQuizQuestionUpdate = (
     return {
       statusCode: 400,
       error:
-        'The points awarded for the question are less than 1 or greater than 10',
+        "The points awarded for the question are less than 1 or greater than 10",
     };
   }
 
   // Error: The length of any answer is shorter than 1 character long, or longer than 30 characters long
-  const invalidLengthAnswers = answers.filter(({ answer }) => answer.length < 1 || answer.length > 30);
+  const invalidLengthAnswers = answers.filter(
+    ({ answer }) => answer.length < 1 || answer.length > 30
+  );
   if (invalidLengthAnswers.length !== 0) {
     return {
       statusCode: 400,
       error:
-        'The length of any answer is shorter than 1 character long, or longer than 30 characters long',
+        "The length of any answer is shorter than 1 character long, or longer than 30 characters long",
     };
   }
 
@@ -750,16 +754,18 @@ const adminQuizQuestionUpdate = (
     return {
       statusCode: 400,
       error:
-        'Any answer strings are duplicates of one another (within the same question)',
+        "Any answer strings are duplicates of one another (within the same question)",
     };
   }
 
   // Error: There are no correct answers
-  const correctAnswers = answers.filter((currAnswer) => currAnswer.correct === true);
+  const correctAnswers = answers.filter(
+    (currAnswer) => currAnswer.correct === true
+  );
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
-      error: 'There are no correct answers'
+      error: "There are no correct answers",
     };
   }
 
@@ -770,7 +776,7 @@ const adminQuizQuestionUpdate = (
       answerId: newAnswerId,
       answer: currAnswer.answer,
       colour: getQuestionColour(),
-      correct: currAnswer.correct
+      correct: currAnswer.correct,
     };
   });
 
@@ -802,11 +808,11 @@ const adminQuizDeleteQuestion = (
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -821,22 +827,26 @@ const adminQuizDeleteQuestion = (
   if (validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
   // Check if question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: "Question Id does not refer to a valid question within this quiz",
     };
   }
 
   // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
   // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
-  const indexOfDeletedQuestion = validQuiz.questions.map((currQuestion) => currQuestion.questionId).indexOf(questionId);
+  const indexOfDeletedQuestion = validQuiz.questions
+    .map((currQuestion) => currQuestion.questionId)
+    .indexOf(questionId);
   validQuiz.questions.splice(indexOfDeletedQuestion, 1);
 
   validQuiz.numQuestions -= 1;
@@ -859,11 +869,11 @@ const adminQuizMoveQuestion = (
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -879,7 +889,7 @@ const adminQuizMoveQuestion = (
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -890,7 +900,7 @@ const adminQuizMoveQuestion = (
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz',
+      error: "Question Id does not refer to a valid question within this quiz",
     };
   }
 
@@ -898,7 +908,7 @@ const adminQuizMoveQuestion = (
     return {
       statusCode: 400,
       error:
-        'NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions',
+        "NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions",
     };
   }
 
@@ -909,7 +919,7 @@ const adminQuizMoveQuestion = (
   if (newPosition === currPosition) {
     return {
       statusCode: 400,
-      error: 'NewPosition is the position of the current question',
+      error: "NewPosition is the position of the current question",
     };
   }
 
@@ -922,17 +932,20 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
-const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObject => {
+const adminQuizRestore = (
+  token: string,
+  quizId: number
+): EmptyObject | ErrorObject => {
   const data = getData();
 
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
       statusCode: 401,
     };
   }
@@ -944,7 +957,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
   if (!existingQuizinTrash) {
     return {
       statusCode: 400,
-      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+      error: "Quiz ID refers to a quiz that is not currently in the trash",
     };
   }
 
@@ -955,14 +968,15 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
   if (existingQuiz) {
     return {
       statusCode: 400,
-      error: 'Quiz name of the restored quiz is already used by another active quiz',
+      error:
+        "Quiz name of the restored quiz is already used by another active quiz",
     };
   }
 
   if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -988,11 +1002,11 @@ const adminQuizDuplicateQuestion = (
     (currSession) => currSession.identifier === token
   );
 
-  if (token === '' || !validSession) {
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
 
@@ -1008,7 +1022,7 @@ const adminQuizDuplicateQuestion = (
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     return {
       statusCode: 403,
-      error: 'Valid token is provided, but user is not an owner of this quiz',
+      error: "Valid token is provided, but user is not an owner of this quiz",
     };
   }
 
@@ -1019,7 +1033,7 @@ const adminQuizDuplicateQuestion = (
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz',
+      error: "Question Id does not refer to a valid question within this quiz",
     };
   }
 
@@ -1042,50 +1056,67 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
-
-const adminQuizTrashEmpty =  (
+function findCommonElements3(arr1: number[], arr2: number[]) {
+  return arr1.some((item) => arr2.includes(item));
+}
+const adminQuizTrashEmpty = (
   token: string,
   quizIds: number[]
 ): EmptyObject | ErrorObject => {
+  
+  console.log("quizIds ban da ne");
+  console.log(quizIds);
+
   const currData = getData();
 
   const validSession = currData.sessions.find(
     (session) => session.identifier === token
   );
-
-  if (token === '' || !validSession) {
+  
+  if (token === "" || !validSession) {
     return {
       statusCode: 401,
       error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
+        "Token is empty or invalid (does not refer to valid logged in user session)",
     };
   }
   const trashIds = new Set(currData.trash.map((quiz) => quiz.quizId));
-  const isAnyQuizNotInTrash = quizIds.some((quizId) => !trashIds.has(quizId));
-  
-  if(isAnyQuizNotInTrash) {
+  // console.log("trash Id is");
+  // console.log(trashIds);
+
+  const isAnyQuizNotInTrash = quizIds.some(
+    (quizId: number) => !trashIds.has(quizId)
+  );
+
+  if (isAnyQuizNotInTrash) {
     return {
       statusCode: 400,
-      error:
-        'One of the Quiz IDs is not in the trash',
+      error: "One or more of the Quiz IDs is not currently in the trash",
     };
   }
 
   for (const quiz of currData.trash) {
-    if (!(quizIds.includes(quiz.quizId) && quiz.quizAuthorId === validSession.authUserId))
+    if (
+      !(
+        quizIds.includes(quiz.quizId) &&
+        quiz.quizAuthorId === validSession.authUserId
+      )
+    )
       return {
         statusCode: 403,
         error:
-        'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
-     };
+          "Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own",
+      };
   }
 
-  currData.trash.filter((quiz) => !quizIds.includes(quiz.quizId));
+  currData.trash = currData.trash.filter(
+    (quiz) => !quizIds.includes(quiz.quizId)
+  );
 
   setData(currData);
 
   return {};
-}
+};
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -1100,5 +1131,5 @@ export {
   adminQuizRestore,
   adminQuizDeleteQuestion,
   adminQuizQuestionUpdate,
-  adminQuizTrashEmpty
+  adminQuizTrashEmpty,
 };

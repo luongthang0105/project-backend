@@ -127,6 +127,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizList(token);
@@ -139,12 +140,6 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   }
 
   res.json(result);
-});
-
-// clear
-app.delete('/v1/clear', (req: Request, res: Response) => {
-  const result = clear();
-  return res.json(result);
 });
 
 // adminQuizDescriptionUpdate

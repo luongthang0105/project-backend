@@ -1042,6 +1042,30 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
+const adminQuizTransfer = (
+  quizId: number,
+  body: {
+    token: string,
+    userEmail: string
+  }
+): EmptyObject | ErrorObject => {
+  const data = getData()
+
+  const session = data.sessions.find(
+    (currSession) => currSession.identifier === body.token
+  );
+
+  if (body.token === "" || !session) {
+    return {
+      statusCode: 401,
+      error:
+        "Token is empty or invalid (does not refer to valid logged in user session)",
+    };
+  }
+
+  return
+}
+
 export {
   adminQuizCreate,
   adminQuizInfo,

@@ -1,5 +1,10 @@
 import { getData, setData } from './dataStore';
-import { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion } from './quizHelper';
+import {
+  alphanumericAndSpaceCheck,
+  getCurrentTimestamp,
+  getQuestionColour,
+  moveQuestion,
+} from './quizHelper';
 import {
   Answer,
   EmptyObject,
@@ -27,8 +32,9 @@ const adminQuizList = (token: string): QuizList | ErrorObject => {
 
   if (token === '' || !validSession) {
     return {
-      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
-      statusCode: 401
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
     };
   }
 
@@ -99,8 +105,7 @@ const adminQuizCreate = (
 
   // Check if the name is already used by the current logged-in user for another quiz
   const quizNameUsed = currData.quizzes.find(
-    (quiz: QuizObject) =>
-      quiz.quizAuthorId === authUserId && quiz.name === name
+    (quiz: QuizObject) => quiz.quizAuthorId === authUserId && quiz.name === name
   );
   if (quizNameUsed) {
     return {
@@ -368,7 +373,8 @@ const adminQuizNameUpdate = (
   if (token === '' || !validSession) {
     return {
       statusCode: 401,
-      error: 'Token is empty or invalid (does not refer to valid logged in user session)'
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
     };
   }
 
@@ -386,7 +392,10 @@ const adminQuizNameUpdate = (
 
   // Check if the quiz with the given quizId is owned by the authenticated user
   if (validQuiz.quizAuthorId !== authUserId) {
-    return { statusCode: 403, error: 'Valid token is provided, but user is not an owner of this quiz' };
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
   }
 
   // Check if the new name contains invalid characters
@@ -545,8 +554,10 @@ const adminQuizCreateQuestion = (
     };
   }
 
-  // Error: The length of any answer is shorter than 1 character long, or longer than 30 characters long
-  const invalidLengthAnswers = answers.filter(({ answer }) => answer.length < 1 || answer.length > 30);
+  // The length of any answer is shorter than 1 character long, or longer than 30 characters long
+  const invalidLengthAnswers = answers.filter(
+    ({ answer }) => answer.length < 1 || answer.length > 30
+  );
   if (invalidLengthAnswers.length !== 0) {
     return {
       statusCode: 400,
@@ -578,8 +589,10 @@ const adminQuizCreateQuestion = (
     };
   }
 
-  // Error: There are no correct answers
-  const correctAnswers = answers.filter((currAnswer) => currAnswer.correct === true);
+  // There are no correct answers
+  const correctAnswers = answers.filter(
+    (currAnswer) => currAnswer.correct === true
+  );
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
@@ -909,6 +922,126 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
+const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const existingQuizinTrash = data.trash.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  if (!existingQuizinTrash) {
+    return {
+      statusCode: 400,
+      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+    };
+  }
+
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.name === existingQuizinTrash.name
+  );
+
+  if (existingQuiz) {
+    return {
+      statusCode: 400,
+      error: 'Quiz name of the restored quiz is already used by another active quiz',
+    };
+  }
+
+  if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
+  }
+
+  data.quizzes.push(existingQuizinTrash);
+  for (let i = 0; i < data.trash.length; i++) {
+    if (data.trash[i].quizId === quizId) {
+      data.trash.splice(i, 1);
+    }
+  }
+
+  setData(data);
+  return {};
+};
+
+const adminQuizDuplicateQuestion = (
+  token: string,
+  quizId: number,
+  questionId: number
+): { newQuestionId: number } | ErrorObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // If quizId is not valid, return an error object
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+    };
+  }
+
+  const validQuestion = validQuiz.questions.find(
+    (question: Question) => question.questionId === questionId
+  );
+
+  if (!validQuestion) {
+    return {
+      statusCode: 400,
+      error: 'Question Id does not refer to a valid question within this quiz',
+    };
+  }
+
+  const currPosition = validQuiz.questions.findIndex(
+    (question: Question) => question.questionId === questionId
+  );
+
+  const duplicateQuestion = {
+    questionId: data.nextQuestionId,
+    question: validQuestion.question,
+    duration: validQuestion.duration,
+    points: validQuestion.points,
+    answers: validQuestion.answers,
+  };
+  validQuiz.questions.splice(currPosition + 1, 0, duplicateQuestion);
+  validQuiz.timeLastEdited = getCurrentTimestamp();
+  validQuiz.numQuestions++;
+  validQuiz.duration += duplicateQuestion.duration;
+  data.nextQuestionId++;
+  setData(data);
+  return { newQuestionId: duplicateQuestion.questionId };
+};
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -919,6 +1052,8 @@ export {
   adminQuizMoveQuestion,
   adminQuizCreateQuestion,
   adminQuizViewTrash,
+  adminQuizDuplicateQuestion,
+  adminQuizRestore,
   adminQuizDeleteQuestion,
   adminQuizQuestionUpdate
 };

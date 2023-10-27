@@ -8,9 +8,24 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminQuizCreateQuestion, adminQuizDeleteQuestion, adminQuizList, adminQuizQuestionUpdate, adminQuizRemove, adminQuizViewTrash } from './quiz';
+import {
+  adminQuizCreateQuestion,
+  adminQuizDeleteQuestion,
+  adminQuizList,
+  adminQuizQuestionUpdate,
+  adminQuizRemove,
+  adminQuizViewTrash,
+  adminQuizDuplicateQuestion,
+  adminQuizRestore,
+} from './quiz';
 import { clear } from './other';
-import { adminAuthRegister, adminAuthLogin, adminUserDetails } from './auth';
+import {
+  adminAuthRegister,
+  adminAuthLogin,
+  adminUserDetails,
+  adminAuthLogout,
+  adminUserDetailsUpdate,
+} from './auth';
 import {
   adminQuizCreate,
   adminQuizDescriptionUpdate,
@@ -180,6 +195,18 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.body.token;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, quizId);
+  if ('error' in result) {
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
+  res.json(result);
+});
+
 // adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
@@ -238,51 +265,65 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizQuestionUpdate
-app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid);
+app.post('/v1/admin/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
 
-  const { token, questionBody } = req.body;
-
-  const result = adminQuizQuestionUpdate(
-    token,
-    quizId,
-    questionId,
-    questionBody.question,
-    questionBody.duration,
-    questionBody.points,
-    questionBody.answers
-  );
+  const result = adminAuthLogout(token);
 
   if ('error' in result) {
     res.status(result.statusCode).json({ error: result.error });
     return;
   }
-
   res.json(result);
 });
+
+// adminQuizQuestionUpdate
+app.put(
+  '/v1/admin/quiz/:quizid/question/:questionid',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, questionBody } = req.body;
+
+    const result = adminQuizQuestionUpdate(
+      token,
+      quizId,
+      questionId,
+      questionBody.question,
+      questionBody.duration,
+      questionBody.points,
+      questionBody.answers
+    );
+
+    if ('error' in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
 
 // adminQuizDeleteQuestion
-app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const questionId = parseInt(req.params.questionid);
+app.delete(
+  '/v1/admin/quiz/:quizid/question/:questionid',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const questionId = parseInt(req.params.questionid);
 
-  const token = req.query.token as string;
+    const token = req.query.token as string;
 
-  const result = adminQuizDeleteQuestion(
-    token,
-    quizId,
-    questionId
-  );
+    const result = adminQuizDeleteQuestion(token, quizId, questionId);
 
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
+    if ('error' in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
   }
-
-  res.json(result);
-});
+);
 
 app.put(
   '/v1/admin/quiz/:quizid/question/:questionid/move',
@@ -309,6 +350,49 @@ app.put(
   }
 );
 
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+  console.log(result);
+  res.json(result);
+});
+
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+  console.log(result);
+  res.json(result);
+});
+
+app.post(
+  '/v1/admin/quiz/:quizid/question/:questionid/duplicate',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token } = req.body;
+
+    const result = adminQuizDuplicateQuestion(token, quizId, questionId);
+
+    if ('error' in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

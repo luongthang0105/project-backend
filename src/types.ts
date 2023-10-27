@@ -4,14 +4,14 @@
  * @property error - A descriptive error message providing more information about the error.
  */
 type ErrorObject = {
-  statusCode?: number,
-  error: string
-}
+  statusCode?: number;
+  error: string;
+};
 
 /**
  * Represents an empty object with no properties.
  */
-type EmptyObject = Record<string, never>
+type EmptyObject = Record<string, never>;
 
 /**
  * Represents a session token used for storing user sessions in data.json.
@@ -19,9 +19,9 @@ type EmptyObject = Record<string, never>
  * @property authUserId - The user's authentication user ID associated with the session.
  */
 type Token = {
-  identifier: string,
-  authUserId: number
-}
+  identifier: string;
+  authUserId: number;
+};
 
 /**
  * Represents the token type returned by the adminAuthRegister and adminAuthLogin processes
@@ -29,8 +29,8 @@ type Token = {
  * @property token - A string containing the authentication token received upon successful registration or login.
  */
 type ReturnedToken = {
-  token: string
-}
+  token: string;
+};
 
 /**
  * Represents the parameter type used for adminAuthRegister and adminAuthLogin functions.
@@ -40,11 +40,11 @@ type ReturnedToken = {
  * @property nameLast - (Optional) The user's last name, used during registration.
  */
 type LoginInfo = {
-  email: string,
-  password: string,
-  nameFirst?: string,
-  nameLast?: string
-}
+  email: string;
+  password: string;
+  nameFirst?: string;
+  nameLast?: string;
+};
 
 /**
  * Represents the return type for the adminUserDetails function, providing detailed user information.
@@ -57,20 +57,20 @@ type LoginInfo = {
  */
 type UserDetails = {
   user: {
-    userId: number,
-    name: string,
-    email: string,
-    numSuccessfulLogins: number,
-    numFailedPasswordsSinceLastLogin: number,
-  }
-}
+    userId: number;
+    name: string;
+    email: string;
+    numSuccessfulLogins: number;
+    numFailedPasswordsSinceLastLogin: number;
+  };
+};
 
 /**
  * Represents a quiz object, used in the QuizList type.
  * @property quizId - The unique identifier for the quiz.
  * @property name - (Optional) The name or title of the quiz.
  */
-type Quiz = {quizId: number, name?: string};
+type Quiz = { quizId: number; name?: string };
 
 /**
  * Represents the return type for the adminQuizList functions, providing information about quizzes.
@@ -79,8 +79,8 @@ type Quiz = {quizId: number, name?: string};
  *   @property name - (Optional) The name or title of the quiz.
  */
 type QuizList = {
-  quizzes: Quiz[]
-}
+  quizzes: Quiz[];
+};
 
 /**
  * Represents the parameter type used for the adminQuizCreate function, specifying quiz creation details.
@@ -89,22 +89,22 @@ type QuizList = {
  * @property description - A brief description of the quiz.
  */
 type QuizCreate = {
-  token: string,
-  name: string,
-  description: string
-}
+  token: string;
+  name: string;
+  description: string;
+};
 
 /**
  * Represents a color selection with predefined options.
  */
 type Colour =
-  | 'red'
-  | 'blue'
-  | 'green'
-  | 'yellow'
-  | 'purple'
-  | 'brown'
-  | 'orange'
+  | "red"
+  | "blue"
+  | "green"
+  | "yellow"
+  | "purple"
+  | "brown"
+  | "orange";
 
 /**
  * Represents an answer option in a quiz question.
@@ -114,11 +114,11 @@ type Colour =
  * @property correct - A boolean indicating whether this answer is correct or not.
  */
 type Answer = {
-  answerId?: number,
-  answer: string,
-  colour?: Colour,
-  correct: boolean
-}
+  answerId?: number;
+  answer: string;
+  colour?: Colour;
+  correct: boolean;
+};
 
 /**
  * Represents a quiz question with its associated properties.
@@ -129,12 +129,12 @@ type Answer = {
  * @property answers - An array of Answer objects representing answer options for the question.
  */
 type Question = {
-  questionId?: number,
-  question: string,
-  duration: number,
-  points: number,
-  answers: Answer[]
-}
+  questionId?: number;
+  question: string;
+  duration: number;
+  points: number;
+  answers: Answer[];
+};
 
 /**
  * Represents the parameter type used for updating a quiz's name in adminQuizNameUpdate.
@@ -142,9 +142,9 @@ type Question = {
  * @property name - The new name for the quiz.
  */
 type NameUpdate = {
-  token: string,
-  name: string
-}
+  token: string;
+  name: string;
+};
 
 /**
  * Represents the parameter type used for updating a quiz's description in adminQuizDescriptionUpdate.
@@ -152,55 +152,53 @@ type NameUpdate = {
  * @property name - The new description for the quiz.
  */
 type DescriptionUpdate = {
-  token: string,
-  name: string
-}
-
+  token: string;
+  name: string;
+};
 
 /**
  * Represents a user object with user-related properties.
  */
 type UserObject = {
-  authUserId: number,
-  nameFirst: string,
-  nameLast: string,
-  email: string,
-  password: string
-  usedPasswords: string[]
-  numSuccessfulLogins: number,
-  numFailedPasswordsSinceLastLogin: number,
-}
+  authUserId: number;
+  nameFirst: string;
+  nameLast: string;
+  email: string;
+  password: string;
+  usedPasswords: string[];
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+};
 
 /**
  * Represents a quiz object with quiz-related properties.
  */
 type QuizObject = {
-  quizId: number,
-  quizAuthorId?: number,
-  name: string,
-  description: string,
-  timeCreated: number,
-  timeLastEdited: number,
-  questions: Question[],
-  numQuestions: number,
-  duration: number
-}
-
+  quizId: number;
+  quizAuthorId?: number;
+  name: string;
+  description: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  questions: Question[];
+  numQuestions: number;
+  duration: number;
+};
 
 /**
  * Represents the data store structure with arrays of users, quizzes, sessions, and counters.
  */
 type DataStore = {
-  users: UserObject[],
-  quizzes: QuizObject[],
-  trash: QuizObject[],
-  sessions: Token[],
-  nextTokenId: number,
-  nextUserId: number,
-  nextQuizId: number,
-  nextQuestionId: number,
-  nextAnswerId: number
-}
+  users: UserObject[];
+  quizzes: QuizObject[];
+  trash: QuizObject[];
+  sessions: Token[];
+  nextTokenId: number;
+  nextUserId: number;
+  nextQuizId: number;
+  nextQuestionId: number;
+  nextAnswerId: number;
+};
 
 export {
   EmptyObject,
@@ -219,5 +217,5 @@ export {
   DescriptionUpdate,
   UserObject,
   QuizObject,
-  DataStore
+  DataStore,
 };

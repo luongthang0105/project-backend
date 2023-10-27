@@ -349,6 +349,7 @@ export const adminQuizTrashEmpty = (
     }
   });
 
+
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode

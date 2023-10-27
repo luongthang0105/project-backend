@@ -98,7 +98,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 //adminQuizTrashEmpty
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIds = JSON.parse(req.query.quizIds);
+  const quizIds = JSON.parse(req.query.quizIds as string);
   const token = req.query.token as string;
   const result = adminQuizTrashEmpty(token, quizIds);
   if ('error' in result) {

@@ -565,6 +565,36 @@ export const adminUserDetailsUpdate = (
 };
 
 /**
+ * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
+ *
+ * @param quizId - The unique identifier of the quiz to be transferred.
+ * @param tokenObject - An object containing the authentication token for the transfer.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param userEmail - The email address of the user to whom the quiz should be transferred.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz transfer request.
+ */
+export const adminQuizTransfer = (
+  quizId: number,
+  tokenObject: ReturnedToken,
+  userEmail: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/transfer';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      userEmail: userEmail
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
+/**
  * Updates a user's password by sending a PUT request to the server's password update endpoint.
  *
  * @param tokenObject - An object containing the authentication token for password update.
@@ -592,5 +622,32 @@ export const adminUserPasswordUpdate = (
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Empties the trash (permanently deletes quizzes) by sending a DELETE request to the server's trash emptying endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for emptying the trash.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizIds - A string containing the IDs of quizzes to be permanently deleted, separated by commas.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the trash emptying request.
+ */
+export const adminQuizTrashEmpty = (
+  tokenObject: ReturnedToken,
+  quizIds: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+      quizIds: quizIds
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
   };
 };

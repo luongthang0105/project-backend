@@ -445,6 +445,12 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+/**
+ * View the quizzes that are currently in the trash for the logged in user
+ *
+ * @param {string} token
+ * @returns { ErrorObject | QuizList}
+ */
 const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   // Retrieve the current data
   const currData = getData();
@@ -477,6 +483,18 @@ const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   return { quizzes: quizList };
 };
 
+/**
+ * Creates a new question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz to which the question should be added.
+ * @param question - The text of the question.
+ * @param duration - The duration (in seconds) allocated for answering the question.
+ * @param points - The number of points awarded for the question.
+ * @param answers - An array of answer objects associated with the question.
+ *
+ * @returns Either the question's unique identifier (questionId) or an ErrorObject if any validation checks fail.
+ */
 const adminQuizCreateQuestion = (
   token: string,
   quizId: number,
@@ -632,6 +650,19 @@ const adminQuizCreateQuestion = (
   return { questionId: newQuestion.questionId };
 };
 
+/**
+ * Updates an existing question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be updated.
+ * @param question - The updated text of the question.
+ * @param duration - The updated duration (in seconds) for answering the question.
+ * @param points - The updated number of points awarded for the question.
+ * @param answers - An array of updated answer objects associated with the question.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizQuestionUpdate = (
   token: string,
   quizId: number,
@@ -668,12 +699,14 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: Question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
 
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: 'Question Id does not refer to a valid question within this quiz',
     };
   }
 
@@ -722,7 +755,9 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: The length of any answer is shorter than 1 character long, or longer than 30 characters long
-  const invalidLengthAnswers = answers.filter(({ answer }) => answer.length < 1 || answer.length > 30);
+  const invalidLengthAnswers = answers.filter(
+    ({ answer }) => answer.length < 1 || answer.length > 30
+  );
   if (invalidLengthAnswers.length !== 0) {
     return {
       statusCode: 400,
@@ -755,11 +790,13 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: There are no correct answers
-  const correctAnswers = answers.filter((currAnswer) => currAnswer.correct === true);
+  const correctAnswers = answers.filter(
+    (currAnswer) => currAnswer.correct === true
+  );
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
-      error: 'There are no correct answers'
+      error: 'There are no correct answers',
     };
   }
 
@@ -770,7 +807,7 @@ const adminQuizQuestionUpdate = (
       answerId: newAnswerId,
       answer: currAnswer.answer,
       colour: getQuestionColour(),
-      correct: currAnswer.correct
+      correct: currAnswer.correct,
     };
   });
 
@@ -791,6 +828,15 @@ const adminQuizQuestionUpdate = (
   return {};
 };
 
+/**
+ * Deletes a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be deleted.
+ *
+ * @returns An EmptyObject if the question is deleted successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizDeleteQuestion = (
   token: string,
   quizId: number,
@@ -826,17 +872,21 @@ const adminQuizDeleteQuestion = (
   }
 
   // Check if question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: 'Question Id does not refer to a valid question within this quiz',
     };
   }
 
   // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
   // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
-  const indexOfDeletedQuestion = validQuiz.questions.map((currQuestion) => currQuestion.questionId).indexOf(questionId);
+  const indexOfDeletedQuestion = validQuiz.questions
+    .map((currQuestion) => currQuestion.questionId)
+    .indexOf(questionId);
   validQuiz.questions.splice(indexOfDeletedQuestion, 1);
 
   validQuiz.numQuestions -= 1;
@@ -847,6 +897,16 @@ const adminQuizDeleteQuestion = (
   return {};
 };
 
+/**
+ * Moves a question within a quiz to a new position.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be moved.
+ * @param newPosition - The new position for the question within the quiz.
+ *
+ * @returns An EmptyObject if the question is moved successfully or an ErrorObject if any validation checks fail.
+ */
 const adminQuizMoveQuestion = (
   token: string,
   quizId: number,
@@ -922,7 +982,18 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
-const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObject => {
+/**
+ * Restores a quiz from the trash.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz to be restored from the trash.
+ *
+ * @returns An EmptyObject if the quiz is successfully restored or an ErrorObject if any validation checks fail.
+ */
+const adminQuizRestore = (
+  token: string,
+  quizId: number
+): EmptyObject | ErrorObject => {
   const data = getData();
 
   const validSession = data.sessions.find(
@@ -955,7 +1026,8 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
   if (existingQuiz) {
     return {
       statusCode: 400,
-      error: 'Quiz name of the restored quiz is already used by another active quiz',
+      error:
+        'Quiz name of the restored quiz is already used by another active quiz',
     };
   }
 
@@ -965,6 +1037,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
       error: 'Valid token is provided, but user is not an owner of this quiz',
     };
   }
+  existingQuizinTrash.timeLastEdited = getCurrentTimestamp();
 
   data.quizzes.push(existingQuizinTrash);
   for (let i = 0; i < data.trash.length; i++) {
@@ -977,6 +1050,15 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
   return {};
 };
 
+/**
+ * Duplicates a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object with `newQuestionId` if the duplication is successful, or an ErrorObject if any validation checks fail.
+ */
 const adminQuizDuplicateQuestion = (
   token: string,
   quizId: number,
@@ -1042,6 +1124,158 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
+
+/**
+ * Empty the trash by permanently deleting quizzes with specified quizIds.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizIds - An array of unique identifiers for the quizzes to be permanently deleted from the trash.
+ *
+ * @returns An EmptyObject if the operation is successful, or an ErrorObject if any validation checks fail.
+ */
+const adminQuizTrashEmpty = (
+  token: string,
+  quizIds: number[]
+): EmptyObject | ErrorObject => {
+  const currData = getData();
+
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Error :"Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own"
+  const quizInTrashNotOwnedByUser = currData.trash.find((quizInTrash) => quizIds.includes(quizInTrash.quizId) && quizInTrash.quizAuthorId !== authUserId);
+  if (quizInTrashNotOwnedByUser) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own'
+    };
+  }
+
+  const isAnyQuizNotInTrash = quizIds.filter(
+    (quizId: number) => currData.trash.find((quizInTrash) => quizInTrash.quizId === quizId)
+  );
+
+  if (isAnyQuizNotInTrash.length !== quizIds.length) {
+    return {
+      statusCode: 400,
+      error: 'One or more of the Quiz IDs is not currently in the trash',
+    };
+  }
+
+  currData.trash = currData.trash.filter(
+    (quiz) => !(quizIds.includes(quiz.quizId))
+  );
+
+  setData(currData);
+
+  return {};
+};
+
+/**
+ * Transfer ownership of a quiz to a different user based on their email
+ *
+ * @param {number} quizId - ID of the quiz
+ * @param {string} Token - Token of the quiz owner
+ * @param {string} userEmail - The email of the targeted user
+ * @returns
+ */
+const adminQuizTransfer = (
+  quizId: number,
+  token: string,
+  userEmail: string
+): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  // Find the logged in user
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+      'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+  const authUserId = validSession.authUserId;
+
+  // Find the quizObject of the quizId
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  if (validQuiz.quizAuthorId !== authUserId) {
+    return {
+      statusCode: 403,
+      error:
+        'Valid token is provided, but user is not an owner of this quiz'
+    };
+  }
+
+  // Finds the user object of the targeted email
+  const targetUser = data.users.find(
+    (targetEmail) => targetEmail.email === userEmail
+  );
+
+  if (!targetUser) {
+    return {
+      statusCode: 400,
+      error:
+        'userEmail is not a real user'
+    };
+  }
+
+  // Finds the user that owns this token
+  const currentUser = data.users.find(
+    (curr) => curr.authUserId === authUserId
+  );
+
+  // If this user has the same email as the targeted email, then throw error
+  if (currentUser.email === userEmail) {
+    return {
+      statusCode: 400,
+      error:
+        'userEmail is the current logged in user'
+    };
+  }
+
+  // Filters an array of quizzes that this target user owns
+  const quizzesFromTargetedUsers = data.quizzes.filter(
+    (curr) => curr.quizAuthorId === targetUser.authUserId
+  );
+
+  // Finds a quiz owned by the target user that has the same name of the transferred quiz
+  const quizSameName = quizzesFromTargetedUsers.find((quiz) => quiz.name === validQuiz.name);
+
+  if (quizSameName) {
+    return {
+      statusCode: 400,
+      error:
+        'Quiz ID refers to a quiz that has a name that is already used by the target user'
+    };
+  }
+
+  // Check if all sessions had ended (not yet to be implemented until It3)
+
+  validQuiz.quizAuthorId = targetUser.authUserId;
+
+  setData(data);
+
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -1049,11 +1283,13 @@ export {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
-  adminQuizMoveQuestion,
   adminQuizCreateQuestion,
+  adminQuizDeleteQuestion,
+  adminQuizMoveQuestion,
+  adminQuizTransfer,
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizRestore,
-  adminQuizDeleteQuestion,
-  adminQuizQuestionUpdate
+  adminQuizQuestionUpdate,
+  adminQuizTrashEmpty
 };

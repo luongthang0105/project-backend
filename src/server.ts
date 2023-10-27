@@ -17,6 +17,8 @@ import {
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizRestore,
+  adminQuizTrashEmpty,
+  adminQuizTransfer
 } from './quiz';
 import { clear } from './other';
 import {
@@ -160,7 +162,7 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizViewTrash
+// adminQuizVewTrash
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
@@ -394,6 +396,43 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, userEmail } = req.body;
+
+  const result = adminQuizTransfer(
+    quizId,
+    token,
+    userEmail
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+// adminQuizTrashEmpty
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const quizIds: number[] = JSON.parse(req.query.quizIds as string);
+
+  const token = req.query.token as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
+  if ('error' in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

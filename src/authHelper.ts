@@ -1,7 +1,14 @@
 import { DataStore } from './types';
 
-// Return true if newEmail has already been used by another user in data
-function emailUsed(newEmail: string, data: DataStore): boolean {
+/**
+ * Check if the given email address is already used by any user in the data store.
+ *
+ * @param newEmail - The email address to check.
+ * @param data - The data store containing user information.
+ *
+ * @returns `true` if the email address is already in use, `false` otherwise.
+ */
+const emailUsed = (newEmail: string, data: DataStore): boolean => {
   for (const user of data.users) {
     if (user.email === newEmail) {
       return true;
@@ -10,9 +17,14 @@ function emailUsed(newEmail: string, data: DataStore): boolean {
   return false;
 }
 
-// Return true if given name is valid
-// Name should not contain characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes
-function validName(name: string): boolean {
+/**
+ * Check if the given name is valid based on specific criteria.
+ *
+ * @param name - The name to check.
+ *
+ * @returns `true` if the name is valid, `false` otherwise.
+ */
+const validName = (name: string): boolean => {
   for (const character of name) {
     // character is an alphabetic character
     if (character.toLowerCase() !== character.toUpperCase()) continue;
@@ -32,8 +44,14 @@ function validName(name: string): boolean {
   return true;
 }
 
-// Return true if password has at least one letter and at least one number
-function securedPassword(password: string): boolean {
+/**
+ * Check if the given password is secure based on specific criteria.
+ *
+ * @param password - The password to check.
+ *
+ * @returns `true` if the password is secure, `false` otherwise.
+ */
+const securedPassword = (password: string): boolean => {
   let hasLetter = false;
   let hasNumber = false;
 

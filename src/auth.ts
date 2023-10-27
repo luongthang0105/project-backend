@@ -1,14 +1,7 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { emailUsed, validName, securedPassword } from './authHelper';
-import {
-  ErrorObject,
-  ReturnedToken,
-  Token,
-  UserDetails,
-  UserObject,
-  EmptyObject,
-} from './types';
+import { ErrorObject, ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -374,37 +367,23 @@ const adminUserPasswordUpdate = (
 ): EmptyObject | ErrorObject => {
   const data = getData();
 
-  const session = data.sessions.find(
-    (currSession) => currSession.identifier === token
-  );
+  const session = data.sessions.find((currSession) => currSession.identifier === token);
 
   // Checks if token is empty or invalid
   if (token === '' || !session) {
-    return {
-      statusCode: 401,
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
-    };
+    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
   }
 
-  const userInfo = data.users.find(
-    (user) => user.authUserId === session.authUserId
-  );
+  const userInfo = data.users.find((user) => user.authUserId === session.authUserId);
 
   // Checks if the old password is the same as current password
   if (userInfo.password !== oldPassword) {
-    return {
-      statusCode: 400,
-      error: 'Old Password is not the correct old password',
-    };
+    return { statusCode: 400, error: 'Old Password is not the correct old password' };
   }
 
   // Checks if old password and new password are the same
   if (oldPassword === newPassword) {
-    return {
-      statusCode: 400,
-      error: 'Old Password and New Password match exactly',
-    };
+    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
   }
 
   // Checks if new password has already been used before by this user
@@ -435,7 +414,6 @@ const adminUserPasswordUpdate = (
   userInfo.password = newPassword;
 
   setData(data);
-
   return {};
 };
 

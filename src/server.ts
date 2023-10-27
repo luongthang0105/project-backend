@@ -18,6 +18,7 @@ import {
   adminQuizDuplicateQuestion,
   adminQuizRestore,
   adminQuizTrashEmpty,
+  adminQuizTransfer,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -477,6 +478,7 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(result);
 });
 
+// adminQuizMoveQuestion
 app.put(
   '/v1/admin/quiz/:quizid/question/:questionid/move',
   (req: Request, res: Response) => {
@@ -515,6 +517,27 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, userEmail } = req.body;
+
+  const result = adminQuizTransfer(
+    quizId,
+    token,
+    userEmail
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

@@ -381,6 +381,26 @@ export const adminUserDetailsUpdate = (
   };
 };
 
+export const adminQuizTransfer = (
+  quizId: number,
+  tokenObject: ReturnedToken,
+  userEmail: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/transfer';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      userEmail: userEmail
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
 export const adminUserPasswordUpdate = (
   tokenObject: { token: string },
   oldPassword: string,
@@ -399,5 +419,23 @@ export const adminUserPasswordUpdate = (
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
+  };
+};
+
+export const adminQuizTrashEmpty = (
+  tokenObject: ReturnedToken,
+  quizIds: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+      quizIds: quizIds
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
   };
 };

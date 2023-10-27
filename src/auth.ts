@@ -208,10 +208,8 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   const data = getData();
 
   // Find user information based on the provided authUserId
-  const session = data.sessions.find(
-    (currSession) => currSession.identifier === token
-  );
-  console.log(token);
+  const session = data.sessions.find((currSession) => currSession.identifier === token);
+
   // If token is empty or no session with given token is found
   if (token === '' || !session) {
     return {
@@ -241,6 +239,82 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
   };
 };
 
+const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  // Find user information based on the provided authUserId
+  const validSession = data.sessions.find((currSession) => currSession.identifier === token);
+
+  // if there is no token, print error
+  if (token === '' || !validSession) {
+    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // find the user to update and let the token for the user, be updated
+  const userToBeUpdated = data.users.find((user) => user.authUserId === authUserId);
+
+  // Check if the email address is used by another user
+  if (emailUsed(email, data)) {
+    return {
+      statusCode: 400,
+      error: 'Email is currently used by another user (excluding the current authorised user)',
+    };
+  }
+
+  // Check if the email address is valid
+  if (!validator.isEmail(email)) {
+    return {
+      error: 'Invalid email address',
+      statusCode: 400
+    };
+  }
+
+  // Check if the first name is valid
+  if (!validName(nameFirst)) {
+    return {
+      error:
+        'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  }
+
+  // Check the length of the first name
+  if (nameFirst.length > 20 || nameFirst.length < 2) {
+    return {
+      error: 'First name is less than 2 characters or more than 20 characters',
+      statusCode: 400
+    };
+  }
+
+  // Check if the last name is valid
+  if (!validName(nameLast)) {
+    return {
+      error:
+        'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  }
+
+  // Check the length of the last name
+  if (nameLast.length > 20 || nameLast.length < 2) {
+    return {
+      statusCode: 400,
+      error: 'Last name is less than 2 characters or more than 20 characters',
+    };
+  }
+
+  // update user
+  userToBeUpdated.email = email;
+  userToBeUpdated.nameFirst = nameFirst;
+  userToBeUpdated.nameLast = nameLast;
+
+  setData(data);
+
+  return {};
+};
+
 // This function is responsible for updating the User Details (the token, the email, first and last name), not the password
 const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const data = getData();
@@ -267,54 +341,11 @@ const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
 
   return {};
 };
-// function adminUserDetailsUpdate(
-//   token: string,
-//   email: string,
-//   nameFirst: string,
-//   nameLast: string
-// ) {
-//   const data = getData();
-
-//   function validNameFormat(name: string): boolean {
-//     const validCharacters = /^[a-zA-Z\s\-']+$/;
-//     return validCharacters.test(name);
-//   }
-//   if (!token) {
-//     return { statusCode: 401, error: "Token is empty or invalid" };
-//   }
-//   const userUpdate = data.users.find((user) => user.token === token);
-//   const emailAlreadyUsed = data.users.some(
-//     (user) => user.email === email && user.email !== userUpdate.email
-//   );
-//   if (emailAlreadyUsed) {
-//     return { statusCode: 400, error: "Email already used by another user" };
-//   }
-//   if (!validator.isEmail(email)) {
-//     return { statusCode: 400, error: "Email is invalid" };
-//   }
-//   if (!validNameFormat(nameFirst) || !validNameFormat(nameLast)) {
-//     return { statusCode: 400, error: "Name is not in correct format" };
-//   }
-//   if (nameFirst.length < 2 || nameFirst.length > 20) {
-//     return { statusCode: 400, error: "First Name is too short or too long" };
-//   }
-//   if (nameLast.length < 2 || nameLast.length > 20) {
-//     return { statusCode: 400, error: "Last Name is too short or too long" };
-//   }
-//   if (!userUpdate) {
-//     return { statusCode: 401, error: "token is empty or invalid" };
-//   }
-//   userUpdate.token = token;
-//   userUpdate.email = email;
-//   userUpdate.nameFirst = nameFirst;
-//   userUpdate.nameLast = nameLast;
-
-//   setData(data);
-// }
 
 export {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
   adminAuthLogout,
+  adminUserDetailsUpdate
 };

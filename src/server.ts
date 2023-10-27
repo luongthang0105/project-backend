@@ -23,6 +23,7 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
+  adminUserPasswordUpdate,
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
@@ -393,6 +394,113 @@ app.post(
     res.json(result);
   }
 );
+// adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, questionBody } = req.body;
+
+  const result = adminQuizCreateQuestion(
+    token,
+    quizId,
+    questionBody.question,
+    questionBody.duration,
+    questionBody.points,
+    questionBody.answers
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+// adminQuizQuestionUpdate
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+
+  const { token, questionBody } = req.body;
+
+  const result = adminQuizQuestionUpdate(
+    token,
+    quizId,
+    questionId,
+    questionBody.question,
+    questionBody.duration,
+    questionBody.points,
+    questionBody.answers
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+// adminQuizDeleteQuestion
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+
+  const token = req.query.token as string;
+
+  const result = adminQuizDeleteQuestion(
+    token,
+    quizId,
+    questionId
+  );
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
+app.put(
+  '/v1/admin/quiz/:quizid/question/:questionid/move',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, newPosition } = req.body;
+
+    const result = adminQuizMoveQuestion(
+      token,
+      quizId,
+      questionId,
+      newPosition
+    );
+
+    if ('error' in result) {
+      res.status(result.statusCode).json({ error: result.error });
+      return;
+    }
+
+    res.json(result);
+  }
+);
+
+// adminUserPasswordUpdate
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body;
+
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+
+  if ('error' in result) {
+    res.status(result.statusCode).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

@@ -374,6 +374,11 @@ export const adminUserDetailsUpdate = (
       nameLast: nameLast,
     }
   });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
 };
 
 export const adminQuizTransfer = (

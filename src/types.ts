@@ -98,13 +98,13 @@ type QuizCreate = {
  * Represents a color selection with predefined options.
  */
 type Colour =
-  | "red"
-  | "blue"
-  | "green"
-  | "yellow"
-  | "purple"
-  | "brown"
-  | "orange";
+  | 'red'
+  | 'blue'
+  | 'green'
+  | 'yellow'
+  | 'purple'
+  | 'brown'
+  | 'orange';
 
 /**
  * Represents an answer option in a quiz question.

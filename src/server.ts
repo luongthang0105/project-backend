@@ -120,6 +120,22 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizTrashEmpty
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const quizIds: number[] = JSON.parse(req.query.quizIds as string);
+
+  const token = req.query.token as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
+  if ('error' in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
+
+  res.json(result);
+});
+
 // adminQuizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
@@ -157,6 +173,20 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
+  res.json(result);
+});
+
+// adminQuizViewTrash
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = adminQuizViewTrash(token);
+  if ('error' in result) {
+    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
+    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
+    res.status(result.statusCode as number).json({ error: result.error });
+    return;
+  }
+
   res.json(result);
 });
 
@@ -257,20 +287,6 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizViewTrash
-app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = req.query.token as string;
-  const result = adminQuizViewTrash(token);
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
-  res.json(result);
-});
-
 // adminQuizRestore
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token;
@@ -280,22 +296,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
     res.status(result.statusCode as number).json({ error: result.error });
     return;
   }
-  res.json(result);
-});
-
-// adminQuizTrashEmpty
-app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const quizIds: number[] = JSON.parse(req.query.quizIds as string);
-
-  const token = req.query.token as string;
-  const result = adminQuizTrashEmpty(token, quizIds);
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 

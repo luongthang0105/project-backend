@@ -15,7 +15,7 @@ const emailUsed = (newEmail: string, data: DataStore): boolean => {
     }
   }
   return false;
-}
+};
 
 /**
  * Check if the given name is valid based on specific criteria.
@@ -42,7 +42,7 @@ const validName = (name: string): boolean => {
   }
 
   return true;
-}
+};
 
 /**
  * Check if the given password is secure based on specific criteria.
@@ -68,6 +68,6 @@ const securedPassword = (password: string): boolean => {
   }
 
   return hasLetter && hasNumber;
-}
+};
 
 export { validName, securedPassword, emailUsed };

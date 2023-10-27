@@ -401,3 +401,21 @@ export const adminUserPasswordUpdate = (
     statusCode: res.statusCode,
   };
 };
+
+export const adminQuizTrashEmpty = (
+  tokenObject: ReturnedToken,
+  quizIds: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+      quizIds: quizIds
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

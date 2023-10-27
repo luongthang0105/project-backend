@@ -445,6 +445,12 @@ const adminQuizNameUpdate = (
   return {};
 };
 
+/**
+ * View the quizzes that are currently in the trash for the logged in user
+ *
+ * @param {string} token
+ * @returns { ErrorObject | QuizList}
+ */
 const adminQuizViewTrash = (token: string): ErrorObject | QuizList => {
   // Retrieve the current data
   const currData = getData();
@@ -668,12 +674,14 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: Question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
 
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: 'Question Id does not refer to a valid question within this quiz',
     };
   }
 
@@ -722,7 +730,9 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: The length of any answer is shorter than 1 character long, or longer than 30 characters long
-  const invalidLengthAnswers = answers.filter(({ answer }) => answer.length < 1 || answer.length > 30);
+  const invalidLengthAnswers = answers.filter(
+    ({ answer }) => answer.length < 1 || answer.length > 30
+  );
   if (invalidLengthAnswers.length !== 0) {
     return {
       statusCode: 400,
@@ -755,11 +765,13 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: There are no correct answers
-  const correctAnswers = answers.filter((currAnswer) => currAnswer.correct === true);
+  const correctAnswers = answers.filter(
+    (currAnswer) => currAnswer.correct === true
+  );
   if (correctAnswers.length === 0) {
     return {
       statusCode: 400,
-      error: 'There are no correct answers'
+      error: 'There are no correct answers',
     };
   }
 
@@ -770,7 +782,7 @@ const adminQuizQuestionUpdate = (
       answerId: newAnswerId,
       answer: currAnswer.answer,
       colour: getQuestionColour(),
-      correct: currAnswer.correct
+      correct: currAnswer.correct,
     };
   });
 
@@ -826,17 +838,21 @@ const adminQuizDeleteQuestion = (
   }
 
   // Check if question Id does not refer to a valid question within this quiz
-  const validQuestion = validQuiz.questions.find((currQuestion) => currQuestion.questionId === questionId);
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
   if (!validQuestion) {
     return {
       statusCode: 400,
-      error: 'Question Id does not refer to a valid question within this quiz'
+      error: 'Question Id does not refer to a valid question within this quiz',
     };
   }
 
   // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
   // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
-  const indexOfDeletedQuestion = validQuiz.questions.map((currQuestion) => currQuestion.questionId).indexOf(questionId);
+  const indexOfDeletedQuestion = validQuiz.questions
+    .map((currQuestion) => currQuestion.questionId)
+    .indexOf(questionId);
   validQuiz.questions.splice(indexOfDeletedQuestion, 1);
 
   validQuiz.numQuestions -= 1;
@@ -922,7 +938,10 @@ const adminQuizMoveQuestion = (
   return {};
 };
 
-const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObject => {
+const adminQuizRestore = (
+  token: string,
+  quizId: number
+): EmptyObject | ErrorObject => {
   const data = getData();
 
   const validSession = data.sessions.find(
@@ -955,7 +974,8 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
   if (existingQuiz) {
     return {
       statusCode: 400,
-      error: 'Quiz name of the restored quiz is already used by another active quiz',
+      error:
+        'Quiz name of the restored quiz is already used by another active quiz',
     };
   }
 
@@ -965,6 +985,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject | ErrorObj
       error: 'Valid token is provided, but user is not an owner of this quiz',
     };
   }
+  existingQuizinTrash.timeLastEdited = getCurrentTimestamp();
 
   data.quizzes.push(existingQuizinTrash);
   for (let i = 0; i < data.trash.length; i++) {
@@ -1042,6 +1063,55 @@ const adminQuizDuplicateQuestion = (
   setData(data);
   return { newQuestionId: duplicateQuestion.questionId };
 };
+
+const adminQuizTrashEmpty = (
+  token: string,
+  quizIds: number[]
+): EmptyObject | ErrorObject => {
+  const currData = getData();
+
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    return {
+      statusCode: 401,
+      error:
+        'Token is empty or invalid (does not refer to valid logged in user session)',
+    };
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Error :"Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own"
+  const quizInTrashNotOwnedByUser = currData.trash.find((quizInTrash) => quizIds.includes(quizInTrash.quizId) && quizInTrash.quizAuthorId !== authUserId);
+  if (quizInTrashNotOwnedByUser) {
+    return {
+      statusCode: 403,
+      error: 'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own'
+    };
+  }
+
+  const isAnyQuizNotInTrash = quizIds.filter(
+    (quizId: number) => currData.trash.find((quizInTrash) => quizInTrash.quizId === quizId)
+  );
+
+  if (isAnyQuizNotInTrash.length !== quizIds.length) {
+    return {
+      statusCode: 400,
+      error: 'One or more of the Quiz IDs is not currently in the trash',
+    };
+  }
+
+  currData.trash = currData.trash.filter(
+    (quiz) => !(quizIds.includes(quiz.quizId))
+  );
+
+  setData(currData);
+
+  return {};
+};
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -1055,5 +1125,6 @@ export {
   adminQuizDuplicateQuestion,
   adminQuizRestore,
   adminQuizDeleteQuestion,
-  adminQuizQuestionUpdate
+  adminQuizQuestionUpdate,
+  adminQuizTrashEmpty,
 };

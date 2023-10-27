@@ -373,6 +373,21 @@ export const adminUserDetailsUpdate = (
       nameFirst: nameFirst,
       nameLast: nameLast,
     }
+  })
+}
+
+export const adminQuizTransfer = (
+  quizId: number,
+  tokenObject: ReturnedToken,
+  userEmail: string
+): {content: EmptyObject | ErrorObject, statusCode: number} => {
+  const route = '/v1/admin/quiz/' + quizId + '/transfer';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      userEmail: userEmail
+    }
   });
 
   return {

@@ -35,7 +35,7 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-
+import errorHandler from 'middleware-http-errors';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -436,7 +436,7 @@ app.post(
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
-
+app.use(errorHandler())
 app.use((req: Request, res: Response) => {
   const error = `
     404 Not found - This could be because:

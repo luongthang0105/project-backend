@@ -443,7 +443,7 @@ export const adminAuthLogout = (
     EmptyObject | ErrorObject;
   statusCode: number;
 } => {
-  const route = '/v1/admin/logout';
+  const route = '/v1/admin/auth/logout';
 
   const res = request('POST', SERVER_URL + route, {
     json: {

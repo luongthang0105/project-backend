@@ -247,7 +247,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 // ====================================================================
 
 // adminAuthLogout
-app.post('/v1/admin/logout', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
 
   const result = adminAuthLogout(token);

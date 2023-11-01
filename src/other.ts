@@ -1,12 +1,13 @@
 import { setData } from './dataStore';
+import { QuizObject, Token, UserObject } from './types';
 
 // This function resets the state of the application back to the start.
 function clear() {
   setData({
-    users: [] as any,
-    quizzes: [] as any,
-    trash: [] as any,
-    sessions: [] as any,
+    users: [] as UserObject[],
+    quizzes: [] as QuizObject[],
+    trash: [] as QuizObject[],
+    sessions: [] as Token[],
     nextTokenId: 0,
     nextUserId: 0,
     nextQuizId: 0,

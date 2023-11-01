@@ -114,7 +114,7 @@ describe('adminQuizDescriptionUpdate', () => {
     });
 
     const quizInfo = adminQuizInfo(user, quiz.quizId);
-    expect(quizInfo.statusCode).toBe(200);
+    expect(quizInfo.statusCode).toStrictEqual(200);
     expect((quizInfo.content as QuizObject).description).toStrictEqual('');
     expect((quizInfo.content as QuizObject).timeCreated).toBeLessThanOrEqual(
       (quizInfo.content as QuizObject).timeLastEdited

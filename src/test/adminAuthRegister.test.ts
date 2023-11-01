@@ -30,7 +30,7 @@ describe('adminAuthRegister', () => {
     expect(error.content).toStrictEqual({ error: 'Invalid email address' });
 
     let res = adminAuthRegister('lt05@gmail.com', 'ltngu0105', 'Thang', 'Ngu');
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toStrictEqual(200);
     expect(res.content).toStrictEqual({ token: expect.any(String) });
 
     error = adminAuthRegister('lt@05', 'ltngu2705', 'Thang', 'Ngu');

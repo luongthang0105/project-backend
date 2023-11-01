@@ -146,7 +146,7 @@ describe('adminUserDetailsUpdate', () => {
     const nameLast = 'Script';
     const result = adminUserDetailsUpdate(invalidToken, email, nameFirst, nameLast);
 
-    expect(result.statusCode).toBe(401);
+    expect(result.statusCode).toStrictEqual(401);
     expect(result.content.error).toEqual('Token is empty or invalid (does not refer to valid logged in user session)');
   });
 });

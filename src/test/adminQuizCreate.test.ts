@@ -22,13 +22,13 @@ describe('adminQuizCreate', () => {
   });
 
   test('AuthUserId is not a valid user: dataStore has 1 user', () => {
-    // eslint-disable-next-line
-    adminAuthRegister(
+    const user = adminAuthRegister(
       'han@gmai.com',
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
     ).content as ReturnedToken;
+    expect(user.token).toStrictEqual(expect.any(String));
     expect(
       adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
     ).toStrictEqual({
@@ -41,21 +41,22 @@ describe('adminQuizCreate', () => {
   });
 
   test('Token is empty or invalid (does not refer to valid logged in user session): dataStore has 2 users', () => {
-    // eslint-disable-next-line
-    adminAuthRegister(
+    const user1 = adminAuthRegister(
       'han@gmai.com',
       '2705uwuwuwuwuwuw',
       'Han',
       'Hanh'
     ).content as ReturnedToken;
+    expect(user1.token).toStrictEqual(expect.any(String));
 
-    // eslint-disable-next-line
-    adminAuthRegister(
+    const user2 = adminAuthRegister(
       'hanh@gmai.com',
       '2705uwuwuwuwuwuwuu',
       'Hanh',
       'Han'
     ).content as ReturnedToken;
+    expect(user2.token).toStrictEqual(expect.any(String));
+
     expect(
       adminQuizCreate(invalidToken, 'Hayden', 'This is my quiz')
     ).toStrictEqual({

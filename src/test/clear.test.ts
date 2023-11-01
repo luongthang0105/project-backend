@@ -1,4 +1,5 @@
 import { adminAuthRegister, adminAuthLogin, clear } from '../testWrappers';
+import { ReturnedToken } from '../types';
 
 describe('clear', () => {
   beforeEach(() => {
@@ -6,19 +7,20 @@ describe('clear', () => {
   });
 
   test('Success: Can not login after clear', () => {
-    // eslint-disable-next-line
-    adminAuthRegister(
+    const user1 = adminAuthRegister(
       'javascript@gmail.com',
       'aikfnrg7',
       'Java',
       'Script'
-    ).content;
+    ).content as ReturnedToken;
+    expect(user1.token).toStrictEqual(expect.any(String));
 
-    // eslint-disable-next-line
-    adminAuthLogin('javascript@gmail.com', 'aikfnrg7').content;
+    const loginRet = adminAuthLogin('javascript@gmail.com', 'aikfnrg7').content as ReturnedToken;
+    expect(loginRet.token).toStrictEqual(expect.any(String));
+
     const result = clear();
     expect(result.content).toStrictEqual({});
-    expect(result.statusCode).toBe(200);
+    expect(result.statusCode).toStrictEqual(200);
     expect(
       adminAuthLogin('javascript@gmail.com', 'aikfnrg7')
     ).toStrictEqual({

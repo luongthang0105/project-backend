@@ -48,7 +48,7 @@ export const adminUserDetails = (tokenObject: {
   token: string;
 }): { content: UserDetails; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v2/admin/user/details', {
-    qs: {
+    headers: {
       token: tokenObject.token,
     },
   });

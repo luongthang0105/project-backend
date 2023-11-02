@@ -3,7 +3,6 @@ import { port, url } from './config.json';
 import {
   Answer,
   EmptyObject,
-  ErrorObject,
   Quiz,
   QuizList,
   QuizObject,
@@ -28,7 +27,7 @@ export const adminAuthRegister = (
   password: string,
   nameFirst: string,
   nameLast: string
-): { content: ReturnedToken | ErrorObject; statusCode: number } => {
+): { content: ReturnedToken; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
     json: {
       email: email,
@@ -54,7 +53,7 @@ export const adminAuthRegister = (
 export const adminAuthLogin = (
   email: string,
   password: string
-): { content: ReturnedToken | ErrorObject; statusCode: number } => {
+): { content: ReturnedToken; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/login', {
     json: {
       email: email,
@@ -77,7 +76,7 @@ export const adminAuthLogin = (
  */
 export const adminUserDetails = (tokenObject: {
   token: string;
-}): { content: UserDetails | ErrorObject; statusCode: number } => {
+}): { content: UserDetails; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
     qs: {
       token: tokenObject.token,
@@ -100,7 +99,7 @@ export const adminUserDetails = (tokenObject: {
  */
 export const adminQuizList = (tokenObject: {
   token: string;
-}): { content: QuizList | ErrorObject; statusCode: number } => {
+}): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
     qs: {
       token: tokenObject.token,
@@ -129,7 +128,7 @@ export const adminQuizCreate = (
   },
   name: string,
   description: string
-): { content: Quiz | ErrorObject; statusCode: number } => {
+): { content: Quiz; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
     json: {
       token: tokenObject.token,
@@ -156,7 +155,7 @@ export const adminQuizCreate = (
 export const adminQuizRestore = (
   tokenObject: ReturnedToken,
   quizId: number
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
     json: {
       token: tokenObject.token
@@ -181,7 +180,7 @@ export const adminQuizRestore = (
 export const adminQuizRemove = (
   tokenObject: ReturnedToken,
   quizId: number
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId;
 
   const res = request('DELETE', SERVER_URL + route, {
@@ -209,7 +208,7 @@ export const adminQuizInfo = (
   tokenObject: ReturnedToken,
   quizId: number
 ): {
-  content: QuizObject | ErrorObject;
+  content: QuizObject;
   statusCode: number;
 } => {
   const route = '/v1/admin/quiz/' + quizId;
@@ -240,7 +239,7 @@ export const adminQuizNameUpdate = (
   tokenObject: ReturnedToken,
   quizId: number,
   name: string
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/name';
 
   const res = request('PUT', SERVER_URL + route, {
@@ -270,7 +269,7 @@ export const adminQuizDescriptionUpdate = (
   tokenObject: ReturnedToken,
   quizId: number,
   description: string
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/description';
 
   const res = request('PUT', SERVER_URL + route, {
@@ -318,7 +317,7 @@ export const adminQuizMoveQuestion = (
   quizId: number,
   questionId: number,
   newPosition: number
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const route =
     '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
   const res = request('PUT', SERVER_URL + route, {
@@ -344,7 +343,7 @@ export const adminQuizMoveQuestion = (
  */
 export const adminQuizViewTrash = (tokenObject: {
   token: string;
-}): { content: QuizList | ErrorObject; statusCode: number } => {
+}): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
     qs: {
       token: tokenObject.token,
@@ -377,7 +376,7 @@ export const adminQuizCreateQuestion = (
   duration: number,
   points: number,
   answers: Answer[]
-): { content: { questionId: number } | ErrorObject; statusCode: number } => {
+): { content: { questionId: number }; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/question';
 
   const res = request('POST', SERVER_URL + route, {
@@ -412,7 +411,7 @@ export const adminQuizDuplicateQuestion = (
   tokenObject: ReturnedToken,
   quizId: number,
   questionId: number
-): { content: { newQuestionId: number } | ErrorObject; statusCode: number } => {
+): { content: { newQuestionId: number }; statusCode: number } => {
   const route =
     '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate';
 
@@ -440,7 +439,7 @@ export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
   content:
-    EmptyObject | ErrorObject;
+    EmptyObject;
   statusCode: number;
 } => {
   const route = '/v1/admin/logout';
@@ -479,7 +478,7 @@ export const adminQuizQuestionUpdate = (
   duration: number,
   points: number,
   answers: Answer[]
-): {content: EmptyObject | ErrorObject, statusCode: number} => {
+): {content: EmptyObject, statusCode: number} => {
   const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('PUT', SERVER_URL + route, {
@@ -514,7 +513,7 @@ export const adminQuizDeleteQuestion = (
   tokenObject: ReturnedToken,
   quizId: number,
   questionId: number
-): {content: EmptyObject | ErrorObject, statusCode: number} => {
+): {content: EmptyObject, statusCode: number} => {
   const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('DELETE', SERVER_URL + route, {
@@ -545,7 +544,7 @@ export const adminUserDetailsUpdate = (
   email: string,
   nameFirst: string,
   nameLast: string
-): {content: EmptyObject | ErrorObject, statusCode: number} => {
+): {content: EmptyObject, statusCode: number} => {
   const route = '/v1/admin/user/details';
 
   const res = request('PUT', SERVER_URL + route, {
@@ -577,7 +576,7 @@ export const adminQuizTransfer = (
   quizId: number,
   tokenObject: ReturnedToken,
   userEmail: string
-): {content: EmptyObject | ErrorObject, statusCode: number} => {
+): {content: EmptyObject, statusCode: number} => {
   const route = '/v1/admin/quiz/' + quizId + '/transfer';
 
   const res = request('POST', SERVER_URL + route, {
@@ -607,7 +606,7 @@ export const adminUserPasswordUpdate = (
   tokenObject: { token: string },
   oldPassword: string,
   newPassword: string
-): { content: EmptyObject | ErrorObject; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/user/password';
 
   const res = request('PUT', SERVER_URL + route, {
@@ -636,7 +635,7 @@ export const adminUserPasswordUpdate = (
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
   quizIds: string
-): {content: EmptyObject | ErrorObject, statusCode: number} => {
+): {content: EmptyObject, statusCode: number} => {
   const route = '/v1/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
     qs: {

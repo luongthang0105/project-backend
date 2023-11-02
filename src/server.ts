@@ -339,9 +339,6 @@ app.use(errorHandler());
 const server = app.listen(PORT, HOST, () => {
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
-
-  // Add a data.json file as database
-  clear();
 });
 
 // For coverage, handle Ctrl+C gracefully

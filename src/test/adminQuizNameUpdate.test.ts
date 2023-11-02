@@ -145,12 +145,14 @@ describe('adminQuizNameUpdate', () => {
       'This is my quiz'
     ).content as Quiz;
 
-    // eslint-disable-next-line
-    adminQuizCreate(
+    const quiz02 = adminQuizCreate(
       user01,
       'quiz02',
       'This is my quiz'
     ).content as Quiz;
+
+    expect(quiz02.quizId).toStrictEqual(expect.any(Number));
+
     expect(
       adminQuizNameUpdate(user01, quiz01.quizId, 'quiz02')
     ).toStrictEqual(
@@ -175,8 +177,9 @@ describe('adminQuizNameUpdate', () => {
 
   test('Success: Returns {} if no error, 2 different users', () => {
     const user01 = adminAuthRegister('han@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
-    // eslint-disable-next-line
-    adminQuizCreate(user01, 'quiz01', 'This is my quiz').content as Quiz;
+
+    const quiz01 = adminQuizCreate(user01, 'quiz01', 'This is my quiz').content as Quiz;
+    expect(quiz01.quizId).toStrictEqual(expect.any(Number));
 
     const user02 = adminAuthRegister('han222@gmai.com', '2705uwuwuwuwuwuw', 'Han', 'Hanh').content as ReturnedToken;
     const quiz02 = adminQuizCreate(user02, 'quiz02', 'This is my quiz 2').content as Quiz;

@@ -126,7 +126,7 @@ const adminQuizCreate = (
     timeCreated: timestamp,
     timeLastEdited: timestamp,
     description: description,
-    questions: [] as any,
+    questions: [] as Question[],
     numQuestions: 0,
     duration: 0,
   };

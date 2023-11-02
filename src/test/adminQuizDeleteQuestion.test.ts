@@ -99,9 +99,9 @@ describe('adminQuizDeleteQuestion', () => {
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currentTime).toBeLessThanOrEqual(1);
 
-    expect(quizInfo.numQuestions).toBe(0);
+    expect(quizInfo.numQuestions).toStrictEqual(0);
     expect(quizInfo.questions).toStrictEqual([]);
-    expect(quizInfo.duration).toBe(0);
+    expect(quizInfo.duration).toStrictEqual(0);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete first one', () => {
@@ -132,7 +132,7 @@ describe('adminQuizDeleteQuestion', () => {
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currentTime).toBeLessThanOrEqual(1);
 
-    expect(quizInfo.numQuestions).toBe(1);
+    expect(quizInfo.numQuestions).toStrictEqual(1);
     expect(quizInfo.questions).toStrictEqual([
       {
         questionId: questionId2,
@@ -146,7 +146,7 @@ describe('adminQuizDeleteQuestion', () => {
         ]
       }
     ]);
-    expect(quizInfo.duration).toBe(50);
+    expect(quizInfo.duration).toStrictEqual(50);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete second one', () => {
@@ -177,7 +177,7 @@ describe('adminQuizDeleteQuestion', () => {
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currentTime).toBeLessThanOrEqual(1);
 
-    expect(quizInfo.numQuestions).toBe(1);
+    expect(quizInfo.numQuestions).toStrictEqual(1);
     expect(quizInfo.questions).toStrictEqual([
       {
         questionId: questionId,
@@ -190,7 +190,7 @@ describe('adminQuizDeleteQuestion', () => {
         ]
       }
     ]);
-    expect(quizInfo.duration).toBe(4);
+    expect(quizInfo.duration).toStrictEqual(4);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete both in numeric order ', () => {
@@ -230,9 +230,9 @@ describe('adminQuizDeleteQuestion', () => {
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currentTime).toBeLessThanOrEqual(1);
 
-    expect(quizInfo.numQuestions).toBe(0);
+    expect(quizInfo.numQuestions).toStrictEqual(0);
     expect(quizInfo.questions).toStrictEqual([]);
-    expect(quizInfo.duration).toBe(0);
+    expect(quizInfo.duration).toStrictEqual(0);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete both in reverse order ', () => {
@@ -272,8 +272,8 @@ describe('adminQuizDeleteQuestion', () => {
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currentTime).toBeLessThanOrEqual(1);
 
-    expect(quizInfo.numQuestions).toBe(0);
+    expect(quizInfo.numQuestions).toStrictEqual(0);
     expect(quizInfo.questions).toStrictEqual([]);
-    expect(quizInfo.duration).toBe(0);
+    expect(quizInfo.duration).toStrictEqual(0);
   });
 });

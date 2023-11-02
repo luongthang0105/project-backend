@@ -138,7 +138,7 @@ describe('adminQuizList', () => {
     const quiz3 = (adminQuizCreate(user1, 'Quiz3', '').content as Quiz).quizId;
 
     const quizRemove = adminQuizRemove(user1, quiz3);
-    expect(quizRemove.statusCode).toBe(200);
+    expect(quizRemove.statusCode).toStrictEqual(200);
 
     const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({
@@ -161,11 +161,11 @@ describe('adminQuizList', () => {
 
     let quizRemove = adminQuizRemove(user1, quiz1);
 
-    expect(quizRemove.statusCode).toBe(200);
+    expect(quizRemove.statusCode).toStrictEqual(200);
     quizRemove = adminQuizRemove(user1, quiz2);
-    expect(quizRemove.statusCode).toBe(200);
+    expect(quizRemove.statusCode).toStrictEqual(200);
     quizRemove = adminQuizRemove(user1, quiz3);
-    expect(quizRemove.statusCode).toBe(200);
+    expect(quizRemove.statusCode).toStrictEqual(200);
 
     const success1 = adminQuizList(user1).content as QuizList;
     expect(success1).toStrictEqual({

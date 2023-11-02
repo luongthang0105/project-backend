@@ -21,7 +21,7 @@ describe('HTTP tests using Jest', () => {
             }
     );
     const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
+    expect(res.statusCode).toStrictEqual(OK);
     expect(bodyObj.value).toEqual('Hello');
   });
   test('Test invalid echo', () => {
@@ -36,7 +36,7 @@ describe('HTTP tests using Jest', () => {
             }
     );
     const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(INPUT_ERROR);
+    expect(res.statusCode).toStrictEqual(INPUT_ERROR);
     expect(bodyObj.error).toStrictEqual(expect.any(String));
   });
 });

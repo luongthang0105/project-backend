@@ -62,7 +62,7 @@ const securedPassword = (password: string): boolean => {
     }
 
     // if character is a number (note that isNaN returns false when character is a space so we need to exclude this case)
-    if (!isNaN(character as any) && character !== ' ') {
+    if (!isNaN(Number(character)) && character !== ' ') {
       hasNumber = true;
     }
   }

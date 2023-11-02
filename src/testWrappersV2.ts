@@ -1,16 +1,11 @@
-import request from "sync-request-curl"
-import { port, url } from "./config.json"
+import request from 'sync-request-curl';
+import { port, url } from './config.json';
 import {
-  Answer,
   EmptyObject,
-  Quiz,
-  QuizList,
-  QuizObject,
   ReturnedToken,
-  UserDetails,
-} from "./types"
+} from './types';
 
-const SERVER_URL = `${url}:${port}`
+const SERVER_URL = `${url}:${port}`;
 
 /**
  * Logs out a user by sending a POST request to the server's logout endpoint.
@@ -21,21 +16,21 @@ const SERVER_URL = `${url}:${port}`
  * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the user logout request.
  */
 export const adminAuthLogout = (
-  tokenObject: ReturnedToken,
+  tokenObject: ReturnedToken
 ): {
   content: EmptyObject,
   statusCode: number
 } => {
-  const route = "/v2/admin/auth/logout"
+  const route = '/v2/admin/auth/logout';
 
-  const res = request("POST", SERVER_URL + route, {
+  const res = request('POST', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
-  })
+  });
 
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
-  }
-}
+  };
+};

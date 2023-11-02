@@ -323,7 +323,7 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
 
   const result = adminAuthLogout(token);
-  
+
   res.json(result);
 });
 

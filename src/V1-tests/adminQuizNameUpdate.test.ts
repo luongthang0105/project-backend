@@ -4,7 +4,7 @@ import {
   adminQuizInfo,
   adminAuthRegister,
   clear
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { EmptyObject, Quiz, QuizObject, ReturnedToken } from '../types';
 
 describe('adminQuizNameUpdate', () => {

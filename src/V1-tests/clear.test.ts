@@ -1,4 +1,4 @@
-import { adminAuthRegister, adminAuthLogin, clear } from '../testWrappers';
+import { adminAuthRegister, adminAuthLogin, clear } from '../testWrappersV1';
 import { ReturnedToken } from '../types';
 
 describe('clear', () => {

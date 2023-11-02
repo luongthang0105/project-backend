@@ -3,7 +3,7 @@ import {
   adminQuizCreate,
   adminAuthRegister,
   clear,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { Quiz, ReturnedToken } from '../types';
 
 describe('adminQuizInfo', () => {

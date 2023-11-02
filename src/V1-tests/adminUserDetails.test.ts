@@ -3,7 +3,7 @@ import {
   adminAuthLogin,
   adminUserDetails,
   clear
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { ReturnedToken } from '../types';
 
 describe('adminUserDetails', () => {

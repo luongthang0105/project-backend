@@ -6,7 +6,7 @@ import {
   adminQuizCreateQuestion,
   adminQuizInfo,
   adminQuizQuestionUpdate,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 
 import './toHaveValidColour';

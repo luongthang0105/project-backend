@@ -5,7 +5,7 @@ import {
   adminQuizCreateQuestion,
   adminQuizInfo,
   adminQuizDuplicateQuestion,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 import { getCurrentTimestamp } from '../quizHelper';
 import { expect, test } from '@jest/globals';

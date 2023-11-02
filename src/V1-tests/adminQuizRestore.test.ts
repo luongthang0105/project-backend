@@ -6,7 +6,7 @@ import {
   clear,
   adminQuizViewTrash,
   adminQuizList,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { Quiz, QuizList, ReturnedToken } from '../types';
 
 beforeEach(() => {

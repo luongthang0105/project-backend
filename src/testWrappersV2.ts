@@ -3,7 +3,6 @@ import { port, url } from "./config.json"
 import {
   Answer,
   EmptyObject,
-  ErrorObject,
   Quiz,
   QuizList,
   QuizObject,
@@ -24,7 +23,7 @@ const SERVER_URL = `${url}:${port}`
 export const adminAuthLogout = (
   tokenObject: ReturnedToken,
 ): {
-  content: EmptyObject | ErrorObject
+  content: EmptyObject,
   statusCode: number
 } => {
   const route = "/v2/admin/auth/logout"

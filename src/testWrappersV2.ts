@@ -138,3 +138,36 @@ export const adminQuizList = (tokenObject: {
     statusCode: res.statusCode,
   };
 };
+
+/**
+ * Creates a quiz by sending a POST request to the server's quiz creation endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz creation.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param name - The name or title of the quiz to be created.
+ * @param description - A brief description of the quiz.
+ *
+ * @returns An object containing the response content (Quiz or ErrorObject) and the HTTP status code of the quiz creation request.
+ */
+export const adminQuizCreate = (
+  tokenObject: {
+    token: string;
+  },
+  name: string,
+  description: string
+): { content: Quiz; statusCode: number } => {
+  const res = request('POST', SERVER_URL + '/v2/admin/quiz', {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      name: name,
+      description: description,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

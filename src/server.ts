@@ -356,14 +356,14 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
-//adminQuizList V2
-app.get('/v2/admin/quiz/list', (req: Reqeust, res: Response) => {
+// adminQuizList V2
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const result = adminQuizList(token);
   res.json(result);
 });
 
-//adminQuizCreate V2
+// adminQuizCreate V2
 app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const { name, description } = req.body;

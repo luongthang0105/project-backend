@@ -327,6 +327,14 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizRestore
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizRestore(token, quizId);
+  res.json(result);
+});
+
 // adminQuizViewTrash V2
 app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;

@@ -88,7 +88,6 @@ const adminAuthRegister = (
 
   data.sessions.push(newToken);
 
-
   // Update dataStore by calling setData which will save it to data.json
   setData(data);
 

@@ -74,14 +74,13 @@ const securedPassword = (password: string): boolean => {
  * Randomly generate a new sessionId that is not in the current data.
  *
  * @param data - The data store containing user information.
- * 
  * @returns "newSessionId" which is a string
  */
 const randomSessionId = (data: DataStore): string => {
   const min = 0;
-  const max = 100000
+  const max = 100000;
 
-  let newSessionIdInt: number
+  let newSessionIdInt: number;
   let newSessionId: string;
 
   do {

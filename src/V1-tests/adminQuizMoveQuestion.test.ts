@@ -5,7 +5,7 @@ import {
   adminAuthRegister,
   adminQuizInfo,
   clear,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 import './toHaveValidColour';
 import { expect, test } from '@jest/globals';

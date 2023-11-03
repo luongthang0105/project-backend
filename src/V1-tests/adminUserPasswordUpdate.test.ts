@@ -1,4 +1,4 @@
-import { adminUserPasswordUpdate, adminAuthRegister } from '../testWrappers';
+import { adminUserPasswordUpdate, adminAuthRegister } from '../testWrappersV1';
 import { clear } from '../other';
 import { ReturnedToken } from '../types';
 

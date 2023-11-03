@@ -9,7 +9,7 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { EmptyObject, Quiz, QuizList, QuizObject, ReturnedToken, UserDetails } from '../types';
 
 describe('Test on all admin functions', () => {

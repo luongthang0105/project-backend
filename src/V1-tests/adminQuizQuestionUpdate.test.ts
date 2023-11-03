@@ -5,21 +5,25 @@ import {
   clear,
   adminQuizCreateQuestion,
   adminQuizInfo,
-} from '../testWrappers';
+  adminQuizQuestionUpdate,
+} from '../testWrappersV1';
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 
 import './toHaveValidColour';
 import { expect, test } from '@jest/globals';
 
-describe('adminQuizCreateQuestion', () => {
+describe('adminQuizQuestionUpdate', () => {
   let user: ReturnedToken;
-  let quiz: Quiz;
+  let quizId: number;
   let questInfo: Question;
+  let questionId: number;
+
   beforeEach(() => {
     clear();
     user = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
       .content as ReturnedToken;
-    quiz = adminQuizCreate(user, 'Quiz 1', 'Description').content as Quiz;
+    quizId = (adminQuizCreate(user, 'Quiz 1', 'Description').content as Quiz)
+      .quizId;
     questInfo = {
       question: 'What is that pokemon',
       duration: 4,
@@ -35,8 +39,38 @@ describe('adminQuizCreateQuestion', () => {
         },
       ],
     };
+
+    questionId = (
+      adminQuizCreateQuestion(
+        user,
+        quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers
+      ).content as { questionId: number }
+    ).questionId;
   });
 
+  test('Question Id does not refer to a valid question within this quiz', () => {
+    const result = adminQuizQuestionUpdate(
+      user,
+      quizId,
+      questionId + 1,
+      questInfo.question,
+      questInfo.duration,
+      questInfo.points,
+      questInfo.answers
+    );
+
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error:
+          'Question Id does not refer to a valid question within this quiz',
+      },
+    });
+  });
   test.each([
     { question: 'Less' },
     { question: 'Les' },
@@ -49,9 +83,10 @@ describe('adminQuizCreateQuestion', () => {
     ({ question }) => {
       questInfo.question = question;
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -85,9 +120,10 @@ describe('adminQuizCreateQuestion', () => {
     },
   ])('Error: The question has more than 6 answers', ({ answers }) => {
     questInfo.answers = answers;
-    const result = adminQuizCreateQuestion(
+    const result = adminQuizQuestionUpdate(
       user,
-      quiz.quizId,
+      quizId,
+      questionId,
       questInfo.question,
       questInfo.duration,
       questInfo.points,
@@ -107,9 +143,10 @@ describe('adminQuizCreateQuestion', () => {
     ({ duration }) => {
       questInfo.duration = duration;
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -126,32 +163,46 @@ describe('adminQuizCreateQuestion', () => {
   );
 
   test.each([
-    { duration: 181, times: 1 },
-    { duration: 91, times: 2 },
-    { duration: 61, times: 3 },
-    { duration: 70, times: 4 },
-    { duration: 37, times: 5 },
+    // Since we already have one question which has a duration of 4s when running beforeEach, we need to take that into account when considering the parameters for this test.
+
+    // 4 + 10 * 9 + 100 = 194
+    { initialDuration: 10, updatedDurationOnLastQuestion: 100, numQuestions: 10 },
+
+    // 4 + 85 * 1 + 92 = 181
+    { initialDuration: 85, updatedDurationOnLastQuestion: 92, numQuestions: 2 },
+
+    // 4 + 25 * 5 + 52 = 181
+    { initialDuration: 25, updatedDurationOnLastQuestion: 52, numQuestions: 6 },
+
+    // 4 + 30 * 4 + 70 = 194
+    { initialDuration: 30, updatedDurationOnLastQuestion: 70, numQuestions: 5 },
+
+    // 4 + 176 * 0 + 177 = 181
+    { initialDuration: 176, updatedDurationOnLastQuestion: 177, numQuestions: 1 },
   ])(
     'Error: The sum of the question durations in the quiz exceeds 3 minutes',
-    ({ duration, times }) => {
-      questInfo.duration = duration;
+    ({ initialDuration, updatedDurationOnLastQuestion, numQuestions }) => {
+      questInfo.duration = initialDuration;
 
-      for (let i = 0; i < times - 1; ++i) {
-        adminQuizCreateQuestion(
+      let lastQuestionId;
+
+      for (let i = 0; i < numQuestions; ++i) {
+        lastQuestionId = (adminQuizCreateQuestion(
           user,
-          quiz.quizId,
+          quizId,
           questInfo.question,
           questInfo.duration,
           questInfo.points,
           questInfo.answers
-        );
+        ).content as { questionId: number}).questionId;
       }
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        lastQuestionId,
         questInfo.question,
-        questInfo.duration,
+        updatedDurationOnLastQuestion,
         questInfo.points,
         questInfo.answers
       );
@@ -172,9 +223,10 @@ describe('adminQuizCreateQuestion', () => {
     ({ points }) => {
       questInfo.points = points;
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -210,9 +262,10 @@ describe('adminQuizCreateQuestion', () => {
     ({ answers }) => {
       questInfo.answers = answers;
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -249,9 +302,10 @@ describe('adminQuizCreateQuestion', () => {
     ({ answers }) => {
       questInfo.answers = answers;
 
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         user,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -285,9 +339,10 @@ describe('adminQuizCreateQuestion', () => {
   ])('Error: There are no correct answers', ({ answers }) => {
     questInfo.answers = answers;
 
-    const result = adminQuizCreateQuestion(
+    const result = adminQuizQuestionUpdate(
       user,
-      quiz.quizId,
+      quizId,
+      questionId,
       questInfo.question,
       questInfo.duration,
       questInfo.points,
@@ -316,9 +371,10 @@ describe('adminQuizCreateQuestion', () => {
   ])(
     'Error: Token is empty or invalid (does not refer to valid logged in user session)',
     ({ invalidToken }) => {
-      const result = adminQuizCreateQuestion(
+      const result = adminQuizQuestionUpdate(
         invalidToken,
-        quiz.quizId,
+        quizId,
+        questionId,
         questInfo.question,
         questInfo.duration,
         questInfo.points,
@@ -342,9 +398,10 @@ describe('adminQuizCreateQuestion', () => {
       'Thomas',
       'Hanh'
     ).content as ReturnedToken;
-    const result = adminQuizCreateQuestion(
+    const result = adminQuizQuestionUpdate(
       user2,
-      quiz.quizId,
+      quizId,
+      questionId,
       questInfo.question,
       questInfo.duration,
       questInfo.points,
@@ -359,53 +416,129 @@ describe('adminQuizCreateQuestion', () => {
     });
   });
 
-  test('Success: Successfully create new question', () => {
-    const result = adminQuizCreateQuestion(
-      user,
-      quiz.quizId,
-      questInfo.question,
-      questInfo.duration,
-      questInfo.points,
-      questInfo.answers
-    );
+  test('Success: Successfully update a question, only 1 question in the quiz', () => {
     const currTimeStamp = getCurrentTimestamp();
-    const result2 = adminQuizCreateQuestion(
+
+    const result = adminQuizQuestionUpdate(
       user,
-      quiz.quizId,
-      questInfo.question,
-      questInfo.duration,
-      questInfo.points,
-      questInfo.answers
+      quizId,
+      questionId,
+      'This is a question',
+      180,
+      9,
+      [
+        { answer: 'Pikachu', correct: true },
+        { answer: 'Thomas', correct: false },
+        { answer: 'Charmander', correct: false },
+        { answer: 'Charizard', correct: false },
+      ]
     );
 
     expect(result).toStrictEqual({
       statusCode: 200,
-      content: {
-        questionId: expect.any(Number),
-      },
+      content: {},
     });
 
-    expect(result2).toStrictEqual({
-      statusCode: 200,
-      content: {
-        questionId: expect.any(Number),
-      },
-    });
-
-    const quizInfo = adminQuizInfo(user, quiz.quizId);
+    const quizInfo = adminQuizInfo(user, quizId);
     expect(quizInfo).toStrictEqual({
       statusCode: 200,
       content: {
-        quizId: quiz.quizId,
+        quizId: quizId,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        numQuestions: 1,
+        duration: 180,
+        questions: [
+          {
+            questionId: questionId,
+            question: 'This is a question',
+            duration: 180,
+            points: 9,
+            answers: [
+              {
+                answer: 'Pikachu',
+                correct: true,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Thomas',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charmander',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charizard',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const timeLastEdited = (quizInfo.content as QuizObject).timeLastEdited;
+    expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
+  });
+
+  test('Success: Successfully update a question, 2 questions in the quiz', () => {
+    const currTimeStamp = getCurrentTimestamp();
+
+    const questionId2 = (
+      adminQuizCreateQuestion(
+        user,
+        quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers
+      ).content as { questionId: number }
+    ).questionId;
+
+    const result = adminQuizQuestionUpdate(
+      user,
+      quizId,
+      questionId2,
+      'This is a question',
+      170,
+      9,
+      [
+        { answer: 'Pikachu', correct: true },
+        { answer: 'Thomas', correct: false },
+        { answer: 'Charmander', correct: false },
+        { answer: 'Charizard', correct: false },
+      ]
+    );
+
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+
+    const quizInfo = adminQuizInfo(user, quizId);
+    expect(quizInfo).toStrictEqual({
+      statusCode: 200,
+      content: {
+        quizId: quizId,
         name: 'Quiz 1',
         timeCreated: expect.any(Number),
         timeLastEdited: expect.any(Number),
         description: 'Description',
         numQuestions: 2,
-        duration: 8,
+        duration: 174,
         questions: [
           {
-            questionId: (result.content as { questionId: number }).questionId,
+            questionId: questionId,
             question: 'What is that pokemon',
             duration: 4,
             points: 5,
@@ -413,34 +546,46 @@ describe('adminQuizCreateQuestion', () => {
               {
                 answer: 'Pikachu',
                 correct: true,
-                colour: expect.any(String),
-                answerId: expect.any(Number)
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
               },
               {
                 answer: 'Thomas',
                 correct: false,
-                colour: expect.any(String),
+                colour: expect.toHaveValidColour(),
                 answerId: expect.any(Number),
-              }
+              },
             ],
           },
           {
-            questionId: (result2.content as { questionId: number }).questionId,
-            question: 'What is that pokemon',
-            duration: 4,
-            points: 5,
+            questionId: questionId2,
+            question: 'This is a question',
+            duration: 170,
+            points: 9,
             answers: [
               {
                 answer: 'Pikachu',
                 correct: true,
                 colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
+                answerId: expect.any(Number),
               },
               {
                 answer: 'Thomas',
                 correct: false,
                 colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charmander',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charizard',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
               },
             ],
           },

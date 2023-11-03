@@ -1,4 +1,4 @@
-import { adminAuthRegister } from '../testWrappers';
+import { adminAuthRegister } from '../testWrappersV1';
 import { clear } from '../other';
 
 describe('adminAuthRegister', () => {

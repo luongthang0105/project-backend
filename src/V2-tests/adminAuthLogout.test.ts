@@ -1,9 +1,12 @@
 import {
-  adminAuthRegister,
   adminAuthLogout,
+} from '../testWrappersV2';
+import {
+  adminAuthRegister,
   adminQuizCreate,
   adminAuthLogin
-} from '../testWrappers';
+} from '../testWrappersV1';
+
 import { clear } from '../other';
 import { ReturnedToken } from '../types';
 

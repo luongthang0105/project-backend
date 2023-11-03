@@ -178,7 +178,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 // ====================================================================
 
 // adminAuthLogout
-app.post('/v1/admin/logout', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
 
   const result = adminAuthLogout(token);
@@ -313,6 +313,19 @@ app.post(
     res.json(result);
   }
 );
+
+// ====================================================================
+//  ========================= ITERATION 3 =============================
+// ====================================================================
+
+// adminAuthLogout V2
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+
+  const result = adminAuthLogout(token);
+
+  res.json(result);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

@@ -4,7 +4,7 @@ import {
   adminQuizCreate,
   adminUserDetails,
   adminQuizList
-} from '../testWrappers';
+} from '../testWrappersV1';
 import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 

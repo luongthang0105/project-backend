@@ -328,7 +328,7 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
 });
 
 // adminQuizRestore
-app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizRestore(token, quizId);

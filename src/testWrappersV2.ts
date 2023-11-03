@@ -83,7 +83,6 @@ export const adminQuizRestore = (
       token: tokenObject.token
     },
   });
-
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,

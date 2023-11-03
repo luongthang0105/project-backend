@@ -171,3 +171,35 @@ export const adminQuizCreate = (
     statusCode: res.statusCode,
   };
 };
+
+/**
+ * Updates the name of a quiz by sending a PUT request to the server's quiz name update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz name update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz for which the name is to be updated.
+ * @param name - The new name for the quiz.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz name update request.
+ */
+export const adminQuizNameUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  name: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/name';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      name: name
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

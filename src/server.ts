@@ -371,6 +371,16 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizNameUpdate V2
+app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const { name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

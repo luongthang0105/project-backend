@@ -87,7 +87,7 @@ const adminAuthRegister = (
   };
 
   data.sessions.push(newToken);
-  data.nextTokenId += 1;
+
 
   // Update dataStore by calling setData which will save it to data.json
   setData(data);
@@ -134,13 +134,13 @@ const adminAuthLogin = (
   userInfo.numFailedPasswordsSinceLastLogin = 0;
   userInfo.numSuccessfulLogins += 1;
 
+  const newSessionId = randomSessionId(data);
+
   // If all credentials are valid, give this user another session:
   const newToken: Token = {
-    identifier: data.nextTokenId.toString(),
+    identifier: newSessionId,
     authUserId: userInfo.authUserId,
   };
-
-  data.nextTokenId += 1;
 
   data.sessions.push(newToken);
 

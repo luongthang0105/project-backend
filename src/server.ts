@@ -335,6 +335,19 @@ app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizDescriptionUpdate V2
+app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+
+  const description = req.body.description as string;
+
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

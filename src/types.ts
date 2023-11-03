@@ -184,7 +184,6 @@ type DataStore = {
   quizzes: QuizObject[];
   trash: QuizObject[];
   sessions: Token[];
-  nextTokenId: number;
   nextUserId: number;
   nextQuizId: number;
   nextQuestionId: number;

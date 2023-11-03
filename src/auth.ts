@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { emailUsed, validName, securedPassword } from './authHelper';
+import { emailUsed, validName, securedPassword, randomSessionId } from './authHelper';
 import { ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 
@@ -79,8 +79,10 @@ const adminAuthRegister = (
   data.users.push(user);
   data.nextUserId += 1;
 
+  const newSessionId = randomSessionId(data);
+
   const newToken: Token = {
-    identifier: data.nextTokenId.toString(),
+    identifier: newSessionId,
     authUserId: user.authUserId,
   };
 

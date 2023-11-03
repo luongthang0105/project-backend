@@ -1,12 +1,3 @@
-/**
- * Represents an error object with an optional status code and an error message.
- * @property statusCode - The HTTP status code associated with the error, if applicable.
- * @property error - A descriptive error message providing more information about the error.
- */
-type ErrorObject = {
-  statusCode?: number;
-  error: string;
-};
 
 /**
  * Represents an empty object with no properties.
@@ -202,7 +193,6 @@ type DataStore = {
 
 export {
   EmptyObject,
-  ErrorObject,
   Token,
   ReturnedToken,
   LoginInfo,

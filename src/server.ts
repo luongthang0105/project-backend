@@ -35,7 +35,6 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -76,14 +75,6 @@ app.get('/echo', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
-
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 
@@ -92,29 +83,13 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
 
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 
 // adminUserDetails
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
-  const result = adminUserDetails(token);
-
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
-  res.json(result);
+  res.json(adminUserDetails(token));
 });
 
 // adminQuizTrashEmpty
@@ -123,12 +98,6 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 
   const token = req.query.token as string;
   const result = adminQuizTrashEmpty(token, quizIds);
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
 
   res.json(result);
 });
@@ -137,14 +106,6 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizList(token);
-
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 
@@ -153,11 +114,6 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
 
   const result = adminQuizCreate(token, name, description);
-
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
   res.json(result);
 });
 
@@ -166,10 +122,6 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.query.token as string;
   const result = adminQuizRemove(token, quizId);
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
   res.json(result);
 });
 
@@ -177,12 +129,6 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
-  if ('error' in result) {
-    // In this case result has type ErrorObject so it looks like this: { error: string, statusCode: number }.
-    // We need to return {error: string} according to the spec, so we need to format it like this: {error: result.error}
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
 
   res.json(result);
 });
@@ -195,11 +141,6 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   const result = adminQuizInfo(token, quizId);
 
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 
@@ -209,11 +150,6 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
 
   const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
-
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
 
   res.json(result);
 });
@@ -227,11 +163,6 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const description = req.body.description as string;
 
   const result = adminQuizDescriptionUpdate(token, quizId, description);
-
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
 
   res.json(result);
 });
@@ -251,11 +182,6 @@ app.post('/v1/admin/logout', (req: Request, res: Response) => {
   const { token } = req.body;
 
   const result = adminAuthLogout(token);
-
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
   res.json(result);
 });
 
@@ -263,10 +189,7 @@ app.post('/v1/admin/logout', (req: Request, res: Response) => {
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
+
   res.json(result);
 });
 
@@ -276,11 +199,6 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
 
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
-
   res.json(result);
 });
 
@@ -289,10 +207,6 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizRestore(token, quizId);
-  if ('error' in result) {
-    res.status(result.statusCode as number).json({ error: result.error });
-    return;
-  }
   res.json(result);
 });
 
@@ -302,16 +216,7 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
   const { token, userEmail } = req.body;
 
-  const result = adminQuizTransfer(
-    quizId,
-    token,
-    userEmail
-  );
-
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
+  const result = adminQuizTransfer(quizId, token, userEmail);
 
   res.json(result);
 });
@@ -330,11 +235,6 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
     questionBody.points,
     questionBody.answers
   );
-
-  if ('error' in result) {
-    res.status(result.statusCode).json({ error: result.error });
-    return;
-  }
 
   res.json(result);
 });
@@ -358,10 +258,6 @@ app.put(
       questionBody.answers
     );
 
-    if ('error' in result) {
-      res.status(result.statusCode).json({ error: result.error });
-      return;
-    }
     res.json(result);
   }
 );
@@ -376,11 +272,6 @@ app.delete(
     const token = req.query.token as string;
 
     const result = adminQuizDeleteQuestion(token, quizId, questionId);
-
-    if ('error' in result) {
-      res.status(result.statusCode).json({ error: result.error });
-      return;
-    }
 
     res.json(result);
   }
@@ -403,11 +294,6 @@ app.put(
       newPosition
     );
 
-    if ('error' in result) {
-      res.status(result.statusCode).json({ error: result.error });
-      return;
-    }
-
     res.json(result);
   }
 );
@@ -424,11 +310,6 @@ app.post(
 
     const result = adminQuizDuplicateQuestion(token, quizId, questionId);
 
-    if ('error' in result) {
-      res.status(result.statusCode).json({ error: result.error });
-      return;
-    }
-
     res.json(result);
   }
 );
@@ -436,7 +317,6 @@ app.post(
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
-
 app.use((req: Request, res: Response) => {
   const error = `
     404 Not found - This could be because:

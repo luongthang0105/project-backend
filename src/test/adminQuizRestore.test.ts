@@ -228,4 +228,84 @@ describe('adminQuizRestore', () => {
       ]
     });
   });
+
+  test('Successful case: create1 => create2 => remove2 => remove1 => restore2', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content as ReturnedToken;
+
+    const quiz01 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
+    const quiz02 = adminQuizCreate(user, 'loooo', 'This is my quiz').content as Quiz;
+
+    adminQuizRemove(user, quiz02.quizId);
+    adminQuizRemove(user, quiz01.quizId);
+    const result = adminQuizRestore(user, quiz02.quizId);
+    expect(result).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    const trash = adminQuizViewTrash(user).content;
+    expect(trash).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz01.quizId,
+          name: 'Hiiii',
+        }
+      ]
+    });
+
+    const quizzes = adminQuizList(user).content;
+    expect(quizzes).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz02.quizId,
+          name: 'loooo',
+        }
+      ]
+    });
+  });
+
+  test('Successful case: create1 => create2 => remove2 => remove1 => restore1', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content as ReturnedToken;
+
+    const quiz01 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
+    const quiz02 = adminQuizCreate(user, 'loooo', 'This is my quiz').content as Quiz;
+
+    adminQuizRemove(user, quiz02.quizId);
+    adminQuizRemove(user, quiz01.quizId);
+    const result = adminQuizRestore(user, quiz01.quizId);
+    expect(result).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    const trash = adminQuizViewTrash(user).content;
+    expect(trash).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz02.quizId,
+          name: 'loooo',
+        }
+      ]
+    });
+
+    const quizzes = adminQuizList(user).content;
+    expect(quizzes).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quiz01.quizId,
+          name: 'Hiiii',
+        }
+      ]
+    });
+  });
 });

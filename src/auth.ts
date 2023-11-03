@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
 import { emailUsed, validName, securedPassword } from './authHelper';
-import { ErrorObject, ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
+import { ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
+import HTTPError from 'http-errors';
 
 /**
  * Registers a user with an email, password, first name, and last name, then returns their authUserId value.
@@ -19,75 +20,48 @@ const adminAuthRegister = (
   password: string,
   nameFirst: string,
   nameLast: string
-): ReturnedToken | ErrorObject => {
+): ReturnedToken => {
   // Retrieve the current data
   const data = getData();
 
   // Check if the email address is used by another user
   if (emailUsed(email, data)) {
-    return {
-      statusCode: 400,
-      error: 'Email address used by another user',
-    };
+    throw HTTPError(400, 'Email address used by another user');
   }
 
   // Check if the email address is valid
   if (!validator.isEmail(email)) {
-    return {
-      error: 'Invalid email address',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Invalid email address');
   }
 
   // Check if the first name is valid
   if (!validName(nameFirst)) {
-    return {
-      error:
-        'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes');
   }
 
   // Check the length of the first name
   if (nameFirst.length > 20 || nameFirst.length < 2) {
-    return {
-      error: 'First name length must be between 2 and 20 characters',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'First name length must be between 2 and 20 characters');
   }
 
   // Check if the last name is valid
   if (!validName(nameLast)) {
-    return {
-      error:
-        'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes');
   }
 
   // Check the length of the last name
   if (nameLast.length > 20 || nameLast.length < 2) {
-    return {
-      statusCode: 400,
-      error: 'Last name length must be between 2 and 20 characters',
-    };
+    throw HTTPError(400, 'Last name length must be between 2 and 20 characters');
   }
 
   // Check the length of the password
   if (password.length < 8) {
-    return {
-      error: 'Password must have at least 8 characters',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Password must have at least 8 characters');
   }
 
   // Check if the password contains at least one number and one letter
   if (!securedPassword(password)) {
-    return {
-      error:
-        'Password must contain at least one number and at least one letter',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Password must contain at least one number and at least one letter');
   }
 
   // Create a new user object
@@ -133,7 +107,7 @@ const adminAuthRegister = (
 const adminAuthLogin = (
   email: string,
   password: string
-): ReturnedToken | ErrorObject => {
+): ReturnedToken => {
   // Retrieve the current data
   const data = getData();
 
@@ -142,7 +116,7 @@ const adminAuthLogin = (
 
   // If the email does not exist in the database, return an error
   if (!userInfo) {
-    return { statusCode: 400, error: 'Email adress does not exist' };
+    throw HTTPError(400, 'Email adress does not exist');
   }
 
   // Check if the provided password matches the stored password
@@ -151,10 +125,7 @@ const adminAuthLogin = (
     userInfo.numFailedPasswordsSinceLastLogin += 1;
 
     setData(data);
-    return {
-      statusCode: 400,
-      error: 'Password is not correct for the given email',
-    };
+    throw HTTPError(400, 'Password is not correct for the given email');
   }
 
   // Reset the count of failed login attempts and update the count of successful logins
@@ -198,7 +169,7 @@ const adminAuthLogin = (
  *   - An object containing details about the admin user if the authUserId is valid.
  *     If the authUserId is not valid, it returns an error object with a message.
  */
-const adminUserDetails = (token: string): UserDetails | ErrorObject => {
+const adminUserDetails = (token: string): UserDetails => {
   // Retrieve the current data
   const data = getData();
 
@@ -209,11 +180,7 @@ const adminUserDetails = (token: string): UserDetails | ErrorObject => {
 
   // If token is empty or no session with given token is found
   if (token === '' || !session) {
-    return {
-      statusCode: 401,
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
-    };
+    throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
   }
 
   // Find the user associated with the session
@@ -252,7 +219,7 @@ const adminUserDetailsUpdate = (
   email: string,
   nameFirst: string,
   nameLast: string
-): EmptyObject | ErrorObject => {
+): EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -263,11 +230,7 @@ const adminUserDetailsUpdate = (
 
   // Check if there is no token
   if (token === '' || !validSession) {
-    return {
-      statusCode: 401,
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
-    };
+    throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
   }
   // Find authUserId with the associated session
   const authUserId = validSession.authUserId;
@@ -279,53 +242,32 @@ const adminUserDetailsUpdate = (
 
   // Check if the email address is used by another user
   if (emailUsed(email, data)) {
-    return {
-      statusCode: 400,
-      error:
-        'Email is currently used by another user (excluding the current authorised user)',
-    };
+    throw HTTPError(400, 'Email is currently used by another user (excluding the current authorised user)');
   }
 
   // Check if the email address is valid
   if (!validator.isEmail(email)) {
-    return {
-      error: 'Invalid email address',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Invalid email address');
   }
 
   // Check if the first name is valid
   if (!validName(nameFirst)) {
-    return {
-      error:
-        'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'First name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes');
   }
 
   // Check the length of the first name
   if (nameFirst.length > 20 || nameFirst.length < 2) {
-    return {
-      error: 'First name is less than 2 characters or more than 20 characters',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'First name is less than 2 characters or more than 20 characters');
   }
 
   // Check if the last name is valid
   if (!validName(nameLast)) {
-    return {
-      error:
-        'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Last name contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes');
   }
 
   // Check the length of the last name
   if (nameLast.length > 20 || nameLast.length < 2) {
-    return {
-      statusCode: 400,
-      error: 'Last name is less than 2 characters or more than 20 characters',
-    };
+    throw HTTPError(400, 'Last name is less than 2 characters or more than 20 characters');
   }
 
   // Update user
@@ -345,7 +287,7 @@ const adminUserDetailsUpdate = (
  *
  * @returns An empty object if the logout is successful, or an error object with a status code and error message if the token is invalid.
  */
-const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
+const adminAuthLogout = (token: string): EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -356,11 +298,7 @@ const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
 
   // Check if there is no token
   if (token === '' || !validSession) {
-    return {
-      error:
-        'Token is empty or invalid (does not refer to valid logged in user session)',
-      statusCode: 401,
-    };
+    throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
   }
   // Find the index of the current session in session array
   const currSessionPosition = data.sessions.findIndex(
@@ -388,7 +326,7 @@ const adminUserPasswordUpdate = (
   token: string,
   oldPassword: string,
   newPassword: string
-): EmptyObject | ErrorObject => {
+): EmptyObject => {
   // Retrieve the current data
   const data = getData();
 
@@ -399,7 +337,7 @@ const adminUserPasswordUpdate = (
 
   // Checks if token is empty or invalid
   if (token === '' || !session) {
-    return { statusCode: 401, error: 'Token is empty or invalid (does not refer to valid logged in user session)' };
+    throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
   }
 
   // Find the user whose password needs update
@@ -409,36 +347,29 @@ const adminUserPasswordUpdate = (
 
   // Checks if the old password is the same as current password
   if (userInfo.password !== oldPassword) {
-    return { statusCode: 400, error: 'Old Password is not the correct old password' };
+    throw HTTPError(400, 'Old Password is not the correct old password');
   }
 
   // Checks if old password and new password are the same
   if (oldPassword === newPassword) {
-    return { statusCode: 400, error: 'Old Password and New Password match exactly' };
+    throw HTTPError(400, 'Old Password and New Password match exactly');
   }
 
   // Checks if new password has already been used before by this user
   if (
     userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)
   ) {
-    return {
-      statusCode: 400,
-      error: 'New Password has already been used before by this user',
-    };
+    throw HTTPError(400, 'New Password has already been used before by this user');
   }
 
   // Checks if new password is less than 8 characters
   if (newPassword.length < 8) {
-    return { statusCode: 400, error: 'New Password is less than 8 characters' };
+    throw HTTPError(400, 'New Password is less than 8 characters');
   }
 
   // Checks if new password contains at least one number and at least one letter
   if (!/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword)) {
-    return {
-      statusCode: 400,
-      error:
-        'New Password does not contain at least one number and at least one letter',
-    };
+    throw HTTPError(400, 'New Password does not contain at least one number and at least one letter');
   }
 
   userInfo.usedPasswords.push(oldPassword);

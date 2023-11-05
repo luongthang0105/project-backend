@@ -485,17 +485,6 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   res.json(result);
 });
-// adminQuizTransfer V2
-
-app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId)
-  const token = req.headers.token as string
-  const userEmail = req.body.userEmail as string
-
-  const result = adminQuizTransfer(quizId, token, userEmail)
-
-  res.json(result)
-})
 
 // adminUserDetailsUpdate V2
 app.put('/v2/admin/user/details', (req: Request, res: Response) => {
@@ -507,6 +496,20 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizTransfer V2
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+
+  const { userEmail } = req.body;
+
+  const result = adminQuizTransfer(quizId, token, userEmail);
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

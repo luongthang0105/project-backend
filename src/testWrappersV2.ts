@@ -3,7 +3,8 @@ import { port, url } from './config.json';
 import {
   EmptyObject,
   ReturnedToken,
-  QuizList
+  QuizList,
+  Answer
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
@@ -135,6 +136,49 @@ export const adminQuizDescriptionUpdate = (
     },
     json: {
       description: description,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Creates a new question within a quiz by sending a POST request to the server's create question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question creation.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz where the question will be created.
+ * @param question - The text of the question.
+ * @param duration - The duration (in seconds) allowed for answering the question.
+ * @param points - The number of points assigned to the question.
+ * @param answers - An array of answer options for the question.
+ *
+ * @returns An object containing the response content (questionId or ErrorObject) and the HTTP status code of the question creation request.
+ */
+export const adminQuizCreateQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[],
+  thumbnailUrl: string
+): { content: { questionId: number }; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/question';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers,
+        thumbnailUrl: thumbnailUrl
+      },
     },
   });
 

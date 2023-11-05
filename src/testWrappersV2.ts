@@ -234,3 +234,34 @@ export const adminQuizMoveQuestion = (
     statusCode: res.statusCode,
   };
 };
+
+/**
+ * Duplicates a question within a quiz by sending a POST request to the server's duplicate question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question duplication.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object containing the response content (newQuestionId or ErrorObject) and the HTTP status code of the question duplication request.
+ */
+export const adminQuizDuplicateQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number
+): { content: { newQuestionId: number }; statusCode: number } => {
+  const route =
+    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+

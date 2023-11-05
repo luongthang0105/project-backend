@@ -410,6 +410,22 @@ app.put(
   }
 );
 
+// adminQuizDuplicateQuestion V2
+app.post(
+  '/v2/admin/quiz/:quizid/question/:questionid/duplicate',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token } = req.body;
+
+    const result = adminQuizDuplicateQuestion(token, quizId, questionId);
+
+    res.json(result);
+  }
+);
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

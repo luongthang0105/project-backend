@@ -1396,6 +1396,7 @@ export {
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizCreateQuestion,
+  adminQuizCreateQuestionV2,
   adminQuizDeleteQuestion,
   adminQuizMoveQuestion,
   adminQuizTransfer,

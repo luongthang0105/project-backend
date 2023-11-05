@@ -1342,8 +1342,10 @@ const adminQuizCreateQuestionV2 = (
   }
 
   // Error: The thumbnailUrl does not return to a valid file
-  const res = request('GET', thumbnailUrl)
-  if (res.statusCode !== 200) {
+  let res
+  try {
+    res = request('GET', thumbnailUrl)
+  } catch (err) {
     throw HTTPError(400, 'The thumbnailUrl does not return to a valid file')
   }
 

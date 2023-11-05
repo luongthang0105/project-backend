@@ -472,6 +472,27 @@ app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(result)
 })
 
+// adminQuizMoveQuestion V2
+app.put(
+  '/v2/admin/quiz/:quizid/question/:questionid/move',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, newPosition } = req.body;
+
+    const result = adminQuizMoveQuestion(
+      token,
+      quizId,
+      questionId,
+      newPosition
+    );
+
+    res.json(result);
+  }
+);
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

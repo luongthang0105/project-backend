@@ -149,6 +149,7 @@ export const adminQuizDescriptionUpdate = (
 };
 
 /**
+<<<<<<< HEAD
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.
@@ -357,5 +358,35 @@ export const adminUserDetails = (tokenObject: {
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
+ *
+ * @param quizId - The unique identifier of the quiz to be transferred.
+ * @param tokenObject - An object containing the authentication token for the transfer.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param userEmail - The email address of the user to whom the quiz should be transferred.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz transfer request.
+ */
+export const adminQuizTransfer = (
+  quizId: number,
+  tokenObject: ReturnedToken,
+  userEmail: string
+): {content: EmptyObject, statusCode: number} => {
+  const route = '/v2/admin/quiz/' + quizId + '/transfer';
+
+  const res = request('POST', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      userEmail: userEmail
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
   };
 };

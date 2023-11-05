@@ -388,7 +388,7 @@ export const adminQuizMoveQuestion = (
       token: tokenObject.token
     },
     json: {
-      newPosition: newPosition
+      newPosition: newPosition,
     },
   });
 
@@ -493,66 +493,5 @@ export const adminQuizTransfer = (
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode
-  };
-};
-
-/**
- * Deletes a question within a quiz by sending a DELETE request to the server's question deletion endpoint.
- *
- * @param tokenObject - An object containing the authentication token for question deletion.
- * @param tokenObject.token - The authentication token for the request.
- * @param quizId - The unique identifier of the quiz containing the question to be deleted.
- * @param questionId - The unique identifier of the question to be deleted.
- *
- * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question deletion request.
- */
-export const adminQuizDeleteQuestion = (
-  tokenObject: ReturnedToken,
-  quizId: number,
-  questionId: number
-): {content: EmptyObject, statusCode: number} => {
-  const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
-
-  const res = request('DELETE', SERVER_URL + route, {
-    qs: {
-      token: tokenObject.token,
-    }
-  });
-
-  return {
-    content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
-  };
-};
-
-/**
- * Moves a question within a quiz by sending a PUT request to the server's move question endpoint.
- *
- * @param tokenObject - An object containing the authentication token for the question move.
- * @param tokenObject.token - The authentication token for the request.
- * @param quizId - The unique identifier of the quiz containing the question.
- * @param questionId - The unique identifier of the question to be moved.
- * @param newPosition - The new position for the question within the quiz.
- *
- * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question move request.
- */
-export const adminQuizMoveQuestion = (
-  tokenObject: ReturnedToken,
-  quizId: number,
-  questionId: number,
-  newPosition: number
-): { content: EmptyObject; statusCode: number } => {
-  const route =
-    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/move';
-  const res = request('PUT', SERVER_URL + route, {
-    json: {
-      token: tokenObject.token,
-      newPosition: newPosition,
-    },
-  });
-
-  return {
-    content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode,
   };
 };

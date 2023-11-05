@@ -25,6 +25,7 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
+  adminQuizCreateQuestionV2,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -365,6 +366,24 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizCreateQuestion
+app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, questionBody } = req.body;
+
+  const result = adminQuizCreateQuestionV2(
+    token,
+    quizId,
+    questionBody.question,
+    questionBody.duration,
+    questionBody.points,
+    questionBody.answers,
+    questionBody.thumbnailUrl
+  );
+
+  res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

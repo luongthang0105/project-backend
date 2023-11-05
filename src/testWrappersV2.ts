@@ -173,3 +173,32 @@ export const adminQuizTransfer = (
     statusCode: res.statusCode
   };
 };
+
+/**
+ * Deletes a question within a quiz by sending a DELETE request to the server's question deletion endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question deletion.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be deleted.
+ * @param questionId - The unique identifier of the question to be deleted.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question deletion request.
+ */
+export const adminQuizDeleteQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number
+): {content: EmptyObject, statusCode: number} => {
+  const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('DELETE', SERVER_URL + route, {
+    qs: {
+      token: tokenObject.token,
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};

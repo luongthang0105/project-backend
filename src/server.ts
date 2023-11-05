@@ -377,6 +377,18 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(result)
 })
 
+// adminQuizDeleteQuestion V2
+
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId)
+  const questionId = parseInt(req.params.questionId)
+  const token = req.headers.token as string
+
+  const result = adminQuizDeleteQuestion(token, quizId, questionId)
+
+  res.json(result)
+})
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

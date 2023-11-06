@@ -143,3 +143,26 @@ export const adminQuizDescriptionUpdate = (
     statusCode: res.statusCode,
   };
 };
+
+/**
+ * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz list retrieval.
+ * @param tokenObject.token - The authentication token for the request.
+ *
+ * @returns An object containing the response content (QuizList or ErrorObject) and the HTTP status code of the quiz list request.
+ */
+export const adminQuizList = (tokenObject: {
+  token: string;
+}): { content: QuizList; statusCode: number } => {
+  const res = request('GET', SERVER_URL + '/v2/admin/quiz/list', {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

@@ -143,3 +143,37 @@ export const adminQuizDescriptionUpdate = (
     statusCode: res.statusCode,
   };
 };
+
+/**
+ * Updates a user's password by sending a PUT request to the server's password update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for password update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param oldPassword - The user's current/old password.
+ * @param newPassword - The user's new password.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the password update request.
+ */
+export const adminUserPasswordUpdate = (
+  tokenObject: { token: string },
+  oldPassword: string,
+  newPassword: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/user/password';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
+    json: {
+      token: tokenObject.token,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

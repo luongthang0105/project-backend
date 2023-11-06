@@ -1,6 +1,6 @@
-import request from "sync-request-curl";
-import { port, url } from "./config.json";
-import { EmptyObject, ReturnedToken, QuizList } from "./types";
+import request from 'sync-request-curl';
+import { port, url } from './config.json';
+import { EmptyObject, ReturnedToken, QuizList } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -18,9 +18,9 @@ export const adminAuthLogout = (
   content: EmptyObject;
   statusCode: number;
 } => {
-  const route = "/v2/admin/auth/logout";
+  const route = '/v2/admin/auth/logout';
 
-  const res = request("POST", SERVER_URL + route, {
+  const res = request('POST', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
@@ -45,8 +45,8 @@ export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
   quizIds: string
 ): { content: EmptyObject; statusCode: number } => {
-  const route = "/v2/admin/quiz/trash/empty";
-  const res = request("DELETE", SERVER_URL + route, {
+  const route = '/v2/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
@@ -75,8 +75,8 @@ export const adminQuizRestore = (
   quizId: number
 ): { content: EmptyObject; statusCode: number } => {
   const res = request(
-    "POST",
-    SERVER_URL + "/v2/admin/quiz/" + quizId + "/restore",
+    'POST',
+    SERVER_URL + '/v2/admin/quiz/' + quizId + '/restore',
     {
       headers: {
         token: tokenObject.token,
@@ -100,7 +100,7 @@ export const adminQuizRestore = (
 export const adminQuizViewTrash = (tokenObject: {
   token: string;
 }): { content: QuizList; statusCode: number } => {
-  const res = request("GET", SERVER_URL + "/v2/admin/quiz/trash", {
+  const res = request('GET', SERVER_URL + '/v2/admin/quiz/trash', {
     headers: {
       token: tokenObject.token,
     },
@@ -127,9 +127,9 @@ export const adminQuizDescriptionUpdate = (
   quizId: number,
   description: string
 ): { content: EmptyObject; statusCode: number } => {
-  const route = "/v2/admin/quiz/" + quizId + "/description";
+  const route = '/v2/admin/quiz/' + quizId + '/description';
 
-  const res = request("PUT", SERVER_URL + route, {
+  const res = request('PUT', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
@@ -161,9 +161,9 @@ export const adminUserDetailsUpdate = (
   nameFirst: string,
   nameLast: string
 ): { content: EmptyObject; statusCode: number } => {
-  const route = "/v2/admin/user/details";
+  const route = '/v2/admin/user/details';
 
-  const res = request("PUT", SERVER_URL + route, {
+  const res = request('PUT', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },

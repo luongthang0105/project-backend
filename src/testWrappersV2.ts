@@ -1,10 +1,6 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
-import {
-  EmptyObject,
-  ReturnedToken,
-  QuizList
-} from './types';
+import { EmptyObject, ReturnedToken, QuizList, Answer } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
@@ -19,8 +15,8 @@ const SERVER_URL = `${url}:${port}`;
 export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
-  content: EmptyObject,
-  statusCode: number
+  content: EmptyObject;
+  statusCode: number;
 } => {
   const route = '/v2/admin/auth/logout';
 
@@ -48,20 +44,20 @@ export const adminAuthLogout = (
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
   quizIds: string
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v2/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
     qs: {
-      quizIds: quizIds
-    }
+      quizIds: quizIds,
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 
@@ -78,11 +74,15 @@ export const adminQuizRestore = (
   tokenObject: ReturnedToken,
   quizId: number
 ): { content: EmptyObject; statusCode: number } => {
-  const res = request('POST', SERVER_URL + '/v2/admin/quiz/' + quizId + '/restore', {
-    headers: {
-      token: tokenObject.token
-    },
-  });
+  const res = request(
+    'POST',
+    SERVER_URL + '/v2/admin/quiz/' + quizId + '/restore',
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+    }
+  );
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
@@ -135,6 +135,51 @@ export const adminQuizDescriptionUpdate = (
     },
     json: {
       description: description,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Updates the details of a question within a quiz by sending a PUT request to the server's question update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be updated.
+ * @param questionId - The unique identifier of the question to be updated.
+ * @param question - The updated text of the question.
+ * @param duration - The updated duration (in seconds) allowed for answering the question.
+ * @param points - The updated number of points assigned to the question.
+ * @param answers - An array of updated answer options for the question.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question update request.
+ */
+export const adminQuizQuestionUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[]
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers,
+      },
     },
   });
 

@@ -1,14 +1,14 @@
-import express, { json, Request, Response } from "express";
-import { echo } from "./newecho";
-import morgan from "morgan";
-import config from "./config.json";
-import cors from "cors";
-import errorHandler from "middleware-http-errors";
-import YAML from "yaml";
-import sui from "swagger-ui-express";
-import fs from "fs";
-import path from "path";
-import process from "process";
+import express, { json, Request, Response } from 'express';
+import { echo } from './newecho';
+import morgan from 'morgan';
+import config from './config.json';
+import cors from 'cors';
+import errorHandler from 'middleware-http-errors';
+import YAML from 'yaml';
+import sui from 'swagger-ui-express';
+import fs from 'fs';
+import path from 'path';
+import process from 'process';
 import {
   adminQuizCreateQuestion,
   adminQuizDeleteQuestion,
@@ -25,8 +25,8 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
-} from "./quiz";
-import { clear } from "./other";
+} from './quiz';
+import { clear } from './other';
 import {
   adminAuthRegister,
   adminAuthLogin,
@@ -34,7 +34,7 @@ import {
   adminUserPasswordUpdate,
   adminAuthLogout,
   adminUserDetailsUpdate,
-} from "./auth";
+} from './auth';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -42,27 +42,27 @@ app.use(json());
 // Use middleware that allows for access from other domains
 app.use(cors());
 // for logging errors (print to terminal)
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 // for producing the docs that define the API
-const file = fs.readFileSync(path.join(process.cwd(), "swagger.yaml"), "utf8");
-app.get("/", (req: Request, res: Response) => res.redirect("/docs"));
+const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
+app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
 app.use(
-  "/docs",
+  '/docs',
   sui.serve,
   sui.setup(YAML.parse(file), {
-    swaggerOptions: { docExpansion: config.expandDocs ? "full" : "list" },
+    swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' },
   })
 );
 
 const PORT: number = parseInt(process.env.PORT || config.port);
-const HOST: string = process.env.IP || "localhost";
+const HOST: string = process.env.IP || 'localhost';
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
 // Example get request
-app.get("/echo", (req: Request, res: Response) => {
+app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
   return res.json(echo(data));
 });
@@ -72,14 +72,14 @@ app.get("/echo", (req: Request, res: Response) => {
 // ====================================================================
 
 // adminAuthRegister
-app.post("/v1/admin/auth/register", (req: Request, res: Response) => {
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
   res.json(result);
 });
 
 // adminAuthLogin
-app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password);
 
@@ -87,13 +87,13 @@ app.post("/v1/admin/auth/login", (req: Request, res: Response) => {
 });
 
 // adminUserDetails
-app.get("/v1/admin/user/details", (req: Request, res: Response) => {
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
   res.json(adminUserDetails(token));
 });
 
 // adminQuizTrashEmpty
-app.delete("/v1/admin/quiz/trash/empty", (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const quizIds: number[] = JSON.parse(req.query.quizIds as string);
 
   const token = req.query.token as string;
@@ -103,14 +103,14 @@ app.delete("/v1/admin/quiz/trash/empty", (req: Request, res: Response) => {
 });
 
 // adminQuizList
-app.get("/v1/admin/quiz/list", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizList(token);
   res.json(result);
 });
 
 // adminQuizCreate
-app.post("/v1/admin/quiz", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
 
   const result = adminQuizCreate(token, name, description);
@@ -118,7 +118,7 @@ app.post("/v1/admin/quiz", (req: Request, res: Response) => {
 });
 
 // adminQuizRemove
-app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = req.query.token as string;
   const result = adminQuizRemove(token, quizId);
@@ -126,7 +126,7 @@ app.delete("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
 });
 
 // adminQuizViewTrash
-app.get("/v1/admin/quiz/trash", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
   const result = adminQuizViewTrash(token);
 
@@ -134,7 +134,7 @@ app.get("/v1/admin/quiz/trash", (req: Request, res: Response) => {
 });
 
 // adminQuizInfo
-app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.query.token as string;
@@ -145,7 +145,7 @@ app.get("/v1/admin/quiz/:quizid", (req: Request, res: Response) => {
 });
 
 // adminQuizNameUpdate
-app.put("/v1/admin/quiz/:quizid/name", (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const { token, name } = req.body;
@@ -155,7 +155,7 @@ app.put("/v1/admin/quiz/:quizid/name", (req: Request, res: Response) => {
 });
 
 // adminQuizDescriptionUpdate
-app.put("/v1/admin/quiz/:quizid/description", (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.body.token as string;
@@ -168,7 +168,7 @@ app.put("/v1/admin/quiz/:quizid/description", (req: Request, res: Response) => {
 });
 
 // clear
-app.delete("/v1/clear", (req: Request, res: Response) => {
+app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear();
   return res.json(result);
 });
@@ -178,7 +178,7 @@ app.delete("/v1/clear", (req: Request, res: Response) => {
 // ====================================================================
 
 // adminAuthLogout
-app.post("/v1/admin/auth/logout", (req: Request, res: Response) => {
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
 
   const result = adminAuthLogout(token);
@@ -186,7 +186,7 @@ app.post("/v1/admin/auth/logout", (req: Request, res: Response) => {
 });
 
 // adminUserDetailsUpdate
-app.put("/v1/admin/user/details", (req: Request, res: Response) => {
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
@@ -194,7 +194,7 @@ app.put("/v1/admin/user/details", (req: Request, res: Response) => {
 });
 
 // adminUserPasswordUpdate
-app.put("/v1/admin/user/password", (req: Request, res: Response) => {
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
@@ -203,7 +203,7 @@ app.put("/v1/admin/user/password", (req: Request, res: Response) => {
 });
 
 // adminQuizRestore
-app.post("/v1/admin/quiz/:quizid/restore", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.body.token;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizRestore(token, quizId);
@@ -211,7 +211,7 @@ app.post("/v1/admin/quiz/:quizid/restore", (req: Request, res: Response) => {
 });
 
 // adminQuizTransferQuestion
-app.post("/v1/admin/quiz/:quizid/transfer", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const { token, userEmail } = req.body;
@@ -222,7 +222,7 @@ app.post("/v1/admin/quiz/:quizid/transfer", (req: Request, res: Response) => {
 });
 
 // adminQuizCreateQuestion
-app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const { token, questionBody } = req.body;
@@ -241,7 +241,7 @@ app.post("/v1/admin/quiz/:quizid/question", (req: Request, res: Response) => {
 
 // adminQuizQuestionUpdate
 app.put(
-  "/v1/admin/quiz/:quizid/question/:questionid",
+  '/v1/admin/quiz/:quizid/question/:questionid',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
     const questionId = parseInt(req.params.questionid);
@@ -264,7 +264,7 @@ app.put(
 
 // adminQuizDeleteQuestion
 app.delete(
-  "/v1/admin/quiz/:quizid/question/:questionid",
+  '/v1/admin/quiz/:quizid/question/:questionid',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
     const questionId = parseInt(req.params.questionid);
@@ -279,7 +279,7 @@ app.delete(
 
 // adminQuizMoveQuestion
 app.put(
-  "/v1/admin/quiz/:quizid/question/:questionid/move",
+  '/v1/admin/quiz/:quizid/question/:questionid/move',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
 
@@ -300,7 +300,7 @@ app.put(
 
 // adminQuizDuplicateQuestion
 app.post(
-  "/v1/admin/quiz/:quizid/question/:questionid/duplicate",
+  '/v1/admin/quiz/:quizid/question/:questionid/duplicate',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
 
@@ -319,7 +319,7 @@ app.post(
 // ====================================================================
 
 // adminAuthLogout V2
-app.post("/v2/admin/auth/logout", (req: Request, res: Response) => {
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
 
   const result = adminAuthLogout(token);
@@ -328,7 +328,7 @@ app.post("/v2/admin/auth/logout", (req: Request, res: Response) => {
 });
 
 // adminQuizTrashEmpty
-app.delete("/v2/admin/quiz/trash/empty", (req: Request, res: Response) => {
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const quizIds: number[] = JSON.parse(req.query.quizIds as string);
   const token = req.headers.token as string;
   const result = adminQuizTrashEmpty(token, quizIds);
@@ -337,7 +337,7 @@ app.delete("/v2/admin/quiz/trash/empty", (req: Request, res: Response) => {
 });
 
 // adminQuizRestore
-app.post("/v2/admin/quiz/:quizid/restore", (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizRestore(token, quizId);
@@ -345,7 +345,7 @@ app.post("/v2/admin/quiz/:quizid/restore", (req: Request, res: Response) => {
 });
 
 // adminQuizViewTrash V2
-app.get("/v2/admin/quiz/trash", (req: Request, res: Response) => {
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const result = adminQuizViewTrash(token);
 
@@ -353,7 +353,7 @@ app.get("/v2/admin/quiz/trash", (req: Request, res: Response) => {
 });
 
 // adminQuizDescriptionUpdate V2
-app.put("/v2/admin/quiz/:quizid/description", (req: Request, res: Response) => {
+app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
   const token = req.headers.token as string;
@@ -365,9 +365,9 @@ app.put("/v2/admin/quiz/:quizid/description", (req: Request, res: Response) => {
   res.json(result);
 });
 // adminUserPasswordUpdate V2
-app.put("/v2/admin/user/password", (req: Request, res: Response) => {
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-  
+
   const { oldPassword, newPassword } = req.body;
 
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
@@ -403,6 +403,6 @@ const server = app.listen(PORT, HOST, () => {
 });
 
 // For coverage, handle Ctrl+C gracefully
-process.on("SIGINT", () => {
-  server.close(() => console.log("Shutting down server gracefully."));
+process.on('SIGINT', () => {
+  server.close(() => console.log('Shutting down server gracefully.'));
 });

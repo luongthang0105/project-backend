@@ -365,6 +365,29 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizQuestionUpdate V2
+app.put(
+  '/v2/admin/quiz/:quizid/question/:questionid',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const questionId = parseInt(req.params.questionid);
+    const token = req.headers.token as string;
+
+    const { questionBody } = req.body;
+
+    const result = adminQuizQuestionUpdate(
+      token,
+      quizId,
+      questionId,
+      questionBody.question,
+      questionBody.duration,
+      questionBody.points,
+      questionBody.answers
+    );
+
+    res.json(result);
+  }
+);
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

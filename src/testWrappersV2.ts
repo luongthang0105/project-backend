@@ -3,7 +3,8 @@ import { port, url } from './config.json';
 import {
   EmptyObject,
   ReturnedToken,
-  QuizList
+  QuizList,
+  Quiz
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
@@ -158,6 +159,71 @@ export const adminQuizList = (tokenObject: {
   const res = request('GET', SERVER_URL + '/v2/admin/quiz/list', {
     headers: {
       token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Creates a quiz by sending a POST request to the server's quiz creation endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz creation.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param name - The name or title of the quiz to be created.
+ * @param description - A brief description of the quiz.
+ *
+ * @returns An object containing the response content (Quiz or ErrorObject) and the HTTP status code of the quiz creation request.
+ */
+export const adminQuizCreate = (
+  tokenObject: {
+    token: string;
+  },
+  name: string,
+  description: string
+): { content: Quiz; statusCode: number } => {
+  const res = request('POST', SERVER_URL + '/v2/admin/quiz', {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      name: name,
+      description: description,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Updates the name of a quiz by sending a PUT request to the server's quiz name update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz name update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz for which the name is to be updated.
+ * @param name - The new name for the quiz.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz name update request.
+ */
+export const adminQuizNameUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  name: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/name';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      name: name
     },
   });
 

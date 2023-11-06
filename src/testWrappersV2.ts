@@ -38,6 +38,35 @@ export const adminAuthLogout = (
 };
 
 /**
+ * Empties the trash (permanently deletes quizzes) by sending a DELETE request to the server's trash emptying endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for emptying the trash.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizIds - A string containing the IDs of quizzes to be permanently deleted, separated by commas.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the trash emptying request.
+ */
+export const adminQuizTrashEmpty = (
+  tokenObject: ReturnedToken,
+  quizIds: string
+): {content: EmptyObject, statusCode: number} => {
+  const route = '/v2/admin/quiz/trash/empty';
+  const res = request('DELETE', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    qs: {
+      quizIds: quizIds
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
+  };
+};
+
+/**
  * Restores a quiz by sending a POST request to the server's quiz restoration endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz restoration.
@@ -55,7 +84,6 @@ export const adminQuizRestore = (
       token: tokenObject.token
     },
   });
-
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
@@ -164,6 +192,64 @@ export const adminQuizCreate = (
     json: {
       name: name,
       description: description,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Removes a quiz by sending a DELETE request to the server's quiz removal endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz removal.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz to be removed.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz removal request.
+ */
+export const adminQuizRemove = (
+  tokenObject: ReturnedToken,
+  quizId: number
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId;
+
+  const res = request('DELETE', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Updates the name of a quiz by sending a PUT request to the server's quiz name update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz name update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz for which the name is to be updated.
+ * @param name - The new name for the quiz.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz name update request.
+ */
+export const adminQuizNameUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  name: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/name';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      name: name
     },
   });
 

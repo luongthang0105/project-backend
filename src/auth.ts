@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { emailUsed, validName, securedPassword } from './authHelper';
+import { emailUsed, validName, securedPassword, randomSessionId } from './authHelper';
 import { ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 
@@ -79,13 +79,14 @@ const adminAuthRegister = (
   data.users.push(user);
   data.nextUserId += 1;
 
+  const newSessionId = randomSessionId(data);
+
   const newToken: Token = {
-    identifier: data.nextTokenId.toString(),
+    identifier: newSessionId,
     authUserId: user.authUserId,
   };
 
   data.sessions.push(newToken);
-  data.nextTokenId += 1;
 
   // Update dataStore by calling setData which will save it to data.json
   setData(data);
@@ -132,13 +133,13 @@ const adminAuthLogin = (
   userInfo.numFailedPasswordsSinceLastLogin = 0;
   userInfo.numSuccessfulLogins += 1;
 
+  const newSessionId = randomSessionId(data);
+
   // If all credentials are valid, give this user another session:
   const newToken: Token = {
-    identifier: data.nextTokenId.toString(),
+    identifier: newSessionId,
     authUserId: userInfo.authUserId,
   };
-
-  data.nextTokenId += 1;
 
   data.sessions.push(newToken);
 

@@ -70,4 +70,24 @@ const securedPassword = (password: string): boolean => {
   return hasLetter && hasNumber;
 };
 
-export { validName, securedPassword, emailUsed };
+/**
+ * Randomly generate a new sessionId that is not in the current data.
+ *
+ * @param data - The data store containing user information.
+ * @returns "newSessionId" which is a string
+ */
+const randomSessionId = (data: DataStore): string => {
+  const min = 0;
+  const max = 100000;
+
+  let newSessionIdInt: number;
+  let newSessionId: string;
+
+  do {
+    newSessionIdInt = Math.floor(Math.random() * (max - min + 1)) + min;
+    newSessionId = newSessionIdInt.toString();
+  } while (data.sessions.some((session) => session.identifier === newSessionId));
+  return newSessionId;
+};
+
+export { validName, securedPassword, emailUsed, randomSessionId };

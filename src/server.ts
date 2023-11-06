@@ -327,6 +327,15 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizTrashEmpty
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const quizIds: number[] = JSON.parse(req.query.quizIds as string);
+  const token = req.headers.token as string;
+  const result = adminQuizTrashEmpty(token, quizIds);
+
+  res.json(result);
+});
+
 // adminQuizRestore
 app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -356,7 +365,7 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizList V2
+//  adminQuizList V2
 app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const result = adminQuizList(token);

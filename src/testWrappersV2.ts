@@ -154,6 +154,7 @@ export const adminQuizDescriptionUpdate = (
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.

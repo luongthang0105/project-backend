@@ -6,6 +6,7 @@ import {
   QuizList,
   Quiz,
   Answer,
+  QuizObject,
   UserDetails,
 } from './types';
 
@@ -286,8 +287,10 @@ export const adminQuizCreateQuestion = (
   const route = '/v2/admin/quiz/' + quizId + '/question';
 
   const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
     json: {
-      token: tokenObject.token,
       questionBody: {
         question: question,
         duration: duration,
@@ -295,6 +298,36 @@ export const adminQuizCreateQuestion = (
         answers: answers,
         thumbnailUrl: thumbnailUrl
       },
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Retrieves information about a quiz by sending a GET request to the server's quiz information endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for quiz information retrieval.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz for which information is requested.
+ *
+ * @returns An object containing the response content (QuizObject or ErrorObject) and the HTTP status code of the quiz information request.
+ */
+export const adminQuizInfo = (
+  tokenObject: ReturnedToken,
+  quizId: number
+): {
+  content: QuizObject;
+  statusCode: number;
+} => {
+  const route = '/v2/admin/quiz/' + quizId;
+
+  const res = request('GET', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
     },
   });
 

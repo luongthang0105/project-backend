@@ -26,6 +26,7 @@ import {
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
   adminQuizCreateQuestionV2,
+  adminQuizInfoV2,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -435,7 +436,7 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   const token = req.headers.token as string;
 
-  const result = adminQuizInfo(token, quizId);
+  const result = adminQuizInfoV2(token, quizId);
 
   res.json(result);
 });

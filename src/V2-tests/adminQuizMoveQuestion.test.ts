@@ -398,4 +398,3 @@ describe('adminQuizRemoveQuestion', () => {
     expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
   });
 });
-

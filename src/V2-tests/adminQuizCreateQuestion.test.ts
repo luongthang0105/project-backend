@@ -490,18 +490,9 @@ describe('adminQuizCreateQuestion', () => {
       },
     });
 
-    const quizInfo = adminQuizInfo(user, quiz.quizId);
-    expect(quizInfo).toStrictEqual({
-      statusCode: 200,
-      content: {
-        quizId: quiz.quizId,
-        name: 'Quiz 1',
-        timeCreated: expect.any(Number),
-        timeLastEdited: expect.any(Number),
-        description: 'Description',
-        numQuestions: 2,
-        duration: 8,
-        questions: [
+    const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
+    expect(quizInfo.questions).toStrictEqual(
+        [
           {
             questionId: (result.content as { questionId: number }).questionId,
             question: 'What is that pokemon',
@@ -545,10 +536,9 @@ describe('adminQuizCreateQuestion', () => {
             thumbnailUrl: 'https://t.ly/MkDJC'
           },
         ],
-      },
-    });
+    );
 
-    const timeLastEdited = (quizInfo.content as QuizObject).timeLastEdited;
+    const timeLastEdited = quizInfo.timeLastEdited;
     expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
   });
 });

@@ -313,6 +313,7 @@ export const adminQuizCreateQuestion = (
 };
 
 /**
+<<<<<<< HEAD
  * Retrieves information about a quiz by sending a GET request to the server's quiz information endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz information retrieval.

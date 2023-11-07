@@ -427,6 +427,19 @@ app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+
+// adminQuizInfo V2
+app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+
+  const result = adminQuizInfo(token, quizId);
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

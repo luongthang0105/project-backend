@@ -286,8 +286,10 @@ export const adminQuizCreateQuestion = (
   const route = '/v2/admin/quiz/' + quizId + '/question';
 
   const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
     json: {
-      token: tokenObject.token,
       questionBody: {
         question: question,
         duration: duration,

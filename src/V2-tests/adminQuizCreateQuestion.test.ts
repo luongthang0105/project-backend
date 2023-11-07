@@ -473,7 +473,7 @@ describe('adminQuizCreateQuestion', () => {
       questInfo.duration,
       questInfo.points,
       questInfo.answers,
-      questInfo.thumbnailUrl
+      "https://t.ly/MkDJC"
     );
 
     expect(result).toStrictEqual({
@@ -521,6 +521,7 @@ describe('adminQuizCreateQuestion', () => {
                 answerId: expect.any(Number),
               }
             ],
+            thumbnailUrl: "https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg"
           },
           {
             questionId: (result2.content as { questionId: number }).questionId,
@@ -541,6 +542,7 @@ describe('adminQuizCreateQuestion', () => {
                 answerId: expect.any(Number)
               },
             ],
+            thumbnailUrl: "https://t.ly/MkDJC" 
           },
         ],
       },

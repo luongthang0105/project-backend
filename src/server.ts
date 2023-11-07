@@ -27,6 +27,7 @@ import {
   adminQuizMoveQuestion,
   adminQuizCreateQuestionV2,
   adminQuizInfoV2,
+  adminQuizCreateV2,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -382,7 +383,7 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 
   const { name, description } = req.body;
 
-  const result = adminQuizCreate(token, name, description);
+  const result = adminQuizCreateV2(token, name, description);
 
   res.json(result);
 });

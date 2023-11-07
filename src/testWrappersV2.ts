@@ -309,6 +309,7 @@ export const adminQuizCreateQuestion = (
 };
 
 /**
+<<<<<<< HEAD
  * Retrieves information about a quiz by sending a GET request to the server's quiz information endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz information retrieval.
@@ -427,6 +428,8 @@ export const adminQuizDuplicateQuestion = (
 /**
 =======
 >>>>>>> 342c036 (Fixed merge conflicts in testWrappersV2.ts)
+=======
+>>>>>>> e81b708 (Fixed merging in testWrappersV2.ts)
  * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
  *
  * @param quizId - The unique identifier of the quiz to be transferred.

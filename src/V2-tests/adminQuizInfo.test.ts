@@ -1,10 +1,10 @@
 import {
-  adminQuizCreate,
   adminAuthRegister,
   clear,
 } from '../testWrappersV1';
 
 import {
+  adminQuizCreate,
   adminQuizInfo
 } from '../testWrappersV2';
 
@@ -86,6 +86,7 @@ describe('adminQuizInfo', () => {
       questions: [],
       numQuestions: 0,
       duration: 0,
+      thumbnailUrl: ""
     });
   });
 
@@ -113,6 +114,7 @@ describe('adminQuizInfo', () => {
       questions: [],
       numQuestions: 0,
       duration: 0,
+      thumbnailUrl: ""
     });
     expect(result.statusCode).toStrictEqual(200);
   });

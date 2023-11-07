@@ -366,20 +366,7 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizTransfer V2
-
-app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const token = req.headers.token as string;
-  const userEmail = req.body.userEmail as string;
-
-  const result = adminQuizTransfer(quizId, token, userEmail);
-
-  res.json(result);
-});
-
 // adminQuizDeleteQuestion V2
-
 app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionId);

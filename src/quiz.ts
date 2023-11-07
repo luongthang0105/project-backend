@@ -1388,9 +1388,160 @@ const adminQuizCreateQuestionV2 = (
   return { questionId: newQuestion.questionId };
 };
 
+/**
+ * Retrieves all relevant information about the current quiz.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {number} quizId - The ID of the quiz for which information is requested.
+ * @returns {QuizObject | ErrorObject}
+ * - An object containing information about the quiz if it exists and is owned
+ *   by the authenticated user.
+ *   If any validation errors occur, it returns an error object with a message.
+ */
+const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
+  // Retrieve the current data
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currToken) => currToken.identifier === token
+  );
+
+  if (!validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Find the quiz with the specified quizId and check if it exists
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Return an error message if the quiz with the given quizId does not exist
+  if (!existingQuiz) {
+    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
+  }
+  const timeCreated = existingQuiz.timeCreated;
+  const timeLastEdited = existingQuiz.timeLastEdited;
+
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (existingQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Return object with relevant information about the quiz
+  return {
+    quizId: existingQuiz.quizId,
+    name: existingQuiz.name,
+    timeCreated: timeCreated,
+    timeLastEdited: timeLastEdited,
+    description: existingQuiz.description,
+    questions: existingQuiz.questions,
+    numQuestions: existingQuiz.numQuestions,
+    duration: existingQuiz.duration,
+    thumbnailUrl: existingQuiz.thumbnailUrl
+  };
+};
+
+/**
+ * Creates a new quiz for a logged-in user, given basic details about the new quiz.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {string} name - The name of the new quiz.
+ * @param {string} description - The description of the new quiz.
+ * @returns {Quiz}
+ * - An object containing the new quiz id if the quiz is successfully created.
+ *   If any validation errors occur, it returns an error object with a message.
+ */
+const adminQuizCreateV2 = (
+  token: string,
+  name: string,
+  description: string
+): Quiz => {
+  // Retrieve the current data
+  const currData = getData();
+
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if the name contains invalid characters
+  if (!alphanumericAndSpaceCheck(name)) {
+    throw HTTPError(400, 'Name contains invalid characters');
+  }
+
+  // Check if the name is less than 3 characters long
+  if (name.length < 3) {
+    throw HTTPError(400, 'Name is less than 3 characters long');
+  }
+
+  // Check if the name is more than 30 characters long
+  if (name.length > 30) {
+    throw HTTPError(400, 'Name is more than 30 characters long');
+  }
+
+  // Check if the name is already used by the current logged-in user for another quiz
+  const quizNameUsed = currData.quizzes.find(
+    (quiz: QuizObject) => quiz.quizAuthorId === authUserId && quiz.name === name
+  );
+  if (quizNameUsed) {
+    throw HTTPError(
+      400,
+      'Name is already used by the current logged in user for another quiz'
+    );
+  }
+
+  // Check if the description is more than 100 characters in length
+  if (description.length > 100) {
+    throw HTTPError(400, 'Description is more than 100 characters in length');
+  }
+
+  // Get the current timestamp
+  const timestamp = getCurrentTimestamp();
+
+  // Create a new quiz object
+  const newQuiz = {
+    quizId: currData.nextQuizId,
+    quizAuthorId: authUserId,
+    name: name,
+    timeCreated: timestamp,
+    timeLastEdited: timestamp,
+    description: description,
+    questions: [] as Question[],
+    numQuestions: 0,
+    duration: 0,
+    thumbnailUrl: ''
+  };
+
+  // Increment the nextQuizId and add the new quiz to the data
+  currData.nextQuizId++;
+  currData.quizzes.push(newQuiz);
+
+  setData(currData);
+  // Return an object containing the quizId of the newly created quiz
+  return { quizId: newQuiz.quizId };
+};
+
 export {
   adminQuizCreate,
+  adminQuizCreateV2,
   adminQuizInfo,
+  adminQuizInfoV2,
   adminQuizRemove,
   adminQuizList,
   adminQuizNameUpdate,

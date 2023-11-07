@@ -1,12 +1,12 @@
 import { getCurrentTimestamp } from '../quizHelper';
 import {
-  adminQuizCreate,
   adminAuthRegister,
   clear,
-  adminQuizInfo,
 } from '../testWrappersV1';
 import {
+  adminQuizCreate,
   adminQuizCreateQuestion,
+  adminQuizInfo,
 } from '../testWrappersV2';
 
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';

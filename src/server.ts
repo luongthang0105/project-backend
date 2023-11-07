@@ -419,7 +419,7 @@ app.post(
 
     const questionId = parseInt(req.params.questionid);
 
-    const { token } = req.body;
+    const token = req.headers.token as string;
 
     const result = adminQuizDuplicateQuestion(token, quizId, questionId);
 

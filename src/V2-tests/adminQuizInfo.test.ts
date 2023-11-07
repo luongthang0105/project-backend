@@ -86,7 +86,7 @@ describe('adminQuizInfo', () => {
       questions: [],
       numQuestions: 0,
       duration: 0,
-      thumbnailUrl: ""
+      thumbnailUrl: ''
     });
   });
 
@@ -114,7 +114,7 @@ describe('adminQuizInfo', () => {
       questions: [],
       numQuestions: 0,
       duration: 0,
-      thumbnailUrl: ""
+      thumbnailUrl: ''
     });
     expect(result.statusCode).toStrictEqual(200);
   });

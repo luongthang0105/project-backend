@@ -417,7 +417,7 @@ app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 
   const { questionBody } = req.body;
 
-  const token = req.headers.token as string
+  const token = req.headers.token as string;
 
   const result = adminQuizCreateQuestionV2(
     token,
@@ -431,7 +431,6 @@ app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 
   res.json(result);
 });
-
 
 // adminQuizInfo V2
 app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {

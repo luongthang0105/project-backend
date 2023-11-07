@@ -1525,7 +1525,7 @@ const adminQuizCreateV2 = (
     questions: [] as Question[],
     numQuestions: 0,
     duration: 0,
-    thumbnailUrl: ""
+    thumbnailUrl: ''
   };
 
   // Increment the nextQuizId and add the new quiz to the data

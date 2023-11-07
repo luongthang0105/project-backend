@@ -179,7 +179,7 @@ type QuizObject = {
   duration: number;
 
   // let this field be optional since we need backwards compatibility with It2
-  thumbnailUrl?: string 
+  thumbnailUrl?: string
 };
 
 /**

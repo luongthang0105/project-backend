@@ -150,6 +150,7 @@ export const adminQuizDescriptionUpdate = (
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.
@@ -362,6 +363,8 @@ export const adminUserDetails = (tokenObject: {
 };
 
 /**
+=======
+>>>>>>> 26e267401302ab92701177c7168b32239135057a
  * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
  *
  * @param quizId - The unique identifier of the quiz to be transferred.

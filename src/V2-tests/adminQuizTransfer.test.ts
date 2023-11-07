@@ -2,7 +2,12 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminUserDetails,
+<<<<<<< HEAD
   adminQuizList
+=======
+  adminQuizList,
+  clear
+>>>>>>> 91a37fc (Fixed merge conflicts)
 } from '../testWrappersV1';
 
 import { adminQuizTransfer } from '../testWrappersV2';
@@ -10,7 +15,11 @@ import { adminQuizTransfer } from '../testWrappersV2';
 import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 
+<<<<<<< HEAD
 describe('adminQuizTransfer', () => {
+=======
+describe('adminUserPassword', () => {
+>>>>>>> 91a37fc (Fixed merge conflicts)
   let user: ReturnedToken;
   let user2: ReturnedToken;
   let user2Email: string;

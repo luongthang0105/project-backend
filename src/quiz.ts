@@ -1388,6 +1388,67 @@ const adminQuizCreateQuestionV2 = (
   return { questionId: newQuestion.questionId };
 };
 
+/**
+ * Retrieves all relevant information about the current quiz.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {number} quizId - The ID of the quiz for which information is requested.
+ * @returns {QuizObject | ErrorObject}
+ * - An object containing information about the quiz if it exists and is owned
+ *   by the authenticated user.
+ *   If any validation errors occur, it returns an error object with a message.
+ */
+const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
+  // Retrieve the current data
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currToken) => currToken.identifier === token
+  );
+
+  if (!validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Find the quiz with the specified quizId and check if it exists
+  const existingQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Return an error message if the quiz with the given quizId does not exist
+  if (!existingQuiz) {
+    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
+  }
+  const timeCreated = existingQuiz.timeCreated;
+  const timeLastEdited = existingQuiz.timeLastEdited;
+
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (existingQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Return object with relevant information about the quiz
+  return {
+    quizId: existingQuiz.quizId,
+    name: existingQuiz.name,
+    timeCreated: timeCreated,
+    timeLastEdited: timeLastEdited,
+    description: existingQuiz.description,
+    questions: existingQuiz.questions,
+    numQuestions: existingQuiz.numQuestions,
+    duration: existingQuiz.duration,
+    thumbnailUrl: existingQuiz.thumbnailUrl
+  };
+};
+
 export {
   adminQuizCreate,
   adminQuizInfo,

@@ -25,9 +25,6 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
-  adminQuizCreateQuestionV2,
-  adminQuizInfoV2,
-  adminQuizCreateV2,
 } from './quiz';
 import { clear } from './other';
 import {
@@ -377,14 +374,14 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 // adminQuizTransfer V2
 
 app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId)
-  const token = req.headers.token as string
-  const userEmail = req.body.userEmail as string
+  const quizId = parseInt(req.params.quizId);
+  const token = req.headers.token as string;
+  const userEmail = req.body.userEmail as string;
 
-  const result = adminQuizTransfer(quizId, token, userEmail)
+  const result = adminQuizTransfer(quizId, token, userEmail);
 
-  res.json(result)
-})
+  res.json(result);
+});
 
 // adminUserDetailsUpdate V2
 app.put('/v2/admin/user/details', (req: Request, res: Response) => {

@@ -25,6 +25,7 @@ import {
   adminQuizInfo,
   adminQuizNameUpdate,
   adminQuizMoveQuestion,
+  adminQuizCreateQuestionV2
 } from './quiz';
 import { clear } from './other';
 import {
@@ -382,6 +383,36 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizCreateQuestion V2
+app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const { token, questionBody } = req.body;
+
+  const result = adminQuizCreateQuestionV2(
+    token,
+    quizId,
+    questionBody.question,
+    questionBody.duration,
+    questionBody.points,
+    questionBody.answers,
+    questionBody.thumbnailUrl
+  );
+
+  res.json(result);
+});
+// adminQuizTransfer V2
+
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId)
+  const token = req.headers.token as string
+  const userEmail = req.body.userEmail as string
+
+  const result = adminQuizTransfer(quizId, token, userEmail)
+
+  res.json(result)
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

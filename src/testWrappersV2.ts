@@ -3,7 +3,11 @@ import { port, url } from './config.json';
 import {
   EmptyObject,
   ReturnedToken,
-  QuizList
+  QuizList,
+  Quiz,
+  Answer,
+  QuizObject,
+  UserDetails
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;

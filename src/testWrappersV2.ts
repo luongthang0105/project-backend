@@ -6,7 +6,8 @@ import {
   QuizList,
   Quiz,
   Answer,
-  QuizObject
+  QuizObject,
+  UserDetails,
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
@@ -325,6 +326,29 @@ export const adminQuizInfo = (
   const route = '/v2/admin/quiz/' + quizId;
 
   const res = request('GET', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Retrieves user details by sending a GET request to the server's user details endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for user details retrieval.
+ * @param tokenObject.token - The authentication token for the request.
+ *
+ * @returns An object containing the response content (UserDetails or ErrorObject) and the HTTP status code of the user details request.
+ */
+export const adminUserDetails = (tokenObject: {
+  token: string;
+}): { content: UserDetails; statusCode: number } => {
+  const res = request('GET', SERVER_URL + '/v2/admin/user/details', {
     headers: {
       token: tokenObject.token,
     },

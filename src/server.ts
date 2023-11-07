@@ -328,7 +328,7 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizTrashEmpty
+// adminQuizTrashEmpty V2
 app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const quizIds: number[] = JSON.parse(req.query.quizIds as string);
   const token = req.headers.token as string;
@@ -337,7 +337,7 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizRestore
+// adminQuizRestore V2
 app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const quizId = parseInt(req.params.quizid);
@@ -409,50 +409,7 @@ app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// adminQuizList V2
-app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-
-  const result = adminQuizList(token);
-
-  res.json(result);
-});
-
-// adminQuizCreate V2
-app.post('/v2/admin/quiz', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-
-  const { name, description } = req.body;
-
-  const result = adminQuizCreate(token, name, description);
-
-  res.json(result);
-});
-
-// adminQuizRemove V2
-app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.headers.token as string;
-
-  const result = adminQuizRemove(token, quizId);
-  res.json(result);
-});
-
-// adminQuizNameUpdate V2
-app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.headers.token as string;
-
-  const { name } = req.body;
-
-  const result = adminQuizNameUpdate(token, quizId, name);
-
-  res.json(result);
-});
-
-// adminQuizCreateQuestion
+// adminQuizCreateQuestion V2
 app.post('/v2/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 

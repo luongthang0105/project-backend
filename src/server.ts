@@ -374,6 +374,43 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizMoveQuestion V2
+app.put(
+  '/v2/admin/quiz/:quizid/question/:questionid/move',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const { token, newPosition } = req.body;
+
+    const result = adminQuizMoveQuestion(
+      token,
+      quizId,
+      questionId,
+      newPosition
+    );
+
+    res.json(result);
+  }
+);
+
+// adminQuizDuplicateQuestion V2
+app.post(
+  '/v2/admin/quiz/:quizid/question/:questionid/duplicate',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const questionId = parseInt(req.params.questionid);
+
+    const token = req.headers.token as string;
+
+    const result = adminQuizDuplicateQuestion(token, quizId, questionId);
+
+    res.json(result);
+  }
+);
+
 // adminQuizList V2
 app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.headers.token as string;

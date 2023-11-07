@@ -492,50 +492,50 @@ describe('adminQuizCreateQuestion', () => {
 
     const quizInfo = adminQuizInfo(user, quiz.quizId).content as QuizObject;
     expect(quizInfo.questions).toStrictEqual(
-        [
-          {
-            questionId: (result.content as { questionId: number }).questionId,
-            question: 'What is that pokemon',
-            duration: 4,
-            points: 5,
-            answers: [
-              {
-                answer: 'Pikachu',
-                correct: true,
-                colour: expect.any(String),
-                answerId: expect.any(Number)
-              },
-              {
-                answer: 'Thomas',
-                correct: false,
-                colour: expect.any(String),
-                answerId: expect.any(Number),
-              }
-            ],
-            thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
-          },
-          {
-            questionId: (result2.content as { questionId: number }).questionId,
-            question: 'What is that pokemon',
-            duration: 4,
-            points: 5,
-            answers: [
-              {
-                answer: 'Pikachu',
-                correct: true,
-                colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
-              },
-              {
-                answer: 'Thomas',
-                correct: false,
-                colour: expect.toHaveValidColour(),
-                answerId: expect.any(Number)
-              },
-            ],
-            thumbnailUrl: 'https://t.ly/MkDJC'
-          },
-        ],
+      [
+        {
+          questionId: (result.content as { questionId: number }).questionId,
+          question: 'What is that pokemon',
+          duration: 4,
+          points: 5,
+          answers: [
+            {
+              answer: 'Pikachu',
+              correct: true,
+              colour: expect.any(String),
+              answerId: expect.any(Number)
+            },
+            {
+              answer: 'Thomas',
+              correct: false,
+              colour: expect.any(String),
+              answerId: expect.any(Number),
+            }
+          ],
+          thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
+        },
+        {
+          questionId: (result2.content as { questionId: number }).questionId,
+          question: 'What is that pokemon',
+          duration: 4,
+          points: 5,
+          answers: [
+            {
+              answer: 'Pikachu',
+              correct: true,
+              colour: expect.toHaveValidColour(),
+              answerId: expect.any(Number)
+            },
+            {
+              answer: 'Thomas',
+              correct: false,
+              colour: expect.toHaveValidColour(),
+              answerId: expect.any(Number)
+            },
+          ],
+          thumbnailUrl: 'https://t.ly/MkDJC'
+        },
+      ]
     );
 
     const timeLastEdited = quizInfo.timeLastEdited;

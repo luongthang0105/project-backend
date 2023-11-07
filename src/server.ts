@@ -421,7 +421,7 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
 
   const result = adminQuizInfoV2(token, quizId);
-
+  
   res.json(result);
 });
 

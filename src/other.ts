@@ -8,7 +8,6 @@ function clear() {
     quizzes: [] as QuizObject[],
     trash: [] as QuizObject[],
     sessions: [] as Token[],
-    nextTokenId: 0,
     nextUserId: 0,
     nextQuizId: 0,
     nextQuestionId: 0,

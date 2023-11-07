@@ -125,6 +125,9 @@ type Question = {
   duration: number;
   points: number;
   answers: Answer[];
+
+  // let this field be optional since we need backwards compatibility with It2
+  thumbnailUrl?: string
 };
 
 /**
@@ -184,7 +187,6 @@ type DataStore = {
   quizzes: QuizObject[];
   trash: QuizObject[];
   sessions: Token[];
-  nextTokenId: number;
   nextUserId: number;
   nextQuizId: number;
   nextQuestionId: number;

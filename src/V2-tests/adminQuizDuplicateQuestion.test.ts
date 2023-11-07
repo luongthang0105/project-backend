@@ -144,6 +144,10 @@ describe('adminQuizDuplicateQuestion', () => {
     expect(quizInfo.questions[0].duration).toStrictEqual(
       quizInfo.questions[1].duration
     );
+
+    expect(quizInfo.questions[0].thumbnailUrl).toStrictEqual(
+      quizInfo.questions[1].thumbnailUrl
+    );
     const currTimeStamp = getCurrentTimestamp();
     const timeLastEdited = quizInfo.timeLastEdited;
     expect(currTimeStamp - timeLastEdited).toBeLessThanOrEqual(1);
@@ -194,6 +198,9 @@ describe('adminQuizDuplicateQuestion', () => {
     expect(quizInfo.questions[1].duration).toStrictEqual(
       quizInfo.questions[0].duration
     );
+    expect(quizInfo.questions[1].thumbnailUrl).toStrictEqual(
+      quizInfo.questions[0].thumbnailUrl
+    );
 
     expect(quizInfo.questions[2].answers).toStrictEqual(
       quizInfo.questions[0].answers
@@ -206,6 +213,9 @@ describe('adminQuizDuplicateQuestion', () => {
     );
     expect(quizInfo.questions[2].duration).toStrictEqual(
       quizInfo.questions[0].duration
+    );
+    expect(quizInfo.questions[2].thumbnailUrl).toStrictEqual(
+      quizInfo.questions[0].thumbnailUrl
     );
 
     const currTimeStamp = getCurrentTimestamp();

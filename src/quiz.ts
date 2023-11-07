@@ -1206,7 +1206,6 @@ const adminQuizTransfer = (
   return {};
 };
 
-
 // ====================================================================
 //  =====================ITERATION 3 - v2 Functions====================
 // ====================================================================
@@ -1338,22 +1337,22 @@ const adminQuizCreateQuestionV2 = (
 
   // Error: The thumbnailUrl is an empty string
   if (thumbnailUrl === '') {
-    throw HTTPError(400, 'The thumbnailUrl is an empty string')
+    throw HTTPError(400, 'The thumbnailUrl is an empty string');
   }
 
   // Error: The thumbnailUrl does not return to a valid file
-  let res
+  let res;
   try {
-    res = request('GET', thumbnailUrl)
+    res = request('GET', thumbnailUrl);
   } catch (err) {
-    throw HTTPError(400, 'The thumbnailUrl does not return to a valid file')
+    throw HTTPError(400, 'The thumbnailUrl does not return to a valid file');
   }
 
   // Error: The thumbnailUrl, when fetched, is not a JPG or PNG file type
-  const contentType = res.headers['content-type'] 
-  if (contentType !== "image/jpeg" &&
-      contentType !== "image/png") {
-    throw HTTPError(400, 'The thumbnailUrl, when fetched, is not a JPG or PNG file type')
+  const contentType = res.headers['content-type'];
+  if (contentType !== 'image/jpeg' &&
+      contentType !== 'image/png') {
+    throw HTTPError(400, 'The thumbnailUrl, when fetched, is not a JPG or PNG file type');
   }
 
   // Make an array of answers that has the four properties. The colour attribute is randomly generated via getQuestionColour()
@@ -1389,7 +1388,6 @@ const adminQuizCreateQuestionV2 = (
   return { questionId: newQuestion.questionId };
 };
 
-
 export {
   adminQuizCreate,
   adminQuizInfo,
@@ -1408,5 +1406,3 @@ export {
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
 };
-
-

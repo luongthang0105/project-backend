@@ -7,7 +7,7 @@ import {
   Quiz,
   Answer,
   QuizObject,
-  UserDetails
+  UserDetails,
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
@@ -149,7 +149,6 @@ export const adminQuizDescriptionUpdate = (
 };
 
 /**
-<<<<<<< HEAD
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.
@@ -309,7 +308,6 @@ export const adminQuizCreateQuestion = (
 };
 
 /**
-<<<<<<< HEAD
  * Retrieves information about a quiz by sending a GET request to the server's quiz information endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz information retrieval.
@@ -363,7 +361,6 @@ export const adminUserDetails = (tokenObject: {
 };
 
 /**
-<<<<<<< HEAD
  * Moves a question within a quiz by sending a PUT request to the server's move question endpoint.
  *
  * @param tokenObject - An object containing the authentication token for the question move.
@@ -426,10 +423,6 @@ export const adminQuizDuplicateQuestion = (
 };
 
 /**
-=======
->>>>>>> 342c036 (Fixed merge conflicts in testWrappersV2.ts)
-=======
->>>>>>> e81b708 (Fixed merging in testWrappersV2.ts)
  * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
  *
  * @param quizId - The unique identifier of the quiz to be transferred.

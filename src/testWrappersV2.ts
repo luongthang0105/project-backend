@@ -368,6 +368,7 @@ export const adminUserDetails = (tokenObject: {
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
  * Moves a question within a quiz by sending a PUT request to the server's move question endpoint.
  *
  * @param tokenObject - An object containing the authentication token for the question move.

@@ -413,7 +413,7 @@ export const adminQuizDuplicateQuestion = (
     '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate';
 
   const res = request('POST', SERVER_URL + route, {
-    json: {
+    headers: {
       token: tokenObject.token,
     },
   });

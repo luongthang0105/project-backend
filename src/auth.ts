@@ -358,9 +358,9 @@ const adminUserPasswordUpdate = (
   }
 
   // Checks if new password has already been used before by this user
-  let hashOfNewPassword = getHashOf(oldPassword)
+  let hashOfNewPassword = getHashOf(newPassword)
   if (
-    userInfo.usedPasswords.find((usedPassword) => usedPassword === getHashOf(hashOfNewPassword))
+    userInfo.usedPasswords.find((usedPassword) => usedPassword === hashOfNewPassword)
   ) {
     throw HTTPError(400, 'New Password has already been used before by this user');
   }

@@ -500,4 +500,3 @@ export const adminQuizTransfer = (
     statusCode: res.statusCode
   };
 };
-

@@ -1148,7 +1148,7 @@ const adminQuizTransfer = (
       401,
       'Token is empty or invalid (does not refer to valid logged in user session)'
     );
-  }  
+  }
 
   const authUserId = validSession.authUserId;
 
@@ -1164,14 +1164,17 @@ const adminQuizTransfer = (
     );
   }
 
+
   // Finds the user object of the targeted email
   const targetUser = data.users.find(
     (targetEmail) => targetEmail.email === userEmail
   );
 
+  /**
   if (!targetUser) {
     throw HTTPError(400, 'userEmail is not a real user');
   }
+*/
 
   // Finds the user that owns this token
   const currentUser = data.users.find((curr) => curr.authUserId === authUserId);

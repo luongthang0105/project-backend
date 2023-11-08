@@ -433,6 +433,7 @@ export const adminQuizDuplicateQuestion = (
 };
 
 /**
+<<<<<<< HEAD
  * Updates user details (email, first name, and last name) by sending a PUT request to the server's user details update endpoint.
  *
  * @param tokenObject - An object containing the authentication token for user details update.
@@ -470,6 +471,8 @@ export const adminUserDetailsUpdate = (
 
 
 /**
+=======
+>>>>>>> 1c14864f2cc272d75566089d895ccbc6c7b0cd7a
  * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
  *
  * @param quizId - The unique identifier of the quiz to be transferred.

@@ -393,7 +393,9 @@ app.put(
 
     const questionId = parseInt(req.params.questionid);
 
-    const { token, newPosition } = req.body;
+    const token = req.headers.token as string;
+
+    const { newPosition } = req.body;
 
     const result = adminQuizMoveQuestion(
       token,
@@ -517,6 +519,20 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const { userEmail } = req.body;
 
   const result = adminQuizTransfer(quizId, token, userEmail);
+
+  res.json(result);
+});
+
+// adminQuizDeleteQuestion V2
+
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const questionId = parseInt(req.params.questionid);
+
+  const token = req.headers.token as string;
+
+  const result = adminQuizDeleteQuestion(token, quizId, questionId);
 
   res.json(result);
 });

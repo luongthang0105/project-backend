@@ -373,6 +373,16 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 
   res.json(result);
 });
+// adminUserPasswordUpdate V2
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+
+  const { oldPassword, newPassword } = req.body;
+
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+
+  res.json(result);
+});
 
 // adminQuizMoveQuestion V2
 app.put(

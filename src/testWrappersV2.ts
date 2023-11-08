@@ -384,9 +384,11 @@ export const adminQuizMoveQuestion = (
   const route =
     '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/move';
   const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
     json: {
-      token: tokenObject.token,
-      newPosition: newPosition,
+      newPosition: newPosition
     },
   });
 

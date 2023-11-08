@@ -509,7 +509,7 @@ export const adminQuizTransfer = (
 export const adminQuizDeleteQuestion = (
   tokenObject: ReturnedToken,
   quizId: number,
-  questionId: number,
+  questionId: number
 ): {content: EmptyObject, statusCode: number} => {
   const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
 

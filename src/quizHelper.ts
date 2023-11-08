@@ -1,4 +1,4 @@
-import { Colour } from './types';
+import { Answer, Colour } from './types';
 import { Question } from './types';
 
 /**
@@ -40,7 +40,11 @@ const getQuestionColour = (): Colour => {
  * @param to - The index to which the question should be moved.
  * @returns A new array of questions with the question moved to the specified index.
  */
-const moveQuestion = (questions: Question[], from: number, to: number): Question[] => {
+const moveQuestion = (
+  questions: Question[],
+  from: number,
+  to: number
+): Question[] => {
   let numOfMovedQs = 1;
 
   const needMoveQuestion = questions.splice(from, numOfMovedQs)[0];
@@ -52,4 +56,24 @@ const moveQuestion = (questions: Question[], from: number, to: number): Question
   return questions;
 };
 
-export { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion };
+const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
+  // We iterate through each answer object by calling .filter()
+  const duplicateAnswers = answers.filter((currAnswer, currAnswerIndex) =>
+    // If we can find another answer object that has different index but same "answer" string,
+    // then add that object to the result array
+    answers.find(
+      (otherAnswer, otherAnswerIndex) =>
+        otherAnswer.answer === currAnswer.answer &&
+        otherAnswerIndex !== currAnswerIndex
+    )
+  );
+  return duplicateAnswers.length !== 0;
+};
+
+export {
+  alphanumericAndSpaceCheck,
+  getCurrentTimestamp,
+  getQuestionColour,
+  moveQuestion,
+  hasDuplicatedAnswers
+};

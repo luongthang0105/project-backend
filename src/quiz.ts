@@ -4,6 +4,7 @@ import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
   getQuestionColour,
+  hasDuplicatedAnswers,
   moveQuestion,
 } from './quizHelper';
 import {
@@ -553,21 +554,7 @@ const adminQuizCreateQuestion = (
   }
 
   // Error: Any answer strings are duplicates of one another (within the same question)
-
-  const duplicateAnswers = (): Answer[] => {
-    // We iterate through each answer object by calling .filter()
-    return answers.filter((currAnswer, currAnswerIndex) =>
-      // If we can find another answer object that has different index but same "answer" string,
-      // then add that object to the result array
-      answers.find(
-        (otherAnswer, otherAnswerIndex) =>
-          otherAnswer.answer === currAnswer.answer &&
-          otherAnswerIndex !== currAnswerIndex
-      )
-    );
-  };
-
-  if (duplicateAnswers().length !== 0) {
+  if (hasDuplicatedAnswers(answers)) {
     throw HTTPError(
       400,
       'Any answer strings are duplicates of one another (within the same question)'
@@ -724,21 +711,7 @@ const adminQuizQuestionUpdate = (
   }
 
   // Error: Any answer strings are duplicates of one another (within the same question)
-
-  const duplicateAnswers = (): Answer[] => {
-    // We iterate through each answer object by calling .filter()
-    return answers.filter((currAnswer, currAnswerIndex) =>
-      // If we can find another answer object that has different index but same "answer" string,
-      // then add that object to the result array
-      answers.find(
-        (otherAnswer, otherAnswerIndex) =>
-          otherAnswer.answer === currAnswer.answer &&
-          otherAnswerIndex !== currAnswerIndex
-      )
-    );
-  };
-
-  if (duplicateAnswers().length !== 0) {
+  if (hasDuplicatedAnswers(answers)) {
     throw HTTPError(
       400,
       'Any answer strings are duplicates of one another (within the same question)'
@@ -1307,21 +1280,7 @@ const adminQuizCreateQuestionV2 = (
   }
 
   // Error: Any answer strings are duplicates of one another (within the same question)
-
-  const duplicateAnswers = (): Answer[] => {
-    // We iterate through each answer object by calling .filter()
-    return answers.filter((currAnswer, currAnswerIndex) =>
-      // If we can find another answer object that has different index but same "answer" string,
-      // then add that object to the result array
-      answers.find(
-        (otherAnswer, otherAnswerIndex) =>
-          otherAnswer.answer === currAnswer.answer &&
-          otherAnswerIndex !== currAnswerIndex
-      )
-    );
-  };
-
-  if (duplicateAnswers().length !== 0) {
+  if (hasDuplicatedAnswers(answers)) {
     throw HTTPError(
       400,
       'Any answer strings are duplicates of one another (within the same question)'

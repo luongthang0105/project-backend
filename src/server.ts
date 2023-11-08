@@ -492,7 +492,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
   const token = req.headers.token as string;
 
-  const userEmail = req.body;
+  const { userEmail } = req.body;
 
   const result = adminQuizTransfer(quizId, token, userEmail);
 

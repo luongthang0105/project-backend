@@ -1170,11 +1170,9 @@ const adminQuizTransfer = (
     (targetEmail) => targetEmail.email === userEmail
   );
 
-  /**
   if (!targetUser) {
     throw HTTPError(400, 'userEmail is not a real user');
   }
-*/
 
   // Finds the user that owns this token
   const currentUser = data.users.find((curr) => curr.authUserId === authUserId);

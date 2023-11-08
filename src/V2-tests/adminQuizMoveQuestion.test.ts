@@ -13,7 +13,7 @@ import './toHaveValidColour';
 import { expect, test } from '@jest/globals';
 import { getCurrentTimestamp } from '../quizHelper';
 
-describe('adminQuizRemoveQuestion', () => {
+describe('adminQuizMoveQuestion', () => {
   let user: ReturnedToken;
   let quiz: Quiz;
   let question: Question;

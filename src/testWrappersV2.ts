@@ -153,6 +153,40 @@ export const adminQuizDescriptionUpdate = (
 };
 
 /**
+ * Updates a user's password by sending a PUT request to the server's password update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for password update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param oldPassword - The user's current/old password.
+ * @param newPassword - The user's new password.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the password update request.
+ */
+export const adminUserPasswordUpdate = (
+  tokenObject: { token: string },
+  oldPassword: string,
+  newPassword: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/user/password';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
+    json: {
+      token: tokenObject.token,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Updates the details of a question within a quiz by sending a PUT request to the server's question update endpoint.
  *
  * @param tokenObject - An object containing the authentication token for question update.
@@ -506,5 +540,37 @@ export const adminUserDetailsUpdate = (
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
+ *
+ * @param quizId - The unique identifier of the quiz to be transferred.
+ * @param tokenObject - An object containing the authentication token for the transfer.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param userEmail - The email address of the user to whom the quiz should be transferred.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the quiz transfer request.
+ */
+export const adminQuizTransfer = (
+  quizId: number,
+  tokenObject: ReturnedToken,
+  userEmail: string
+): {content: EmptyObject, statusCode: number} => {
+  const route = '/v2/admin/quiz/' + quizId + '/transfer';
+
+  const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
+    json: {
+      userEmail: userEmail
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode
   };
 };

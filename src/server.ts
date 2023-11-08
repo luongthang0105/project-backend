@@ -374,6 +374,16 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 
   res.json(result);
 });
+// adminUserPasswordUpdate V2
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+
+  const { oldPassword, newPassword } = req.body;
+
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+
+  res.json(result);
+});
 
 // adminQuizMoveQuestion V2
 app.put(
@@ -497,6 +507,20 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizTransfer V2
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+
+  const { userEmail } = req.body;
+
+  const result = adminQuizTransfer(quizId, token, userEmail);
+
+  res.json(result);
+});
+
 // adminQuizMoveQuestion V2
 app.put(
   '/v2/admin/quiz/:quizid/question/:questionid/move',

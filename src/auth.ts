@@ -1,6 +1,6 @@
 import { getData, setData } from './dataStore';
 import validator from 'validator';
-import { emailUsed, validName, securedPassword, randomSessionId } from './authHelper';
+import { emailUsed, validName, securedPassword, randomSessionId, getHashOf } from './authHelper';
 import { ReturnedToken, Token, UserDetails, UserObject, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 
@@ -70,7 +70,7 @@ const adminAuthRegister = (
     nameFirst: nameFirst,
     nameLast: nameLast,
     email: email,
-    password: password,
+    password: getHashOf(password),
     usedPasswords: [] as string[],
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
@@ -121,7 +121,7 @@ const adminAuthLogin = (
   }
 
   // Check if the provided password matches the stored password
-  if (userInfo.password !== password) {
+  if (userInfo.password !== getHashOf(password)) {
     // Increment the count of failed login attempts
     userInfo.numFailedPasswordsSinceLastLogin += 1;
 
@@ -347,7 +347,8 @@ const adminUserPasswordUpdate = (
   );
 
   // Checks if the old password is the same as current password
-  if (userInfo.password !== oldPassword) {
+  const hashOfOldPassword = getHashOf(oldPassword);
+  if (hashOfOldPassword !== userInfo.password) {
     throw HTTPError(400, 'Old Password is not the correct old password');
   }
 
@@ -357,8 +358,9 @@ const adminUserPasswordUpdate = (
   }
 
   // Checks if new password has already been used before by this user
+  const hashOfNewPassword = getHashOf(newPassword);
   if (
-    userInfo.usedPasswords.find((usedPassword) => usedPassword === newPassword)
+    userInfo.usedPasswords.find((usedPassword) => usedPassword === hashOfNewPassword)
   ) {
     throw HTTPError(400, 'New Password has already been used before by this user');
   }
@@ -373,8 +375,8 @@ const adminUserPasswordUpdate = (
     throw HTTPError(400, 'New Password does not contain at least one number and at least one letter');
   }
 
-  userInfo.usedPasswords.push(oldPassword);
-  userInfo.password = newPassword;
+  userInfo.usedPasswords.push(hashOfOldPassword);
+  userInfo.password = hashOfNewPassword;
 
   setData(data);
   return {};

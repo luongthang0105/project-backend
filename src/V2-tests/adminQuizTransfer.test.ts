@@ -3,15 +3,21 @@ import {
   adminQuizCreate,
   adminUserDetails,
 <<<<<<< HEAD
+<<<<<<< HEAD
   adminQuizList
 =======
   adminQuizList,
   clear
 >>>>>>> 91a37fc (Fixed merge conflicts)
+=======
+  adminQuizList,
+  clear
+>>>>>>> fd2c2af3ee142c336eb042d305e34ba7b4ac758d
 } from '../testWrappersV1';
 
 import { adminQuizTransfer } from '../testWrappersV2';
 
+<<<<<<< HEAD
 import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 
@@ -20,6 +26,11 @@ describe('adminQuizTransfer', () => {
 =======
 describe('adminUserPassword', () => {
 >>>>>>> 91a37fc (Fixed merge conflicts)
+=======
+import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
+
+describe('adminUserPassword', () => {
+>>>>>>> fd2c2af3ee142c336eb042d305e34ba7b4ac758d
   let user: ReturnedToken;
   let user2: ReturnedToken;
   let user2Email: string;
@@ -117,6 +128,7 @@ describe('adminUserPassword', () => {
       statusCode: 400,
     });
   });
+<<<<<<< HEAD
   /*
   // Not done
   test.skip("All sessions for this quiz must be in END state", () => {
@@ -128,6 +140,9 @@ describe('adminUserPassword', () => {
     })
   })
 */
+=======
+
+>>>>>>> fd2c2af3ee142c336eb042d305e34ba7b4ac758d
   test('Success: User 2 currently has no quiz', () => {
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {},

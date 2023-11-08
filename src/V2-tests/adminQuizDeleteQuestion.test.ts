@@ -5,8 +5,10 @@ import {
   clear,
   adminQuizCreateQuestion,
   adminQuizInfo,
-  adminQuizDeleteQuestion,
 } from '../testWrappersV1';
+
+import { adminQuizDeleteQuestion } from '../testWrappersV2';
+
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 
 import './toHaveValidColour';
@@ -50,7 +52,8 @@ describe('adminQuizDeleteQuestion', () => {
       ).content as { questionId: number }
     ).questionId;
   });
-  test('Error: Quiz Id does not exist', () => {
+
+  test('Quiz Id does not exist', () => {
     const result = adminQuizDeleteQuestion(user, quizId + 1, questionId);
     expect(result).toStrictEqual({
       statusCode: 403,

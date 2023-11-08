@@ -46,7 +46,6 @@ describe('adminQuizMoveQuestion', () => {
   });
 
   test('QuizId does not exist', () => {
-    
     const result = adminQuizMoveQuestion(
       user,
       quiz.quizId + 1,

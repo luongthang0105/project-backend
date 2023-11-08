@@ -455,7 +455,7 @@ describe('adminQuizCreateQuestion', () => {
     });
   });
 
-  test("QuizId does not exist", () => {
+  test('QuizId does not exist', () => {
     const result = adminQuizCreateQuestion(
       user,
       quiz.quizId + 1,
@@ -463,13 +463,13 @@ describe('adminQuizCreateQuestion', () => {
       questInfo.duration,
       questInfo.points,
       questInfo.answers,
-      "youtube.com"
+      'youtube.com'
     );
     expect(result).toStrictEqual({
       statusCode: 403,
-      content: {error: 'Valid token is provided, but user is not an owner of this quiz'}
-    })
-  })
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' }
+    });
+  });
   test('Success: Successfully create new question', () => {
     const result = adminQuizCreateQuestion(
       user,

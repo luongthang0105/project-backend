@@ -452,7 +452,7 @@ describe('adminQuizCreateQuestion', () => {
     expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
   });
 
-  test("QuizId does not exist", () => {
+  test('QuizId does not exist', () => {
     const result = adminQuizCreateQuestion(
       user,
       quiz.quizId + 1,
@@ -463,7 +463,7 @@ describe('adminQuizCreateQuestion', () => {
     );
     expect(result).toStrictEqual({
       statusCode: 403,
-      content: {error: 'Valid token is provided, but user is not an owner of this quiz'}
-    })
-  })
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' }
+    });
+  });
 });

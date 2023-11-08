@@ -16,7 +16,6 @@ beforeEach(() => {
 });
 
 describe('adminQuizRestore', () => {
-  
   test('Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty', () => {
     const unavailableToken = {
       token: '0',
@@ -51,7 +50,7 @@ describe('adminQuizRestore', () => {
       statusCode: 401,
     });
   });
-  
+
   test('Quiz name of the restored quiz is already used by another active quiz', () => {
     const user = adminAuthRegister(
       'han@gmai.com',
@@ -83,7 +82,7 @@ describe('adminQuizRestore', () => {
       statusCode: 403,
     });
   });
-  
+
   test('Quiz name of the restored quiz is already used by another active quiz (Owned by another user)', () => {
     const user1 = adminAuthRegister(
       'han@gmai.com',

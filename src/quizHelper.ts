@@ -1,4 +1,5 @@
-import { Colour } from './types';
+import { getData } from './dataStore';
+import { Answer, Colour } from './types';
 import { Question } from './types';
 
 /**
@@ -40,7 +41,11 @@ const getQuestionColour = (): Colour => {
  * @param to - The index to which the question should be moved.
  * @returns A new array of questions with the question moved to the specified index.
  */
-const moveQuestion = (questions: Question[], from: number, to: number): Question[] => {
+const moveQuestion = (
+  questions: Question[],
+  from: number,
+  to: number
+): Question[] => {
   let numOfMovedQs = 1;
 
   const needMoveQuestion = questions.splice(from, numOfMovedQs)[0];
@@ -52,4 +57,54 @@ const moveQuestion = (questions: Question[], from: number, to: number): Question
   return questions;
 };
 
-export { alphanumericAndSpaceCheck, getCurrentTimestamp, getQuestionColour, moveQuestion };
+/**
+ * Determine whether a set of answers has duplicated answers in it.
+ * Answers are considered the same if they have the same answer string.
+ *
+ * @param answers - The array of answers.
+ * @returns True if there exists duplicated answers, False otherwise
+ */
+const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
+  // We iterate through each answer object by calling .filter()
+  const duplicateAnswers = answers.filter((currAnswer, currAnswerIndex) =>
+    // If we can find another answer object that has different index but same "answer" string,
+    // then add that object to the result array
+    answers.find(
+      (otherAnswer, otherAnswerIndex) =>
+        otherAnswer.answer === currAnswer.answer &&
+        otherAnswerIndex !== currAnswerIndex
+    )
+  );
+  return duplicateAnswers.length !== 0;
+};
+
+/**
+ * Determine whether a set of answers has duplicated answers in it.
+ * Answers are considered the same if they have the same answer string.
+ *
+ * @param answers - The array of answers.
+ * @returns True if there exists duplicated answers, False otherwise
+ */
+const newAnswerList = (answers: Answer[]): Answer[] => {
+  const data = getData();
+
+  return answers.map((currAnswer) => {
+    const newAnswerId = data.nextAnswerId;
+    data.nextAnswerId += 1;
+    return {
+      answerId: newAnswerId,
+      answer: currAnswer.answer,
+      colour: getQuestionColour(),
+      correct: currAnswer.correct,
+    };
+  });
+};
+
+export {
+  alphanumericAndSpaceCheck,
+  getCurrentTimestamp,
+  getQuestionColour,
+  moveQuestion,
+  hasDuplicatedAnswers,
+  newAnswerList
+};

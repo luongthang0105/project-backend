@@ -1,7 +1,7 @@
 {
     "scripts": {
         "test": "jest",
-        "testV2": "jest src/V2-tests/adminQuizQuestionUpdate.test.ts",
+        "testV2": "jest src/V2-tests",
         "tsc": "tsc --project tsconfig.json",
         "lint": "eslint src/**/*.{ts,js}",
         "lint-fix": "eslint --fix src/**/*.{ts,js}",

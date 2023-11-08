@@ -641,7 +641,6 @@ const adminQuizQuestionUpdate = (
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
-  console.log('in v1');
 
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
   if (token === '' || !validSession) {
@@ -1568,7 +1567,7 @@ const adminQuizQuestionUpdateV2 = (
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
   );
-  console.log('1');
+
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
   if (token === '' || !validSession) {
     throw HTTPError(
@@ -1576,7 +1575,6 @@ const adminQuizQuestionUpdateV2 = (
       'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
-  console.log('2');
 
   // Error: Valid token is provided, but user is unauthorised to complete this action
   const authUserId = validSession.authUserId;
@@ -1680,11 +1678,9 @@ const adminQuizQuestionUpdateV2 = (
   if (correctAnswers.length === 0) {
     throw HTTPError(400, 'There are no correct answers');
   }
-  console.log('3');
 
   // Error: the thumbnailUrl is an empty string
   if (thumbnailUrl === '') {
-    console.log('hello');
     throw HTTPError(400, 'The thumbnailUrl is an empty string');
   }
 
@@ -1729,7 +1725,6 @@ const adminQuizQuestionUpdateV2 = (
   validQuiz.timeLastEdited = getCurrentTimestamp();
 
   setData(data);
-  console.log('hi');
 
   return {};
 };

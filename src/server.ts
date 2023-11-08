@@ -486,6 +486,16 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminUserDetailsUpdate V2
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+
+  const { email, nameFirst, nameLast } = req.body;
+
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+  res.json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

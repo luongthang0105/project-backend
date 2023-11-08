@@ -487,11 +487,12 @@ app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 });
 
 // adminQuizTransfer V2
-
 app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizId);
-  const token = req.headers.token as string;
-  const userEmail = req.body.userEmail as string;
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string
+
+  const userEmail = req.body;
 
   const result = adminQuizTransfer(quizId, token, userEmail);
 

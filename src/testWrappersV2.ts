@@ -440,14 +440,17 @@ export const adminQuizTransfer = (
   const route = '/v2/admin/quiz/' + quizId + '/transfer';
 
   const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
     json: {
-      token: tokenObject.token,
       userEmail: userEmail
     }
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode,
+    statusCode: res.statusCode
   };
 };
+

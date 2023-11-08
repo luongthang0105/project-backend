@@ -187,6 +187,53 @@ export const adminUserPasswordUpdate = (
 };
 
 /**
+ * Updates the details of a question within a quiz by sending a PUT request to the server's question update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be updated.
+ * @param questionId - The unique identifier of the question to be updated.
+ * @param question - The updated text of the question.
+ * @param duration - The updated duration (in seconds) allowed for answering the question.
+ * @param points - The updated number of points assigned to the question.
+ * @param answers - An array of updated answer options for the question.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question update request.
+ */
+export const adminQuizQuestionUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[],
+  thumbnailUrl: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      questionBody: {
+        question: question,
+        duration: duration,
+        points: points,
+        answers: answers,
+        thumbnailUrl: thumbnailUrl
+      },
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.

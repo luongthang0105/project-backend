@@ -3,9 +3,9 @@ import { getData, setData } from './dataStore';
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
-  getQuestionColour,
   hasDuplicatedAnswers,
   moveQuestion,
+  newAnswerList,
 } from './quizHelper';
 import {
   Answer,
@@ -569,24 +569,12 @@ const adminQuizCreateQuestion = (
     throw HTTPError(400, 'There are no correct answers');
   }
 
-  // Make an array of answers that has the four properties. The colour attribute is randomly generated via getQuestionColour()
-  const newAnswerList: Answer[] = answers.map((currAnswer) => {
-    const newAnswerId = data.nextAnswerId;
-    data.nextAnswerId += 1;
-    return {
-      answerId: newAnswerId,
-      answer: currAnswer.answer,
-      colour: getQuestionColour(),
-      correct: currAnswer.correct,
-    };
-  });
-
   const newQuestion: Question = {
     questionId: data.nextQuestionId,
     question: question,
     duration: duration,
     points: points,
-    answers: newAnswerList,
+    answers: newAnswerList(answers),
   };
 
   data.nextQuestionId += 1;
@@ -726,22 +714,11 @@ const adminQuizQuestionUpdate = (
     throw HTTPError(400, 'There are no correct answers');
   }
 
-  const updatedAnswerList: Answer[] = answers.map((currAnswer) => {
-    const newAnswerId = data.nextAnswerId;
-    data.nextAnswerId += 1;
-    return {
-      answerId: newAnswerId,
-      answer: currAnswer.answer,
-      colour: getQuestionColour(),
-      correct: currAnswer.correct,
-    };
-  });
-
   // update quiz duration by subtracting it by the old duration and adding the new duration
   validQuiz.duration = validQuiz.duration - oldQuestionDuration + duration;
 
   // update the info of this question
-  validQuestion.answers = updatedAnswerList;
+  validQuestion.answers = newAnswerList(answers);
   validQuestion.duration = duration;
   validQuestion.points = points;
   validQuestion.question = question;
@@ -1310,30 +1287,20 @@ const adminQuizCreateQuestionV2 = (
 
   // Error: The thumbnailUrl, when fetched, is not a JPG or PNG file type
   const contentType = res.headers['content-type'];
-  if (contentType !== 'image/jpeg' &&
-      contentType !== 'image/png') {
-    throw HTTPError(400, 'The thumbnailUrl, when fetched, is not a JPG or PNG file type');
+  if (contentType !== 'image/jpeg' && contentType !== 'image/png') {
+    throw HTTPError(
+      400,
+      'The thumbnailUrl, when fetched, is not a JPG or PNG file type'
+    );
   }
-
-  // Make an array of answers that has the four properties. The colour attribute is randomly generated via getQuestionColour()
-  const newAnswerList: Answer[] = answers.map((currAnswer) => {
-    const newAnswerId = data.nextAnswerId;
-    data.nextAnswerId += 1;
-    return {
-      answerId: newAnswerId,
-      answer: currAnswer.answer,
-      colour: getQuestionColour(),
-      correct: currAnswer.correct,
-    };
-  });
 
   const newQuestion: Question = {
     questionId: data.nextQuestionId,
     question: question,
     duration: duration,
     points: points,
-    answers: newAnswerList,
-    thumbnailUrl: thumbnailUrl
+    answers: newAnswerList(answers),
+    thumbnailUrl: thumbnailUrl,
   };
 
   data.nextQuestionId += 1;
@@ -1405,7 +1372,7 @@ const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
     questions: existingQuiz.questions,
     numQuestions: existingQuiz.numQuestions,
     duration: existingQuiz.duration,
-    thumbnailUrl: existingQuiz.thumbnailUrl
+    thumbnailUrl: existingQuiz.thumbnailUrl,
   };
 };
 
@@ -1485,7 +1452,7 @@ const adminQuizCreateV2 = (
     questions: [] as Question[],
     numQuestions: 0,
     duration: 0,
-    thumbnailUrl: ''
+    thumbnailUrl: '',
   };
 
   // Increment the nextQuizId and add the new quiz to the data
@@ -1497,6 +1464,185 @@ const adminQuizCreateV2 = (
   return { quizId: newQuiz.quizId };
 };
 
+/**
+ * Updates an existing question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be updated.
+ * @param question - The updated text of the question.
+ * @param duration - The updated duration (in seconds) for answering the question.
+ * @param points - The updated number of points awarded for the question.
+ * @param answers - An array of updated answer objects associated with the question.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizQuestionUpdateV2 = (
+  token: string,
+  quizId: number,
+  questionId: number,
+  question: string,
+  duration: number,
+  points: number,
+  answers: Answer[],
+  thumbnailUrl: string
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is unauthorised to complete this action
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
+
+  if (validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Error: Question Id does not refer to a valid question within this quiz
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
+
+  if (!validQuestion) {
+    throw HTTPError(
+      400,
+      'Question Id does not refer to a valid question within this quiz'
+    );
+  }
+
+  // Error: Question string is less than 5 characters in length or greater than 50 characters in length
+  if (question.length < 5 || question.length > 50) {
+    throw HTTPError(
+      400,
+      'Question string is less than 5 characters in length or greater than 50 characters in length'
+    );
+  }
+
+  // Error: The question has more than 6 answers or less than 2 answers
+  if (answers.length < 2 || answers.length > 6) {
+    throw HTTPError(
+      400,
+      'The question has more than 6 answers or less than 2 answers'
+    );
+  }
+
+  // Error: The question duration is not a positive number
+  if (duration <= 0) {
+    throw HTTPError(400, 'The question duration is not a positive number');
+  }
+
+  // Error: The sum of the question durations (after updating this question) in the quiz exceeds 3 minutes === 180 secs
+  const currTotalDuration = validQuiz.duration;
+  const oldQuestionDuration = validQuestion.duration;
+  if (currTotalDuration - oldQuestionDuration + duration > 180) {
+    throw HTTPError(
+      400,
+      'The sum of the question durations in the quiz exceeds 3 minutes'
+    );
+  }
+
+  // Error: The points awarded for the question are less than 1 or greater than 10
+  if (points < 1 || points > 10) {
+    throw HTTPError(
+      400,
+      'The points awarded for the question are less than 1 or greater than 10'
+    );
+  }
+
+  // Error: The length of any answer is shorter than 1 character long, or longer than 30 characters long
+  const invalidLengthAnswers = answers.filter(
+    ({ answer }) => answer.length < 1 || answer.length > 30
+  );
+  if (invalidLengthAnswers.length !== 0) {
+    throw HTTPError(
+      400,
+      'The length of any answer is shorter than 1 character long, or longer than 30 characters long'
+    );
+  }
+
+  // Error: Any answer strings are duplicates of one another (within the same question)
+
+  const duplicateAnswers = (): Answer[] => {
+    // We iterate through each answer object by calling .filter()
+    return answers.filter((currAnswer, currAnswerIndex) =>
+      // If we can find another answer object that has different index but same "answer" string,
+      // then add that object to the result array
+      answers.find(
+        (otherAnswer, otherAnswerIndex) =>
+          otherAnswer.answer === currAnswer.answer &&
+          otherAnswerIndex !== currAnswerIndex
+      )
+    );
+  };
+
+  if (duplicateAnswers().length !== 0) {
+    throw HTTPError(
+      400,
+      'Any answer strings are duplicates of one another (within the same question)'
+    );
+  }
+
+  // Error: There are no correct answers
+  const correctAnswers = answers.filter(
+    (currAnswer) => currAnswer.correct === true
+  );
+  if (correctAnswers.length === 0) {
+    throw HTTPError(400, 'There are no correct answers');
+  }
+
+  // Error: the thumbnailUrl is an empty string
+  if (thumbnailUrl === '') {
+    throw HTTPError(400, 'The thumbnailUrl is an empty string');
+  }
+
+  // Error: The thumbnailUrl does not return to a valid file
+  let res;
+  try {
+    res = request('GET', thumbnailUrl);
+  } catch (err) {
+    throw HTTPError(400, 'The thumbnailUrl does not return to a valid file');
+  }
+
+  // Error: The thumbnailUrl, when fetched, is not a JPG or PNG file type
+  const contentType = res.headers['content-type'];
+
+  if (contentType !== 'image/jpeg' && contentType !== 'image/png') {
+    throw HTTPError(
+      400,
+      'The thumbnailUrl, when fetched, is not a JPG or PNG file type'
+    );
+  }
+
+  // update quiz duration by subtracting it by the old duration and adding the new duration
+  validQuiz.duration = validQuiz.duration - oldQuestionDuration + duration;
+
+  // update the info of this question
+  validQuestion.answers = newAnswerList(answers);
+  validQuestion.duration = duration;
+  validQuestion.points = points;
+  validQuestion.question = question;
+  validQuestion.thumbnailUrl = thumbnailUrl;
+  // update the last edited timestamp
+  validQuiz.timeLastEdited = getCurrentTimestamp();
+
+  setData(data);
+
+  return {};
+};
 export {
   adminQuizCreate,
   adminQuizCreateV2,
@@ -1516,4 +1662,5 @@ export {
   adminQuizRestore,
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
+  adminQuizQuestionUpdateV2,
 };

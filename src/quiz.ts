@@ -964,6 +964,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
       "Valid token is provided, but user is not an owner of this quiz"
     );
   }
+
   // check if the user is the owner of this quiz
   if (existingQuizinTrash && existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
     throw HTTPError(
@@ -979,11 +980,12 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
       "Quiz ID refers to a quiz that is not currently in the trash"
     );
   }
-  // check if Quiz name of the restored quiz is already used by another active quiz
+
   const existingQuiz = data.quizzes.find(
     (quiz: QuizObject) => quiz.name === existingQuizinTrash.name
   );
 
+  // check if Quiz name of the restored quiz is already used by another active quiz
   if (existingQuiz) {
     throw HTTPError(
       400,
@@ -991,12 +993,6 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
     );
   }
 
-  if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
-    throw HTTPError(
-      403,
-      "Valid token is provided, but user is not an owner of this quiz"
-    );
-  }
   existingQuizinTrash.timeLastEdited = getCurrentTimestamp();
 
   data.quizzes.push(existingQuizinTrash);
@@ -1005,7 +1001,6 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
       data.trash.splice(i, 1);
     }
   }
-
   setData(data);
   return {};
 };
@@ -1170,11 +1165,17 @@ const adminQuizTransfer = (
 
   const authUserId = validSession.authUserId;
 
-  // Find the quizObject of the quizId
   const validQuiz = data.quizzes.find(
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
+  // check if the quiz does not exist
+  if (!validQuiz) {
+    throw HTTPError(
+      403,
+      "Valid token is provided, but user is not an owner of this quiz"
+    );
+  }
   if (validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,

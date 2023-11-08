@@ -70,6 +70,21 @@ describe('adminUserPassword', () => {
     });
   });
 
+  test('QuizId does not exist', () => {
+    const user3 = adminAuthRegister(
+      'ran@mail.com',
+      'dsadsadsa321',
+      'Ran',
+      'Huy'
+    ).content as ReturnedToken;
+    expect(adminQuizTransfer(quiz + 1, user3, user2Email)).toStrictEqual({
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz',
+      },
+      statusCode: 403,
+    });
+  });
+
   test('userEmail is not a real user', () => {
     expect(
       adminQuizTransfer(quiz, user, 'notrealuser@gmail.com')

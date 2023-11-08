@@ -1,5 +1,5 @@
-import { Answer, Colour } from "./types"
-import { Question } from "./types"
+import { Answer, Colour } from './types';
+import { Question } from './types';
 
 /**
  * Checks if a string consists of alphanumeric characters (letters and digits) and spaces only.
@@ -8,29 +8,29 @@ import { Question } from "./types"
  * @returns True if the string contains only alphanumeric characters and spaces, false otherwise.
  */
 const alphanumericAndSpaceCheck = (str: string): boolean =>
-  /^[A-Za-z\s\d]*$/.test(str)
+  /^[A-Za-z\s\d]*$/.test(str);
 
 /**
  * Returns the current timestamp in seconds since the Unix epoch.
  *
  * @returns The current timestamp as a number (integer) representing seconds.
  */
-const getCurrentTimestamp = (): number => Math.floor(Date.now() / 1000)
+const getCurrentTimestamp = (): number => Math.floor(Date.now() / 1000);
 
 // Helper function to randomly get a colour for a question
 const getQuestionColour = (): Colour => {
   const colours: Colour[] = [
-    "red",
-    "blue",
-    "green",
-    "yellow",
-    "purple",
-    "brown",
-    "orange",
-  ]
-  const randomIndex = Math.floor(Math.random() * (colours.length - 1))
-  return colours[randomIndex]
-}
+    'red',
+    'blue',
+    'green',
+    'yellow',
+    'purple',
+    'brown',
+    'orange',
+  ];
+  const randomIndex = Math.floor(Math.random() * (colours.length - 1));
+  return colours[randomIndex];
+};
 
 /**
  * Moves a question within an array of questions from one index to another.
@@ -43,18 +43,18 @@ const getQuestionColour = (): Colour => {
 const moveQuestion = (
   questions: Question[],
   from: number,
-  to: number,
+  to: number
 ): Question[] => {
-  let numOfMovedQs = 1
+  let numOfMovedQs = 1;
 
-  const needMoveQuestion = questions.splice(from, numOfMovedQs)[0]
+  const needMoveQuestion = questions.splice(from, numOfMovedQs)[0];
 
-  numOfMovedQs = 0
+  numOfMovedQs = 0;
 
-  questions.splice(to, numOfMovedQs, needMoveQuestion)
+  questions.splice(to, numOfMovedQs, needMoveQuestion);
 
-  return questions
-}
+  return questions;
+};
 
 const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
   // We iterate through each answer object by calling .filter()
@@ -64,11 +64,11 @@ const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
     answers.find(
       (otherAnswer, otherAnswerIndex) =>
         otherAnswer.answer === currAnswer.answer &&
-        otherAnswerIndex !== currAnswerIndex,
-    ),
-  )
+        otherAnswerIndex !== currAnswerIndex
+    )
+  );
   return duplicateAnswers.length !== 0;
-}
+};
 
 export {
   alphanumericAndSpaceCheck,
@@ -76,4 +76,4 @@ export {
   getQuestionColour,
   moveQuestion,
   hasDuplicatedAnswers
-}
+};

@@ -365,6 +365,68 @@ export const adminUserDetails = (tokenObject: {
 };
 
 /**
+ * Moves a question within a quiz by sending a PUT request to the server's move question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for the question move.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be moved.
+ * @param newPosition - The new position for the question within the quiz.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question move request.
+ */
+export const adminQuizMoveQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  newPosition: number
+): { content: EmptyObject; statusCode: number } => {
+  const route =
+    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/move';
+  const res = request('PUT', SERVER_URL + route, {
+    json: {
+      token: tokenObject.token,
+      newPosition: newPosition,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Duplicates a question within a quiz by sending a POST request to the server's duplicate question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question duplication.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object containing the response content (newQuestionId or ErrorObject) and the HTTP status code of the question duplication request.
+ */
+export const adminQuizDuplicateQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number
+): { content: { newQuestionId: number }; statusCode: number } => {
+  const route =
+    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate';
+
+  const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Updates user details (email, first name, and last name) by sending a PUT request to the server's user details update endpoint.
  *
  * @param tokenObject - An object containing the authentication token for user details update.

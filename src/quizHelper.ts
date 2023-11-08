@@ -1,3 +1,4 @@
+import { getData } from './dataStore';
 import { Answer, Colour } from './types';
 import { Question } from './types';
 
@@ -56,6 +57,13 @@ const moveQuestion = (
   return questions;
 };
 
+/**
+ * Determine whether a set of answers has duplicated answers in it.
+ * Answers are considered the same if they have the same answer string.
+ *
+ * @param answers - The array of answers.
+ * @returns True if there exists duplicated answers, False otherwise
+ */
 const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
   // We iterate through each answer object by calling .filter()
   const duplicateAnswers = answers.filter((currAnswer, currAnswerIndex) =>
@@ -70,10 +78,33 @@ const hasDuplicatedAnswers = (answers: Answer[]): boolean => {
   return duplicateAnswers.length !== 0;
 };
 
+/**
+ * Determine whether a set of answers has duplicated answers in it.
+ * Answers are considered the same if they have the same answer string.
+ *
+ * @param answers - The array of answers.
+ * @returns True if there exists duplicated answers, False otherwise
+ */
+const newAnswerList = (answers: Answer[]): Answer[] => {
+  const data = getData();
+
+  return answers.map((currAnswer) => {
+    const newAnswerId = data.nextAnswerId;
+    data.nextAnswerId += 1;
+    return {
+      answerId: newAnswerId,
+      answer: currAnswer.answer,
+      colour: getQuestionColour(),
+      correct: currAnswer.correct,
+    };
+  });
+};
+
 export {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
   getQuestionColour,
   moveQuestion,
-  hasDuplicatedAnswers
+  hasDuplicatedAnswers,
+  newAnswerList
 };

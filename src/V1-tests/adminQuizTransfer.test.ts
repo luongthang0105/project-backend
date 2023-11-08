@@ -8,7 +8,7 @@ import {
 import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 
-describe('adminUserPassword', () => {
+describe('adminQuizTransfer', () => {
   let user: ReturnedToken;
   let user2: ReturnedToken;
   let user2Email: string;

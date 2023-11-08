@@ -2,12 +2,12 @@ import {
   adminAuthRegister,
   adminQuizCreate,
   adminUserDetails,
-  adminQuizList,
-  clear
+  adminQuizList
 } from '../testWrappersV1';
 
 import { adminQuizTransfer } from '../testWrappersV2';
 
+import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 
 describe('adminQuizTransfer', () => {

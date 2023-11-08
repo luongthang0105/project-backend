@@ -23,8 +23,8 @@ const SERVER_URL = `${url}:${port}`;
 export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
-  content: EmptyObject,
-  statusCode: number
+  content: EmptyObject;
+  statusCode: number;
 } => {
   const route = '/v2/admin/auth/logout';
 
@@ -52,20 +52,20 @@ export const adminAuthLogout = (
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
   quizIds: string
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v2/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
     headers: {
       token: tokenObject.token,
     },
     qs: {
-      quizIds: quizIds
-    }
+      quizIds: quizIds,
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 
@@ -82,11 +82,15 @@ export const adminQuizRestore = (
   tokenObject: ReturnedToken,
   quizId: number
 ): { content: EmptyObject; statusCode: number } => {
-  const res = request('POST', SERVER_URL + '/v2/admin/quiz/' + quizId + '/restore', {
-    headers: {
-      token: tokenObject.token
-    },
-  });
+  const res = request(
+    'POST',
+    SERVER_URL + '/v2/admin/quiz/' + quizId + '/restore',
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+    }
+  );
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
@@ -149,8 +153,6 @@ export const adminQuizDescriptionUpdate = (
 };
 
 /**
-<<<<<<< HEAD
-<<<<<<< HEAD
  * Retrieves a list of quizzes by sending a GET request to the server's quiz list endpoint.
  *
  * @param tokenObject - An object containing the authentication token for quiz list retrieval.
@@ -363,8 +365,106 @@ export const adminUserDetails = (tokenObject: {
 };
 
 /**
-=======
->>>>>>> 26e267401302ab92701177c7168b32239135057a
+ * Moves a question within a quiz by sending a PUT request to the server's move question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for the question move.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be moved.
+ * @param newPosition - The new position for the question within the quiz.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question move request.
+ */
+export const adminQuizMoveQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number,
+  newPosition: number
+): { content: EmptyObject; statusCode: number } => {
+  const route =
+    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/move';
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      newPosition: newPosition,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Duplicates a question within a quiz by sending a POST request to the server's duplicate question endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for question duplication.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object containing the response content (newQuestionId or ErrorObject) and the HTTP status code of the question duplication request.
+ */
+export const adminQuizDuplicateQuestion = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  questionId: number
+): { content: { newQuestionId: number }; statusCode: number } => {
+  const route =
+    '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate';
+
+  const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Updates user details (email, first name, and last name) by sending a PUT request to the server's user details update endpoint.
+ *
+ * @param tokenObject - An object containing the authentication token for user details update.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param email - The updated email address for the user.
+ * @param nameFirst - The updated first name for the user.
+ * @param nameLast - The updated last name for the user.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the user details update request.
+ */
+export const adminUserDetailsUpdate = (
+  tokenObject: ReturnedToken,
+  email: string,
+  nameFirst: string,
+  nameLast: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v2/admin/user/details';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      email: email,
+      nameFirst: nameFirst,
+      nameLast: nameLast,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Transfers a quiz to another user by sending a POST request to the server's quiz transfer endpoint.
  *
  * @param quizId - The unique identifier of the quiz to be transferred.
@@ -382,8 +482,10 @@ export const adminQuizTransfer = (
   const route = '/v2/admin/quiz/' + quizId + '/transfer';
 
   const res = request('POST', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
     json: {
-      token: tokenObject.token,
       userEmail: userEmail
     }
   });
@@ -412,8 +514,8 @@ export const adminQuizDeleteQuestion = (
   const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('DELETE', SERVER_URL + route, {
-    qs: {
-      token: tokenObject.token,
+    headers: {
+      token: tokenObject.token
     }
   });
 

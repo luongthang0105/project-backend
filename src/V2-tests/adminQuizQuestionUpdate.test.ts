@@ -73,6 +73,7 @@ describe('adminQuizQuestionUpdate', () => {
       },
     });
   });
+
   test.each([
     { question: 'Less' },
     { question: 'Les' },
@@ -518,7 +519,7 @@ describe('adminQuizQuestionUpdate', () => {
     expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
   });
 
-  test('Success: Successfully update a question, 2 questions in the quiz', () => {
+  test('Success: Successfully update a question, 2 questions in the quiz, thumnbnailUrls are all jpg', () => {
     const currTimeStamp = getCurrentTimestamp();
 
     const questionId2 = (
@@ -621,6 +622,232 @@ describe('adminQuizQuestionUpdate', () => {
             ],
             thumbnailUrl:
               'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg',
+          },
+        ],
+        thumbnailUrl: '',
+      },
+    });
+
+    const timeLastEdited = (quizInfo.content as QuizObject).timeLastEdited;
+    expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
+  });
+
+  test('Success: Successfully update a question, 2 questions in the quiz, update one question thumnbnailUrl from jpg to png', () => {
+    const currTimeStamp = getCurrentTimestamp();
+
+    const questionId2 = (
+      adminQuizCreateQuestion(
+        user,
+        quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers,
+        questInfo.thumbnailUrl
+      ).content as { questionId: number }
+    ).questionId;
+
+    const result = adminQuizQuestionUpdate(
+      user,
+      quizId,
+      questionId2,
+      'This is a question',
+      170,
+      9,
+      [
+        { answer: 'Pikachu', correct: true },
+        { answer: 'Thomas', correct: false },
+        { answer: 'Charmander', correct: false },
+        { answer: 'Charizard', correct: false },
+      ],
+      'https://static.vecteezy.com/system/resources/previews/018/249/188/non_2x/happy-cat-transparent-background-png.png'
+    );
+
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+
+    const quizInfo = adminQuizInfo(user, quizId);
+    expect(quizInfo).toStrictEqual({
+      statusCode: 200,
+      content: {
+        quizId: quizId,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        numQuestions: 2,
+        duration: 174,
+        questions: [
+          {
+            questionId: questionId,
+            question: 'What is that pokemon',
+            duration: 4,
+            points: 5,
+            answers: [
+              {
+                answer: 'Pikachu',
+                correct: true,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Thomas',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+            ],
+            thumbnailUrl:
+              'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg',
+          },
+          {
+            questionId: questionId2,
+            question: 'This is a question',
+            duration: 170,
+            points: 9,
+            answers: [
+              {
+                answer: 'Pikachu',
+                correct: true,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Thomas',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charmander',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charizard',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+            ],
+            thumbnailUrl:
+              'https://static.vecteezy.com/system/resources/previews/018/249/188/non_2x/happy-cat-transparent-background-png.png',
+          },
+        ],
+        thumbnailUrl: '',
+      },
+    });
+
+    const timeLastEdited = (quizInfo.content as QuizObject).timeLastEdited;
+    expect(timeLastEdited - currTimeStamp).toBeLessThanOrEqual(1);
+  });
+
+  test('Success: Successfully update a question, 2 questions in the quiz, update one question thumnbnailUrl from jpg to png', () => {
+    const currTimeStamp = getCurrentTimestamp();
+
+    const questionId2 = (
+      adminQuizCreateQuestion(
+        user,
+        quizId,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers,
+        questInfo.thumbnailUrl
+      ).content as { questionId: number }
+    ).questionId;
+
+    const result = adminQuizQuestionUpdate(
+      user,
+      quizId,
+      questionId2,
+      'This is a question',
+      170,
+      9,
+      [
+        { answer: 'Pikachu', correct: true },
+        { answer: 'Thomas', correct: false },
+        { answer: 'Charmander', correct: false },
+        { answer: 'Charizard', correct: false },
+      ],
+      'https://cdn2.hubspot.net/hubfs/3821536/Blog%20Assets/1_lAl0198JalrQNC2YDQDiIw.jpeg'
+    );
+
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {},
+    });
+
+    const quizInfo = adminQuizInfo(user, quizId);
+    expect(quizInfo).toStrictEqual({
+      statusCode: 200,
+      content: {
+        quizId: quizId,
+        name: 'Quiz 1',
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: 'Description',
+        numQuestions: 2,
+        duration: 174,
+        questions: [
+          {
+            questionId: questionId,
+            question: 'What is that pokemon',
+            duration: 4,
+            points: 5,
+            answers: [
+              {
+                answer: 'Pikachu',
+                correct: true,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Thomas',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+            ],
+            thumbnailUrl:
+              'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg',
+          },
+          {
+            questionId: questionId2,
+            question: 'This is a question',
+            duration: 170,
+            points: 9,
+            answers: [
+              {
+                answer: 'Pikachu',
+                correct: true,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Thomas',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charmander',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+              {
+                answer: 'Charizard',
+                correct: false,
+                colour: expect.toHaveValidColour(),
+                answerId: expect.any(Number),
+              },
+            ],
+            thumbnailUrl:
+              'https://cdn2.hubspot.net/hubfs/3821536/Blog%20Assets/1_lAl0198JalrQNC2YDQDiIw.jpeg',
           },
         ],
         thumbnailUrl: '',

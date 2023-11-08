@@ -125,6 +125,9 @@ type Question = {
   duration: number;
   points: number;
   answers: Answer[];
+
+  // let this field be optional since we need backwards compatibility with It2
+  thumbnailUrl?: string
 };
 
 /**
@@ -174,6 +177,9 @@ type QuizObject = {
   questions: Question[];
   numQuestions: number;
   duration: number;
+
+  // let this field be optional since we need backwards compatibility with It2
+  thumbnailUrl?: string
 };
 
 /**

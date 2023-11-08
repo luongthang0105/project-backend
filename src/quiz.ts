@@ -1164,7 +1164,6 @@ const adminQuizTransfer = (
     );
   }
 
-
   // Finds the user object of the targeted email
   const targetUser = data.users.find(
     (targetEmail) => targetEmail.email === userEmail

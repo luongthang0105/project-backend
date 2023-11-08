@@ -50,7 +50,16 @@ describe('adminQuizDeleteQuestion', () => {
       ).content as { questionId: number }
     ).questionId;
   });
-
+  test('Error: Quiz Id does not exist', () => {
+    
+    const result = adminQuizDeleteQuestion(user, quizId + 1, questionId);
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz'
+      }
+    });
+  });
   test('Error: Token is empty or invalid (does not refer to valid logged in user session)', () => {
     const invalidToken = {
       token: '-1'

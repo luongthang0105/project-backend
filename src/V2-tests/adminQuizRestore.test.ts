@@ -16,6 +16,7 @@ beforeEach(() => {
 });
 
 describe('adminQuizRestore', () => {
+  
   test('Token is empty or invalid (does not refer to valid logged in user session): dataStore is empty', () => {
     const unavailableToken = {
       token: '0',
@@ -50,7 +51,7 @@ describe('adminQuizRestore', () => {
       statusCode: 401,
     });
   });
-
+  
   test('Quiz name of the restored quiz is already used by another active quiz', () => {
     const user = adminAuthRegister(
       'han@gmai.com',
@@ -68,6 +69,21 @@ describe('adminQuizRestore', () => {
     });
   });
 
+  test('QuizId does not exist', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content as ReturnedToken;
+    const quiz = adminQuizCreate(user, 'Quiz01', 'myQuiz').content as Quiz;
+    const result = adminQuizRestore(user, quiz.quizId + 1);
+    expect(result).toStrictEqual({
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      statusCode: 403,
+    });
+  });
+  
   test('Quiz name of the restored quiz is already used by another active quiz (Owned by another user)', () => {
     const user1 = adminAuthRegister(
       'han@gmai.com',
@@ -98,7 +114,7 @@ describe('adminQuizRestore', () => {
       'Han',
       'Hanh'
     ).content as ReturnedToken;
-    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
+    const quiz = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
     const result = adminQuizRestore(user, quiz.quizId);
     expect(result).toStrictEqual({
       content: { error: 'Quiz ID refers to a quiz that is not currently in the trash' },
@@ -113,7 +129,7 @@ describe('adminQuizRestore', () => {
       'Han',
       'Hanh'
     ).content as ReturnedToken;
-    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
+    const quiz = adminQuizCreate(user, 'Hiiiii', 'This is my quiz').content as Quiz;
     adminQuizRemove(user, quiz.quizId);
     adminQuizRestore(user, quiz.quizId);
     const result = adminQuizRestore(user, quiz.quizId);

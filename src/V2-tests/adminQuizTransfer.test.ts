@@ -10,7 +10,7 @@ import { adminQuizTransfer } from '../testWrappersV2';
 import { clear } from '../other';
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
 
-describe('adminQuizTransfer', () => {
+describe('adminUserPassword', () => {
   let user: ReturnedToken;
   let user2: ReturnedToken;
   let user2Email: string;
@@ -65,6 +65,21 @@ describe('adminQuizTransfer', () => {
       'Huy'
     ).content as ReturnedToken;
     expect(adminQuizTransfer(quiz, user3, user2Email)).toStrictEqual({
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz',
+      },
+      statusCode: 403,
+    });
+  });
+
+  test('QuizId does not exist', () => {
+    const user3 = adminAuthRegister(
+      'ran@mail.com',
+      'dsadsadsa321',
+      'Ran',
+      'Huy'
+    ).content as ReturnedToken;
+    expect(adminQuizTransfer(quiz + 1, user3, user2Email)).toStrictEqual({
       content: {
         error: 'Valid token is provided, but user is not an owner of this quiz',
       },

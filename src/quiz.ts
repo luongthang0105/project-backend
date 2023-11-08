@@ -496,7 +496,7 @@ const adminQuizCreateQuestion = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       "Valid token is provided, but user is not an owner of this quiz"
@@ -654,7 +654,8 @@ const adminQuizQuestionUpdate = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+   // check if the quiz does not exist or the user is not an owner of this quiz
+   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       "Valid token is provided, but user is not an owner of this quiz"
@@ -816,7 +817,7 @@ const adminQuizDeleteQuestion = (
   );
 
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       "Valid token is provided, but user is not an owner of this quiz"
@@ -1169,14 +1170,8 @@ const adminQuizTransfer = (
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
-  // check if the quiz does not exist
-  if (!validQuiz) {
-    throw HTTPError(
-      403,
-      "Valid token is provided, but user is not an owner of this quiz"
-    );
-  }
-  if (validQuiz.quizAuthorId !== authUserId) {
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       "Valid token is provided, but user is not an owner of this quiz"
@@ -1269,7 +1264,7 @@ const adminQuizCreateQuestionV2 = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       "Valid token is provided, but user is not an owner of this quiz"

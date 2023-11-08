@@ -347,7 +347,7 @@ const adminUserPasswordUpdate = (
   );
 
   // Checks if the old password is the same as current password
-  let hashOfOldPassword = getHashOf(oldPassword)
+  const hashOfOldPassword = getHashOf(oldPassword);
   if (hashOfOldPassword !== userInfo.password) {
     throw HTTPError(400, 'Old Password is not the correct old password');
   }
@@ -358,7 +358,7 @@ const adminUserPasswordUpdate = (
   }
 
   // Checks if new password has already been used before by this user
-  let hashOfNewPassword = getHashOf(newPassword)
+  const hashOfNewPassword = getHashOf(newPassword);
   if (
     userInfo.usedPasswords.find((usedPassword) => usedPassword === hashOfNewPassword)
   ) {

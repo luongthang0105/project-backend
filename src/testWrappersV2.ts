@@ -525,7 +525,7 @@ export const adminQuizDeleteQuestion = (
   const route = '/v2/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('DELETE', SERVER_URL + route, {
-    qs: {
+    headers: {
       token: tokenObject.token,
     }
   });

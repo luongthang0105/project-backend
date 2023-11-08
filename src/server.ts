@@ -382,7 +382,9 @@ app.put(
 
     const questionId = parseInt(req.params.questionid);
 
-    const { token, newPosition } = req.body;
+    const token = req.headers.token as string;
+
+    const { newPosition } = req.body;
 
     const result = adminQuizMoveQuestion(
       token,

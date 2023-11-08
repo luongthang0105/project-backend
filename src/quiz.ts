@@ -497,7 +497,7 @@ const adminQuizCreateQuestion = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -629,7 +629,8 @@ const adminQuizQuestionUpdate = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -766,7 +767,7 @@ const adminQuizDeleteQuestion = (
   );
 
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -905,7 +906,26 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
-  if (!existingQuizinTrash) {
+  const existingQuizinQuizzes = data.quizzes.find((quiz) => quiz.quizId === quizId);
+
+  // check if this quiz does exist
+  if (!existingQuizinQuizzes && !existingQuizinTrash) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // check if the user is the owner of this quiz
+  if (existingQuizinTrash && existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // check if Quiz ID refers to a quiz that is not currently in the trash
+  if (existingQuizinQuizzes) {
     throw HTTPError(
       400,
       'Quiz ID refers to a quiz that is not currently in the trash'
@@ -916,6 +936,7 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
     (quiz: QuizObject) => quiz.name === existingQuizinTrash.name
   );
 
+  // check if Quiz name of the restored quiz is already used by another active quiz
   if (existingQuiz) {
     throw HTTPError(
       400,
@@ -923,12 +944,6 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
     );
   }
 
-  if (existingQuizinTrash.quizAuthorId !== validSession.authUserId) {
-    throw HTTPError(
-      403,
-      'Valid token is provided, but user is not an owner of this quiz'
-    );
-  }
   existingQuizinTrash.timeLastEdited = getCurrentTimestamp();
 
   data.quizzes.push(existingQuizinTrash);
@@ -937,7 +952,6 @@ const adminQuizRestore = (token: string, quizId: number): EmptyObject => {
       data.trash.splice(i, 1);
     }
   }
-
   setData(data);
   return {};
 };
@@ -1102,12 +1116,12 @@ const adminQuizTransfer = (
 
   const authUserId = validSession.authUserId;
 
-  // Find the quizObject of the quizId
   const validQuiz = data.quizzes.find(
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -1200,7 +1214,7 @@ const adminQuizCreateQuestionV2 = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -1505,7 +1519,7 @@ const adminQuizQuestionUpdateV2 = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'

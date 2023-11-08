@@ -65,6 +65,21 @@ describe('adminQuizMoveQuestion', () => {
       },
     });
   });
+  test('Quiz Id does not exist', () => {
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz.quizId + 1,
+      question.questionId,
+      1
+    );
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      content: {
+        error:
+          'Valid token is provided, but user is not an owner of this quiz',
+      },
+    });
+  });
 
   test('Question ID does not refer to a valid question within this quiz', () => {
     const result = adminQuizMoveQuestion(

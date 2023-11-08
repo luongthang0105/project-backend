@@ -1,4 +1,5 @@
 import { DataStore } from './types';
+import crypto from 'crypto';
 
 /**
  * Check if the given email address is already used by any user in the data store.
@@ -89,5 +90,17 @@ const randomSessionId = (data: DataStore): string => {
   } while (data.sessions.some((session) => session.identifier === newSessionId));
   return newSessionId;
 };
+
+/**
+ * Receives plaintext password and returns the hash of it using SHA256 method
+ *
+ * @param plaintext - The password in plaintext.
+ * @returns The hash of the plaintext password
+ */
+function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
+}
+
+export { getHashOf };
 
 export { validName, securedPassword, emailUsed, randomSessionId };

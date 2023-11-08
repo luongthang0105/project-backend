@@ -1122,6 +1122,7 @@ const adminQuizTransfer = (
       'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
+
   const authUserId = validSession.authUserId;
 
   // Find the quizObject of the quizId

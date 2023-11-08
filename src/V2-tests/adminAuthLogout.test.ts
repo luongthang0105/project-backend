@@ -1,9 +1,9 @@
 import {
   adminAuthLogout,
+  adminQuizCreate,
 } from '../testWrappersV2';
 import {
   adminAuthRegister,
-  adminQuizCreate,
   adminAuthLogin
 } from '../testWrappersV1';
 

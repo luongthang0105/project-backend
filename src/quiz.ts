@@ -178,13 +178,9 @@ const adminQuizDescriptionUpdate = (
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
-  // Return an error message if the quiz with the given quizId does not exist
-  if (!existingQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-
+  // Check if the quiz with the given quizId does not exist
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (existingQuiz.quizAuthorId !== authUserId) {
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -228,7 +224,7 @@ const adminQuizRemove = (token: string, quizId: number): EmptyObject => {
   );
 
   // If authUserId is not valid, return an error object
-  if (!validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
       'Token is empty or invalid (does not refer to valid logged in user session)'
@@ -242,13 +238,9 @@ const adminQuizRemove = (token: string, quizId: number): EmptyObject => {
     (quiz: QuizObject) => quiz.quizId === quizId
   );
 
-  // If quizId is not valid, return an error object
-  if (!existingQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-
+  // Check if the quiz with the given quizId does not exist
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (existingQuiz.quizAuthorId !== authUserId) {
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -288,7 +280,7 @@ const adminQuizInfo = (token: string, quizId: number): QuizObject => {
     (currToken) => currToken.identifier === token
   );
 
-  if (!validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
       'Token is empty or invalid (does not refer to valid logged in user session)'
@@ -303,19 +295,16 @@ const adminQuizInfo = (token: string, quizId: number): QuizObject => {
   );
 
   // Return an error message if the quiz with the given quizId does not exist
-  if (!existingQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-  const timeCreated = existingQuiz.timeCreated;
-  const timeLastEdited = existingQuiz.timeLastEdited;
-
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (existingQuiz.quizAuthorId !== authUserId) {
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
     );
   }
+
+  const timeCreated = existingQuiz.timeCreated;
+  const timeLastEdited = existingQuiz.timeLastEdited;
 
   // Return object with relevant information about the quiz
   return {
@@ -367,12 +356,8 @@ const adminQuizNameUpdate = (
   );
 
   // If quizId is not valid, return an error object
-  if (!validQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
@@ -1362,19 +1347,15 @@ const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
   );
 
   // Return an error message if the quiz with the given quizId does not exist
-  if (!existingQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-  const timeCreated = existingQuiz.timeCreated;
-  const timeLastEdited = existingQuiz.timeLastEdited;
-
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (existingQuiz.quizAuthorId !== authUserId) {
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'
     );
   }
+  const timeCreated = existingQuiz.timeCreated;
+  const timeLastEdited = existingQuiz.timeLastEdited;
 
   // Return object with relevant information about the quiz
   return {
@@ -1590,20 +1571,7 @@ const adminQuizQuestionUpdateV2 = (
 
   // Error: Any answer strings are duplicates of one another (within the same question)
 
-  const duplicateAnswers = (): Answer[] => {
-    // We iterate through each answer object by calling .filter()
-    return answers.filter((currAnswer, currAnswerIndex) =>
-      // If we can find another answer object that has different index but same "answer" string,
-      // then add that object to the result array
-      answers.find(
-        (otherAnswer, otherAnswerIndex) =>
-          otherAnswer.answer === currAnswer.answer &&
-          otherAnswerIndex !== currAnswerIndex
-      )
-    );
-  };
-
-  if (duplicateAnswers().length !== 0) {
+  if (hasDuplicatedAnswers(answers)) {
     throw HTTPError(
       400,
       'Any answer strings are duplicates of one another (within the same question)'

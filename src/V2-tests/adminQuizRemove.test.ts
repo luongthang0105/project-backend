@@ -56,8 +56,8 @@ describe('adminQuizRemove', () => {
     ).content as ReturnedToken;
     const result = adminQuizRemove(user, 1);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      statusCode: 403,
     });
   });
 
@@ -71,8 +71,8 @@ describe('adminQuizRemove', () => {
     const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
     const result = adminQuizRemove(user, quiz.quizId + 1);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      statusCode: 403,
     });
   });
 
@@ -129,8 +129,8 @@ describe('adminQuizRemove', () => {
 
     const result = adminQuizInfo(user, quiz02.quizId);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      statusCode: 403,
     });
   });
 });

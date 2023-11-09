@@ -106,5 +106,5 @@ export {
   getQuestionColour,
   moveQuestion,
   hasDuplicatedAnswers,
-  newAnswerList
+  newAnswerList,
 };

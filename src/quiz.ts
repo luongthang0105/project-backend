@@ -1361,8 +1361,6 @@ const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
   const timeCreated = existingQuiz.timeCreated;
   const timeLastEdited = existingQuiz.timeLastEdited;
 
-  
-
   // Return object with relevant information about the quiz
   return {
     quizId: existingQuiz.quizId,

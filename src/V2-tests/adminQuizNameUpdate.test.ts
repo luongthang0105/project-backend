@@ -30,8 +30,8 @@ describe('adminQuizNameUpdate', () => {
       'Hanh'
     ).content as ReturnedToken;
     expect(adminQuizNameUpdate(user, -1, 'name')).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      statusCode: 403
     });
   });
 

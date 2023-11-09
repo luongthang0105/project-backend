@@ -47,7 +47,7 @@ describe('adminQuizRemove', () => {
     });
   });
 
-  test('Quiz ID does not refer to a valid quiz: dataStore has 0 quiz', () => {
+  test(' Valid token is provided, but user is not an owner of this quiz: dataStore has 0 quiz', () => {
     const user = adminAuthRegister(
       'han@gmai.com',
       '2705uwuwuwuwuwuw',
@@ -56,12 +56,14 @@ describe('adminQuizRemove', () => {
     ).content as ReturnedToken;
     const result = adminQuizRemove(user, 1);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz',
+      },
+      statusCode: 403,
     });
   });
 
-  test('Quiz ID does not refer to a valid quiz: dataStore has 1 quiz', () => {
+  test(' Valid token is provided, but user is not an owner of this quiz: dataStore has 1 quiz', () => {
     const user = adminAuthRegister(
       'han@gmai.com',
       '2705uwuwuwuwuwuw',
@@ -71,8 +73,10 @@ describe('adminQuizRemove', () => {
     const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
     const result = adminQuizRemove(user, quiz.quizId + 1);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz',
+      },
+      statusCode: 403,
     });
   });
 
@@ -89,12 +93,10 @@ describe('adminQuizRemove', () => {
       'Hanh',
       'Han'
     ).content as ReturnedToken;
-    const quiz01 = adminQuizCreate(
-      user01,
-      'Hihihihihih',
-      'This is my quiz'
-    ).content as Quiz;
-    const quiz02 = adminQuizCreate(user02, 'Hiiii', 'This is my quiz').content as Quiz;
+    const quiz01 = adminQuizCreate(user01, 'Hihihihihih', 'This is my quiz')
+      .content as Quiz;
+    const quiz02 = adminQuizCreate(user02, 'Hiiii', 'This is my quiz')
+      .content as Quiz;
     expect(adminQuizRemove(user01, quiz02.quizId)).toStrictEqual({
       content: {
         error: 'Valid token is provided, but user is not an owner of this quiz',
@@ -119,7 +121,8 @@ describe('adminQuizRemove', () => {
 
     adminQuizCreate(user, 'Hihihihihih', 'This is my quiz');
 
-    const quiz02 = adminQuizCreate(user, 'Hiiii', 'This is my quiz').content as Quiz;
+    const quiz02 = adminQuizCreate(user, 'Hiiii', 'This is my quiz')
+      .content as Quiz;
 
     const quizRemoved = adminQuizRemove(user, quiz02.quizId);
     expect(quizRemoved).toStrictEqual({
@@ -129,8 +132,11 @@ describe('adminQuizRemove', () => {
 
     const result = adminQuizInfo(user, quiz02.quizId);
     expect(result).toStrictEqual({
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
-      statusCode: 400,
+      content: {
+        error:
+          'Valid token is provided, but user is not an owner of this quiz',
+      },
+      statusCode: 403,
     });
   });
 });

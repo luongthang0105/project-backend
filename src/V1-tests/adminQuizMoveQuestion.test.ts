@@ -45,6 +45,21 @@ describe('adminQuizMoveQuestion', () => {
     ).content as Question;
   });
 
+  test('QuizId does not exist', () => {
+    const result = adminQuizMoveQuestion(
+      user,
+      quiz.quizId + 1,
+      question.questionId,
+      1
+    );
+    expect(result).toStrictEqual({
+      statusCode: 403,
+      content: {
+        error:
+          'Valid token is provided, but user is not an owner of this quiz',
+      },
+    });
+  });
   test('Token is empty or invalid (does not refer to valid logged in user session)', () => {
     const invalidToken = {
       token: '-1',

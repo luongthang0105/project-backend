@@ -356,12 +356,8 @@ const adminQuizNameUpdate = (
   );
 
   // If quizId is not valid, return an error object
-  if (!validQuiz) {
-    throw HTTPError(400, 'Quiz ID does not refer to a valid quiz');
-  }
-
   // Check if the quiz with the given quizId is owned by the authenticated user
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not an owner of this quiz'

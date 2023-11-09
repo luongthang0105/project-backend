@@ -47,8 +47,8 @@ describe('adminQuizInfo', () => {
     const result = adminQuizInfo(user, quiz.quizId + 1);
 
     expect(result).toStrictEqual({
-      statusCode: 400,
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
+      statusCode: 403,
+      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
     });
   });
 

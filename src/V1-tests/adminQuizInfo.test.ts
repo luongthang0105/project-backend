@@ -11,18 +11,10 @@ describe('adminQuizInfo', () => {
   let quiz: Quiz;
   beforeEach(() => {
     clear();
-    user = adminAuthRegister(
-      'han@gmai.com',
-      '2705uwuwuwu',
-      'Han',
-      'Hanh'
-    ).content as ReturnedToken;
+    user = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
+      .content as ReturnedToken;
 
-    quiz = adminQuizCreate(
-      user,
-      'New Quiz',
-      'description'
-    ).content as Quiz;
+    quiz = adminQuizCreate(user, 'New Quiz', 'description').content as Quiz;
   });
   test('Token is empty or invalid (does not refer to valid logged in user session)', () => {
     const invalidToken = {
@@ -39,12 +31,15 @@ describe('adminQuizInfo', () => {
     });
   });
 
-  test('Quiz ID does not refer to a valid quiz', () => {
+  test(' Valid token is provided, but user is not an owner of this quiz', () => {
     const result = adminQuizInfo(user, quiz.quizId + 1);
 
     expect(result).toStrictEqual({
-      statusCode: 400,
-      content: { error: 'Quiz ID does not refer to a valid quiz' },
+      statusCode: 403,
+      content: {
+        error:
+          'Valid token is provided, but user is not an owner of this quiz',
+      },
     });
   });
 
@@ -55,11 +50,8 @@ describe('adminQuizInfo', () => {
       'Thomas',
       'Nguyen'
     ).content as ReturnedToken;
-    const quiz2 = adminQuizCreate(
-      user2,
-      'New Quiz 2',
-      'long description'
-    ).content as Quiz;
+    const quiz2 = adminQuizCreate(user2, 'New Quiz 2', 'long description')
+      .content as Quiz;
 
     const result = adminQuizInfo(user, quiz2.quizId);
     expect(result).toStrictEqual({
@@ -92,11 +84,8 @@ describe('adminQuizInfo', () => {
       'Thomas',
       'Nguyen'
     ).content as ReturnedToken;
-    const quiz2 = adminQuizCreate(
-      user2,
-      'New Quiz 2',
-      'long description'
-    ).content as Quiz;
+    const quiz2 = adminQuizCreate(user2, 'New Quiz 2', 'long description')
+      .content as Quiz;
     const result = adminQuizInfo(user2, quiz2.quizId);
     expect(result.content).toStrictEqual({
       quizId: quiz2.quizId,

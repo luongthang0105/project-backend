@@ -65,12 +65,18 @@ describe('adminQuizDuplicateQuestion', () => {
     });
   });
 
-  test('Quiz ID does not refer to a valid quiz', () => {
-    const result = adminQuizDuplicateQuestion(user, quiz.quizId + 1, question.questionId);
+  test(' Valid token is provided, but user is not an owner of this quiz', () => {
+    const result = adminQuizDuplicateQuestion(
+      user,
+      quiz.quizId + 1,
+      question.questionId
+    );
 
     expect(result).toStrictEqual({
       statusCode: 403,
-      content: { error: 'Valid token is provided, but user is not an owner of this quiz' },
+      content: {
+        error: 'Valid token is provided, but user is not an owner of this quiz',
+      },
     });
   });
 

@@ -39,7 +39,6 @@ export const adminQuizSessionStart = (
   };
 };
 
-
 /**
  * Registers a user by sending a POST request to the server's registration endpoint.
  *

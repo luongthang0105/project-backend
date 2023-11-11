@@ -4,10 +4,9 @@ import {
   clear,
   adminAuthLogout,
   adminQuizSessionStart,
-  adminQuizGetSessionStatus,
-  adminQuizInfo
+  adminQuizGetSessionStatus
 } from '../testWrappersV1';
-import { adminQuizCreateQuestion } from '../testWrappersV2';
+import { adminQuizCreateQuestion , adminQuizInfo} from '../testWrappersV2';
 import { Question, Quiz, ReturnedToken } from '../types';
 
 let user1: ReturnedToken;
@@ -101,6 +100,7 @@ describe('adminQuizGetSessionStatus', () => {
       ,
     });
   });
+
   test('SUCCESS: Quiz with 1 question', () => {
     const result = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1);
     const quizTimeCreated = adminQuizInfo(user1, quiz1.quizId).content.timeCreated;
@@ -203,7 +203,7 @@ describe('adminQuizGetSessionStatus', () => {
               points: 5,
               answers: [
                 {
-                  answerId: adminQuizInfo(user1, quiz1.quizId).content.questions[0].answers[0].answerId,
+                  answerId: adminQuizInfo(user1, quiz1.quizId).content.questions[0].duration,
                   answer: 'Pikachu',
                   colour: adminQuizInfo(user1, quiz1.quizId).content.questions[0].answers[0].colour,
                   correct: true,

@@ -4,9 +4,9 @@ import {
   adminAuthLogout,
   adminQuizSessionStart,
   adminQuizGetSessionStatus,
-} from "../testWrappersV1";
-import { adminQuizCreate, adminQuizCreateQuestion, adminQuizInfo } from "../testWrappersV2";
-import { Question, Quiz, ReturnedToken } from "../types";
+} from '../testWrappersV1';
+import { adminQuizCreate, adminQuizCreateQuestion, adminQuizInfo } from '../testWrappersV2';
+import { Question, Quiz, ReturnedToken } from '../types';
 
 let user1: ReturnedToken;
 let quiz1: Quiz;
@@ -16,25 +16,25 @@ let quizSession1: number;
 beforeEach(() => {
   clear();
   user1 = adminAuthRegister(
-    "sasaki@gmai.com",
-    "2705uwuwuwuwuwuw",
-    "Mutsuki",
-    "Sasaki"
+    'sasaki@gmai.com',
+    '2705uwuwuwuwuwuw',
+    'Mutsuki',
+    'Sasaki'
   ).content as ReturnedToken;
-  quiz1 = adminQuizCreate(user1, "Hihihihihih", "This is my quiz")
+  quiz1 = adminQuizCreate(user1, 'Hihihihihih', 'This is my quiz')
     .content as Quiz;
   questInfo1 = {
-    question: "What is that pokemon",
+    question: 'What is that pokemon',
     duration: 4,
-    thumbnailUrl: "https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg",
+    thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg',
     points: 5,
     answers: [
       {
-        answer: "Pikachu",
+        answer: 'Pikachu',
         correct: true,
       },
       {
-        answer: "Thomas",
+        answer: 'Thomas',
         correct: false,
       },
     ],
@@ -52,22 +52,21 @@ beforeEach(() => {
     .sessionId;
 });
 
-describe("adminQuizGetSessionStatus", () => {
-  
-  test("Token is empty or invalid (does not refer to valid logged in user session): Logged out session", () => {
+describe('adminQuizGetSessionStatus', () => {
+  test('Token is empty or invalid (does not refer to valid logged in user session): Logged out session', () => {
     adminAuthLogout(user1);
     const result = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Token is empty or invalid (does not refer to valid logged in user session)",
+          'Token is empty or invalid (does not refer to valid logged in user session)',
       },
       statusCode: 401,
     });
   });
-  test("Token is empty or invalid (does not refer to valid logged in user session): Empty token", () => {
+  test('Token is empty or invalid (does not refer to valid logged in user session): Empty token', () => {
     const unavailableToken = {
-      token: "",
+      token: '',
     };
     const result = adminQuizGetSessionStatus(
       unavailableToken,
@@ -77,12 +76,12 @@ describe("adminQuizGetSessionStatus", () => {
     expect(result).toStrictEqual({
       content: {
         error:
-          "Token is empty or invalid (does not refer to valid logged in user session)",
+          'Token is empty or invalid (does not refer to valid logged in user session)',
       },
       statusCode: 401,
     });
   });
-  test("Session Id does not refer to a valid session within this quiz", () => {
+  test('Session Id does not refer to a valid session within this quiz', () => {
     const result = adminQuizGetSessionStatus(
       user1,
       quiz1.quizId,
@@ -90,30 +89,30 @@ describe("adminQuizGetSessionStatus", () => {
     );
     expect(result).toStrictEqual({
       content: {
-        error: "Session Id does not refer to a valid session within this quiz",
+        error: 'Session Id does not refer to a valid session within this quiz',
       },
       statusCode: 400,
     });
   });
 
-  test("Valid token is provided, but user is not authorised to view this session", () => {
+  test('Valid token is provided, but user is not authorised to view this session', () => {
     const user2 = adminAuthRegister(
-      "muttsuki@gmail.com",
-      "2705t3huwu",
-      "Type",
-      "Script"
+      'muttsuki@gmail.com',
+      '2705t3huwu',
+      'Type',
+      'Script'
     ).content as ReturnedToken;
     const result = adminQuizGetSessionStatus(user2, quiz1.quizId, quizSession1);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Valid token is provided, but user is not authorised to view this session",
+          'Valid token is provided, but user is not authorised to view this session',
       },
       statusCode: 403,
     });
   });
 
-  test("SUCCESS: Quiz with 1 question", () => {
+  test('SUCCESS: Quiz with 1 question', () => {
     const result = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1);
     const quizTimeCreated = adminQuizInfo(user1, quiz1.quizId).content
       .timeCreated;
@@ -122,28 +121,28 @@ describe("adminQuizGetSessionStatus", () => {
 
     expect(result).toStrictEqual({
       content: {
-        state: "LOBBY",
+        state: 'LOBBY',
         atQuestion: 0,
         players: [],
         metadata: {
           quizId: quiz1.quizId,
-          name: "Hihihihihih",
+          name: 'Hihihihihih',
           timeCreated: quizTimeCreated,
           timeLastEdited: quizTimeLastEdited,
-          description: "This is my quiz",
+          description: 'This is my quiz',
           numQuestions: 1,
           questions: [
             {
               questionId: question1,
-              question: "What is that pokemon",
+              question: 'What is that pokemon',
               duration: 4,
-              thumbnailUrl: "https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg",
+              thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg',
               points: 5,
               answers: [
                 {
                   answerId: adminQuizInfo(user1, quiz1.quizId).content
                     .questions[0].answers[0].answerId,
-                  answer: "Pikachu",
+                  answer: 'Pikachu',
                   colour: adminQuizInfo(user1, quiz1.quizId).content
                     .questions[0].answers[0].colour,
                   correct: true,
@@ -151,7 +150,7 @@ describe("adminQuizGetSessionStatus", () => {
                 {
                   answerId: adminQuizInfo(user1, quiz1.quizId).content
                     .questions[0].answers[1].answerId,
-                  answer: "Thomas",
+                  answer: 'Thomas',
                   colour: adminQuizInfo(user1, quiz1.quizId).content
                     .questions[0].answers[1].colour,
                   correct: false,
@@ -160,7 +159,7 @@ describe("adminQuizGetSessionStatus", () => {
             },
           ],
           duration: 4,
-          thumbnailUrl: "",
+          thumbnailUrl: '',
         },
       },
       statusCode: 200,

@@ -190,11 +190,46 @@ type DataStore = {
   quizzes: QuizObject[];
   trash: QuizObject[];
   sessions: Token[];
+  quizSessions: QuizSession[];
   nextUserId: number;
   nextQuizId: number;
   nextQuestionId: number;
   nextAnswerId: number;
+  nextQuizSessionId: number;
 };
+
+/**
+ * States a quiz session can be in
+ */
+type SessionState =
+  | 'LOBBY'
+  | 'QUESTION_COUNTDOWN'
+  | 'QUESTION_OPEN'
+  | 'QUESTION_CLOSE'
+  | 'ANSWER_SHOW'
+  | 'FINAL_RESULTS'
+  | 'END'
+
+/**
+ * 4 key actions that an admin can send to moves us between states
+ */
+  type AdminAction =
+  | 'NEXT_QUESTION'
+  | 'SKIP_COUNTDOWN'
+  | 'GO_TO_ANSWER'
+  | 'GO_TO_FINAL_RESULTS'
+  | 'END'
+
+/**
+ * Represents the structure of quiz sessions which describe a particular instance of a quiz being run
+ */
+  type QuizSession = {
+    quizSessionId?: number,
+    state: SessionState,
+    atQuestion: number,
+    players: string[],
+    metadata: QuizObject
+  }
 
 export {
   EmptyObject,
@@ -213,4 +248,7 @@ export {
   UserObject,
   QuizObject,
   DataStore,
+  SessionState,
+  AdminAction,
+  QuizSession
 };

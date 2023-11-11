@@ -13,6 +13,33 @@ import {
 const SERVER_URL = `${url}:${port}`;
 
 /**
+ * Creates a new quiz session
+ * This copies the quiz, so that any edits whilst a session is running does not affect active session
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} autoStartNum - The number people needed to automatically start the quiz
+ * @returns {sessionId: number} - ID of the quiz session
+ */
+export const adminQuizSessionStart = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  autoStartNum: number
+): { content: {sessionId: number}; statusCode: number } => {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/start', {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      autoStartNum: autoStartNum,
+    },
+  });
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Registers a user by sending a POST request to the server's registration endpoint.
  *
  * @param email - The email address for the user's registration.

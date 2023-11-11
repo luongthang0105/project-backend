@@ -94,7 +94,32 @@ describe('adminQuizGetSessionStatus', () => {
       statusCode: 400,
     });
   });
-
+  test('Session Id does not refer to a valid session within this quiz: 2 quizzes', () => {
+    const quiz2 = adminQuizCreate(user1,'NewQuiz', 'nice quiz').content as Quiz;
+    const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 3).content.sessionId;
+    const result1 = adminQuizGetSessionStatus(
+      user1,
+      quiz1.quizId,
+      quizSession2
+    );
+    expect(result1).toStrictEqual({
+      content: {
+        error: 'Session Id does not refer to a valid session within this quiz',
+      },
+      statusCode: 400,
+    });
+    const result2 = adminQuizGetSessionStatus(
+      user1,
+      quiz2.quizId,
+      quizSession1
+    );
+    expect(result1).toStrictEqual({
+      content: {
+        error: 'Session Id does not refer to a valid session within this quiz',
+      },
+      statusCode: 400,
+    });
+  });
   test('Valid token is provided, but user is not authorised to view this session', () => {
     const user2 = adminAuthRegister(
       'muttsuki@gmail.com',
@@ -103,6 +128,17 @@ describe('adminQuizGetSessionStatus', () => {
       'Script'
     ).content as ReturnedToken;
     const result = adminQuizGetSessionStatus(user2, quiz1.quizId, quizSession1);
+    expect(result).toStrictEqual({
+      content: {
+        error:
+          'Valid token is provided, but user is not authorised to view this session',
+      },
+      statusCode: 403,
+    });
+  });
+
+  test('Valid token is provided, but user is not authorised to view this session: non-existent quizId', () => {
+    const result = adminQuizGetSessionStatus(user1, quiz1.quizId + 1, quizSession1);
     expect(result).toStrictEqual({
       content: {
         error:

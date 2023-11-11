@@ -1736,7 +1736,7 @@ const adminQuizGetSessionStatus = (
   const authUserId = validSession.authUserId;
   const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId) as QuizObject;
 
-  if (validQuiz.quizAuthorId !== authUserId) {
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
       'Valid token is provided, but user is not authorised to view this session'

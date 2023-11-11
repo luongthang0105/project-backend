@@ -29,7 +29,8 @@ import {
   adminQuizInfoV2,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizSessionStart
+  adminQuizSessionStart,
+  adminQuizGetSessionStatus
 } from './quiz';
 import { clear } from './other';
 import {
@@ -322,6 +323,19 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+// adminQuizGetSessionStatus V1
+app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+
+  const sessionId = parseInt(req.params.sessionid);
+
+  const result = adminQuizGetSessionStatus(token, quizId, sessionId);
+
+  res.json(result);
+});
+
 // adminQuizSessionStart V1
 app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);

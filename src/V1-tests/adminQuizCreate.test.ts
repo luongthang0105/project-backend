@@ -1,5 +1,4 @@
-import { adminQuizCreate, adminAuthRegister } from '../testWrappersV1';
-import { clear } from '../other';
+import { adminQuizCreate, adminAuthRegister, clear } from '../testWrappersV1';
 import { ReturnedToken } from '../types';
 beforeEach(() => {
   clear();

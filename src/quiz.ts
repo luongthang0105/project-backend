@@ -1777,7 +1777,7 @@ const adminQuizDuplicateQuestionV2 = (
   validQuiz.timeLastEdited = getCurrentTimestamp();
   validQuiz.numQuestions++;
   validQuiz.duration += duplicateQuestion.duration;
-  
+
   data.nextQuestionId++;
 
   setData(data);

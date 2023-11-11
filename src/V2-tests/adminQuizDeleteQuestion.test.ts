@@ -4,8 +4,8 @@ import {
   clear,
 } from '../testWrappersV1';
 
-import { 
-  adminQuizDeleteQuestion, 
+import {
+  adminQuizDeleteQuestion,
   adminQuizCreate,
   adminQuizCreateQuestion,
   adminQuizInfo,

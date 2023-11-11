@@ -3,7 +3,7 @@ import {
   clear,
 } from '../testWrappersV1';
 
-import { 
+import {
   adminQuizMoveQuestion,
   adminQuizInfo,
   adminQuizCreateQuestion,
@@ -216,7 +216,7 @@ describe('adminQuizMoveQuestion', () => {
       questInfo1.duration,
       questInfo1.points,
       questInfo1.answers,
-      questInfo1.thumbnailUrl,
+      questInfo1.thumbnailUrl
     ).content as Question;
 
     const result = adminQuizMoveQuestion(

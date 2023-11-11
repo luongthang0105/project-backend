@@ -3,7 +3,7 @@ import {
   clear,
 } from '../testWrappersV1';
 
-import { 
+import {
   adminQuizDuplicateQuestion,
   adminQuizCreateQuestion,
   adminQuizInfo,

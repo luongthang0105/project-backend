@@ -2,7 +2,7 @@ import {
   adminAuthRegister,
   clear
 } from '../testWrappersV1';
-import { 
+import {
   adminQuizNameUpdate,
   adminQuizCreate,
   adminQuizInfo

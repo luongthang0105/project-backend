@@ -1,6 +1,6 @@
 import { adminAuthRegister, clear } from '../testWrappersV1';
-import { 
-  adminUserDetailsUpdate, 
+import {
+  adminUserDetailsUpdate,
   adminUserDetails
 } from '../testWrappersV2';
 import { ReturnedToken, UserDetails } from '../types';

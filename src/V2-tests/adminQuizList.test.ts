@@ -1,7 +1,7 @@
 import { adminAuthRegister, clear } from '../testWrappersV1';
-import { 
+import {
   adminQuizList,
-  adminQuizCreate, 
+  adminQuizCreate,
   adminQuizRemove
 } from '../testWrappersV2';
 import { Quiz, QuizList, ReturnedToken } from '../types';

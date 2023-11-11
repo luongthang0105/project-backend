@@ -4,10 +4,10 @@ import {
 } from '../testWrappersV2';
 import {
   adminAuthRegister,
-  adminAuthLogin
+  adminAuthLogin,
+  clear
 } from '../testWrappersV1';
 
-import { clear } from '../other';
 import { ReturnedToken } from '../types';
 
 describe('adminAuthLogout', () => {

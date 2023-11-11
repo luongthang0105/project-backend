@@ -1,10 +1,9 @@
-import { adminAuthRegister } from '../testWrappersV1';
+import { adminAuthRegister, clear } from '../testWrappersV1';
 import { 
   adminQuizList,
   adminQuizCreate, 
   adminQuizRemove
 } from '../testWrappersV2';
-import { clear } from '../testWrappersV1';
 import { Quiz, QuizList, ReturnedToken } from '../types';
 
 describe('adminQuizList', () => {

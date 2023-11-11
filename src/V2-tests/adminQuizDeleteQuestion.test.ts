@@ -159,7 +159,8 @@ describe('adminQuizDeleteQuestion', () => {
           { answer: 'Pukachi', correct: true, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
           { answer: 'Han', correct: false, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
           { answer: 'Charmander', correct: false, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
-        ]
+        ],
+        thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       }
     ]);
     expect(quizInfo.duration).toStrictEqual(50);
@@ -204,7 +205,8 @@ describe('adminQuizDeleteQuestion', () => {
         answers: [
           { answer: 'Pikachu', correct: true, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
           { answer: 'Thomas', correct: false, answerId: expect.any(Number), colour: expect.toHaveValidColour() }
-        ]
+        ],
+        thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       }
     ]);
     expect(quizInfo.duration).toStrictEqual(4);

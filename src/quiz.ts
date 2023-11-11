@@ -1333,7 +1333,7 @@ const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
     (currToken) => currToken.identifier === token
   );
 
-  if (!validSession) {
+  if (token === ""|| !validSession) {
     throw HTTPError(
       401,
       'Token is empty or invalid (does not refer to valid logged in user session)'

@@ -1,12 +1,12 @@
 import {
-  adminQuizCreate,
-  adminQuizRemove,
   adminAuthRegister,
   clear,
-  adminQuizViewTrash,
 } from '../testWrappersV1';
 import {
-  adminQuizTrashEmpty
+  adminQuizTrashEmpty,
+  adminQuizViewTrash,
+  adminQuizCreate,
+  adminQuizRemove
 } from '../testWrappersV2';
 import { Quiz, ReturnedToken } from '../types';
 

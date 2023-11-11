@@ -1,13 +1,15 @@
 import { getCurrentTimestamp } from '../quizHelper';
 import {
-  adminQuizCreate,
   adminAuthRegister,
   clear,
-  adminQuizCreateQuestion,
-  adminQuizInfo,
 } from '../testWrappersV1';
 
-import { adminQuizDeleteQuestion } from '../testWrappersV2';
+import { 
+  adminQuizDeleteQuestion, 
+  adminQuizCreate,
+  adminQuizCreateQuestion,
+  adminQuizInfo,
+} from '../testWrappersV2';
 
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 
@@ -39,6 +41,7 @@ describe('adminQuizDeleteQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
 
     questionId = (
@@ -48,7 +51,8 @@ describe('adminQuizDeleteQuestion', () => {
         questInfo.question,
         questInfo.duration,
         questInfo.points,
-        questInfo.answers
+        questInfo.answers,
+        questInfo.thumbnailUrl
       ).content as { questionId: number }
     ).questionId;
   });
@@ -127,7 +131,8 @@ describe('adminQuizDeleteQuestion', () => {
           { answer: 'Pukachi', correct: true },
           { answer: 'Han', correct: false },
           { answer: 'Charmander', correct: false },
-        ]
+        ],
+        'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       )
     ).content as {questionId: number}).questionId;
 
@@ -172,7 +177,8 @@ describe('adminQuizDeleteQuestion', () => {
           { answer: 'Pukachi', correct: true },
           { answer: 'Han', correct: false },
           { answer: 'Charmander', correct: false },
-        ]
+        ],
+        'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       ).content as { questionId: number }
     ).questionId;
 
@@ -216,7 +222,8 @@ describe('adminQuizDeleteQuestion', () => {
           { answer: 'Pukachi', correct: true },
           { answer: 'Han', correct: false },
           { answer: 'Charmander', correct: false },
-        ]
+        ],
+        'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       ).content as { questionId: number }
     ).questionId;
 
@@ -258,7 +265,8 @@ describe('adminQuizDeleteQuestion', () => {
           { answer: 'Pukachi', correct: true },
           { answer: 'Han', correct: false },
           { answer: 'Charmander', correct: false },
-        ]
+        ],
+        'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       ).content as { questionId: number }
     ).questionId;
 

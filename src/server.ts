@@ -29,7 +29,8 @@ import {
   adminQuizInfoV2,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizSessionStart
+  adminQuizSessionStart,
+  adminQuizDuplicateQuestionV2
 } from './quiz';
 import { clear } from './other';
 import {
@@ -431,7 +432,7 @@ app.post(
 
     const token = req.headers.token as string;
 
-    const result = adminQuizDuplicateQuestion(token, quizId, questionId);
+    const result = adminQuizDuplicateQuestionV2(token, quizId, questionId);
 
     res.json(result);
   }

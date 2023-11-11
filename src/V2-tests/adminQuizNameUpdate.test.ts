@@ -1,10 +1,12 @@
 import {
-  adminQuizCreate,
-  adminQuizInfo,
   adminAuthRegister,
   clear
 } from '../testWrappersV1';
-import { adminQuizNameUpdate } from '../testWrappersV2';
+import { 
+  adminQuizNameUpdate,
+  adminQuizCreate,
+  adminQuizInfo
+} from '../testWrappersV2';
 import { EmptyObject, Quiz, QuizObject, ReturnedToken } from '../types';
 
 describe('adminQuizNameUpdate', () => {

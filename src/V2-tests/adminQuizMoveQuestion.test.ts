@@ -1,12 +1,14 @@
 import {
-  adminQuizCreateQuestion,
-  adminQuizCreate,
   adminAuthRegister,
-  adminQuizInfo,
   clear,
 } from '../testWrappersV1';
 
-import { adminQuizMoveQuestion } from '../testWrappersV2';
+import { 
+  adminQuizMoveQuestion,
+  adminQuizInfo,
+  adminQuizCreateQuestion,
+  adminQuizCreate,
+} from '../testWrappersV2';
 
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 import './toHaveValidColour';
@@ -31,6 +33,7 @@ describe('adminQuizMoveQuestion', () => {
         correct: false,
       },
     ],
+    thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
   };
   beforeEach(() => {
     clear();
@@ -43,7 +46,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo.question,
       questInfo.duration,
       questInfo.points,
-      questInfo.answers
+      questInfo.answers,
+      questInfo.thumbnailUrl
     ).content as Question;
   });
 
@@ -203,6 +207,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     const question01 = adminQuizCreateQuestion(
       user,
@@ -210,7 +215,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo1.question,
       questInfo1.duration,
       questInfo1.points,
-      questInfo1.answers
+      questInfo1.answers,
+      questInfo1.thumbnailUrl,
     ).content as Question;
 
     const result = adminQuizMoveQuestion(
@@ -251,6 +257,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     const question01 = adminQuizCreateQuestion(
       user,
@@ -258,7 +265,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo1.question,
       questInfo1.duration,
       questInfo1.points,
-      questInfo1.answers
+      questInfo1.answers,
+      questInfo1.thumbnailUrl
     ).content as Question;
 
     const questInfo2 = {
@@ -275,6 +283,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     const question02 = adminQuizCreateQuestion(
       user,
@@ -282,7 +291,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo2.question,
       questInfo2.duration,
       questInfo2.points,
-      questInfo2.answers
+      questInfo2.answers,
+      questInfo2.thumbnailUrl
     ).content as Question;
 
     const result = adminQuizMoveQuestion(
@@ -326,6 +336,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     const question01 = adminQuizCreateQuestion(
       user,
@@ -333,7 +344,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo1.question,
       questInfo1.duration,
       questInfo1.points,
-      questInfo1.answers
+      questInfo1.answers,
+      questInfo1.thumbnailUrl
     ).content as Question;
 
     const questInfo2 = {
@@ -350,6 +362,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
 
     const question02 = adminQuizCreateQuestion(
@@ -358,7 +371,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo2.question,
       questInfo2.duration,
       questInfo2.points,
-      questInfo2.answers
+      questInfo2.answers,
+      questInfo2.thumbnailUrl
     ).content as Question;
 
     const questInfo3 = {
@@ -375,6 +389,7 @@ describe('adminQuizMoveQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     const question03 = adminQuizCreateQuestion(
       user,
@@ -382,7 +397,8 @@ describe('adminQuizMoveQuestion', () => {
       questInfo3.question,
       questInfo3.duration,
       questInfo3.points,
-      questInfo3.answers
+      questInfo3.answers,
+      questInfo3.thumbnailUrl
     ).content as Question;
 
     const result = adminQuizMoveQuestion(

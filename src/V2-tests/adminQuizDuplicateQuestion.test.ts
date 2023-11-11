@@ -1,12 +1,14 @@
 import {
-  adminQuizCreate,
   adminAuthRegister,
   clear,
-  adminQuizCreateQuestion,
-  adminQuizInfo,
 } from '../testWrappersV1';
 
-import { adminQuizDuplicateQuestion } from '../testWrappersV2';
+import { 
+  adminQuizDuplicateQuestion,
+  adminQuizCreateQuestion,
+  adminQuizInfo,
+  adminQuizCreate,
+} from '../testWrappersV2';
 
 import { Question, Quiz, QuizObject, ReturnedToken } from '../types';
 import { getCurrentTimestamp } from '../quizHelper';
@@ -36,6 +38,7 @@ describe('adminQuizDuplicateQuestion', () => {
           correct: false,
         },
       ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     };
     question = adminQuizCreateQuestion(
       user,
@@ -43,7 +46,8 @@ describe('adminQuizDuplicateQuestion', () => {
       questInfo.question,
       questInfo.duration,
       questInfo.points,
-      questInfo.answers
+      questInfo.answers,
+      questInfo.thumbnailUrl
     ).content as Question;
   });
 

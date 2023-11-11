@@ -95,7 +95,7 @@ describe('adminQuizGetSessionStatus', () => {
     });
   });
   test('Session Id does not refer to a valid session within this quiz: 2 quizzes', () => {
-    const quiz2 = adminQuizCreate(user1,'NewQuiz', 'nice quiz').content as Quiz;
+    const quiz2 = adminQuizCreate(user1, 'NewQuiz', 'nice quiz').content as Quiz;
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 3).content.sessionId;
     const result1 = adminQuizGetSessionStatus(
       user1,
@@ -113,7 +113,7 @@ describe('adminQuizGetSessionStatus', () => {
       quiz2.quizId,
       quizSession1
     );
-    expect(result1).toStrictEqual({
+    expect(result2).toStrictEqual({
       content: {
         error: 'Session Id does not refer to a valid session within this quiz',
       },

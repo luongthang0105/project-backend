@@ -29,10 +29,12 @@ import {
   adminQuizInfoV2,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizSessionStart,
-  adminQuizGetSessionStatus,
   adminQuizDuplicateQuestionV2
 } from './quiz';
+import {
+  adminQuizSessionStart,
+  adminQuizGetSessionStatus
+} from './session';
 import { clear } from './other';
 import {
   adminAuthRegister,

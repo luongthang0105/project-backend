@@ -2,9 +2,9 @@ import {
   adminAuthRegister,
   adminAuthLogout,
   adminQuizCreate,
-  adminAuthLogin
+  adminAuthLogin,
+  clear
 } from '../testWrappersV1';
-import { clear } from '../other';
 import { ReturnedToken } from '../types';
 
 describe('adminAuthLogout', () => {

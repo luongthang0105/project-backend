@@ -1,11 +1,11 @@
 import {
   adminAuthRegister,
-  adminQuizInfo,
-  adminQuizCreate,
   clear,
 } from '../testWrappersV1';
 import {
-  adminQuizDescriptionUpdate
+  adminQuizDescriptionUpdate,
+  adminQuizInfo,
+  adminQuizCreate,
 } from '../testWrappersV2';
 import { Quiz, QuizObject, ReturnedToken } from '../types';
 

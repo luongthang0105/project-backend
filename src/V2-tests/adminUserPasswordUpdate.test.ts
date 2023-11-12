@@ -1,6 +1,5 @@
-import { adminAuthRegister } from '../testWrappersV1';
+import { adminAuthRegister, clear } from '../testWrappersV1';
 import { adminUserPasswordUpdate } from '../testWrappersV2';
-import { clear } from '../other';
 import { ReturnedToken } from '../types';
 
 describe('adminUserPasswordUpdate', () => {

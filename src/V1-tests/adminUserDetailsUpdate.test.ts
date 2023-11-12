@@ -1,10 +1,10 @@
 import {
   adminAuthRegister,
   adminUserDetails,
-  adminUserDetailsUpdate
+  adminUserDetailsUpdate,
+  clear
 } from '../testWrappersV1';
 import { ReturnedToken, UserDetails } from '../types';
-import { clear } from '../other';
 
 describe('adminUserDetailsUpdate', () => {
   let user: ReturnedToken;

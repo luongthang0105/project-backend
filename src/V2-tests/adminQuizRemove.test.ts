@@ -1,10 +1,12 @@
 import {
-  adminQuizCreate,
-  adminQuizInfo,
   adminAuthRegister,
   clear,
 } from '../testWrappersV1';
-import { adminQuizRemove } from '../testWrappersV2';
+import {
+  adminQuizRemove,
+  adminQuizCreate,
+  adminQuizInfo
+} from '../testWrappersV2';
 import { Quiz, ReturnedToken } from '../types';
 
 beforeEach(() => {

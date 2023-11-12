@@ -82,7 +82,7 @@ describe('adminQuizInfo', () => {
       timeLastEdited: expect.any(Number),
       description: 'description',
 
-      // these last three properties need to be tested after implementing Question create function
+      // these last three properties need to be d after implementing Question create function
       questions: [],
       numQuestions: 0,
       duration: 0,

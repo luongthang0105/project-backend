@@ -30,7 +30,7 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizSessionStart,
-  adminQuizGetSessionStatus,,
+  adminQuizGetSessionStatus,
   adminQuizDuplicateQuestionV2
 } from './quiz';
 import { clear } from './other';

@@ -561,11 +561,11 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
 
-    const questionId = parseInt(req.params.questionid);
+  const questionId = parseInt(req.params.questionid);
 
-    const token = req.headers.token as string;
+  const token = req.headers.token as string;
 
-    const result = adminQuizDeleteQuestion(token, quizId, questionId);
+  const result = adminQuizDeleteQuestion(token, quizId, questionId);
 
   res.json(result);
 });

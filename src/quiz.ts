@@ -1,4 +1,3 @@
-import request from 'sync-request-curl';
 import { getData, setData } from './dataStore';
 import {
   alphanumericAndSpaceCheck,
@@ -1278,7 +1277,7 @@ const adminQuizCreateQuestionV2 = (
   if (thumbnailUrl === '') {
     throw HTTPError(400, 'The thumbnailUrl is an empty string');
   }
-/*
+  /*
   // NO NEED TO FETCH ANYMORE
   // Error: The thumbnailUrl does not return to a valid file
   let res;
@@ -1302,7 +1301,7 @@ const adminQuizCreateQuestionV2 = (
     throw HTTPError(
       400,
       'The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
-    )
+    );
   }
 
   // Error: The thumbnailUrl does not begin with 'http://' or 'https://'
@@ -1310,7 +1309,7 @@ const adminQuizCreateQuestionV2 = (
     throw HTTPError(
       400,
       'The thumbnailUrl does not begin with "http://" or "https://"'
-    )
+    );
   }
 
   const newQuestion: Question = {
@@ -1611,7 +1610,7 @@ const adminQuizQuestionUpdateV2 = (
     throw HTTPError(400, 'The thumbnailUrl is an empty string');
   }
 
-/*
+  /*
   // Error: The thumbnailUrl does not return to a valid file
   let res;
   try {
@@ -1630,12 +1629,12 @@ const adminQuizQuestionUpdateV2 = (
     );
   }
 */
-   // Error: The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
-   if (!isUrlEndWithImgExtension(thumbnailUrl)) {
+  // Error: The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+  if (!isUrlEndWithImgExtension(thumbnailUrl)) {
     throw HTTPError(
       400,
       'The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
-    )
+    );
   }
 
   // Error: The thumbnailUrl does not begin with 'http://' or 'https://'
@@ -1643,7 +1642,7 @@ const adminQuizQuestionUpdateV2 = (
     throw HTTPError(
       400,
       'The thumbnailUrl does not begin with "http://" or "https://"'
-    )
+    );
   }
 
   // update quiz duration by subtracting it by the old duration and adding the new duration

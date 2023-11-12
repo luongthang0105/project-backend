@@ -110,14 +110,14 @@ const isUrlEndWithImgExtension = (url: string): boolean => {
   // Since the comparison is case-insensitive, we need to normalize the given string by lowercase-ing it
   url = url.toLowerCase();
 
-  if (!url.endsWith('.jpg') || 
-      !url.endsWith('.jpeg') || 
+  if (!url.endsWith('.jpg') ||
+      !url.endsWith('.jpeg') ||
       !url.endsWith('.png')) {
-      return false;
+    return false;
   }
 
   return true;
-}
+};
 
 /**
  * Determine whether the given url string starts with 'http://' or 'https://'
@@ -129,13 +129,13 @@ const isUrlStartWithHTTP = (url: string): boolean => {
   // Since the comparison is case-insensitive, we need to normalize the given string by lowercase-ing it
   url = url.toLowerCase();
 
-  if (!url.startsWith('http://') || 
+  if (!url.startsWith('http://') ||
       !url.startsWith('https://')) {
-      return false;
+    return false;
   }
 
   return true;
-}
+};
 
 export {
   alphanumericAndSpaceCheck,

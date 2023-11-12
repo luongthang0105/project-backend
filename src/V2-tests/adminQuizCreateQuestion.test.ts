@@ -506,7 +506,7 @@ describe('adminQuizCreateQuestion', () => {
       questInfo.duration,
       questInfo.points,
       questInfo.answers,
-      'https://t.ly/MkDJC'
+      'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     );
 
     expect(result).toStrictEqual({
@@ -566,7 +566,7 @@ describe('adminQuizCreateQuestion', () => {
               answerId: expect.any(Number)
             },
           ],
-          thumbnailUrl: 'https://t.ly/MkDJC'
+          thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
         },
       ]
     );

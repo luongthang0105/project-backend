@@ -8,9 +8,35 @@ import {
   QuizObject,
   ReturnedToken,
   UserDetails,
+  QuizSession
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
+
+/**
+ * Get the status of a particular quiz session
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @returns {QuizSession} - Status of the quiz session
+ */
+export const adminQuizGetSessionStatus = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  sessionId: number
+): { content: QuizSession; statusCode: number } => {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId, {
+    headers: {
+      token: tokenObject.token,
+    },
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
 
 /**
  * Creates a new quiz session

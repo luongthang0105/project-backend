@@ -1333,7 +1333,7 @@ const adminQuizInfoV2 = (token: string, quizId: number): QuizObject => {
     (currToken) => currToken.identifier === token
   );
 
-  if (!validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
       'Token is empty or invalid (does not refer to valid logged in user session)'
@@ -1707,6 +1707,85 @@ const adminQuizSessionStart = (
 };
 
 /**
+ * Get the status of a particular quiz session
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @returns {QuizSession} - Status of the quiz session
+ */
+const adminQuizGetSessionStatus = (
+  token: string,
+  quizId: number,
+  sessionId: number
+): QuizSession => {
+  const data = getData();
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is unauthorised to complete this action
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId) as QuizObject;
+
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not authorised to view this session'
+    );
+  }
+
+  const validQuizSesssion = data.quizSessions.find(session => session.quizSessionId === sessionId);
+  if (!validQuizSesssion) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+
+  if (validQuizSesssion.metadata.quizId !== quizId) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+
+  let thumbnail: string;
+  if (!validQuizSesssion.metadata.thumbnailUrl) {
+    thumbnail = '';
+  } else {
+    thumbnail = validQuizSesssion.metadata.thumbnailUrl;
+  }
+
+  const quizSessionStatus: QuizSession = {
+    state: validQuizSesssion.state,
+    atQuestion: validQuizSesssion.atQuestion,
+    players: validQuizSesssion.players,
+    metadata: {
+      quizId: validQuizSesssion.metadata.quizId,
+      name: validQuizSesssion.metadata.name,
+      timeCreated: validQuizSesssion.metadata.timeCreated,
+      timeLastEdited: validQuizSesssion.metadata.timeLastEdited,
+      description: validQuizSesssion.metadata.description,
+      numQuestions: validQuizSesssion.metadata.numQuestions,
+      questions: validQuizSesssion.metadata.questions,
+      duration: validQuizSesssion.metadata.duration,
+      thumbnailUrl: thumbnail
+    }
+  };
+
+  return quizSessionStatus;
+};
+
+/**
  * Duplicates a question within a quiz.
  *
  * @param token - The authentication token for the user performing the action.
@@ -1805,5 +1884,6 @@ export {
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
   adminQuizQuestionUpdateV2,
-  adminQuizSessionStart
+  adminQuizSessionStart,
+  adminQuizGetSessionStatus
 };

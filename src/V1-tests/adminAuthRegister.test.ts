@@ -1,5 +1,4 @@
-import { adminAuthRegister } from '../testWrappersV1';
-import { clear } from '../other';
+import { adminAuthRegister, clear } from '../testWrappersV1';
 
 describe('adminAuthRegister', () => {
   beforeEach(() => {

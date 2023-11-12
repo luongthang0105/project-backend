@@ -1821,6 +1821,84 @@ const adminQuizGetSessionStatus = (
   return quizSessionStatus;
 };
 
+/**
+ * Duplicates a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param questionId - The unique identifier of the question to be duplicated.
+ *
+ * @returns An object with `newQuestionId` if the duplication is successful, or an ErrorObject if any validation checks fail.
+ */
+const adminQuizDuplicateQuestionV2 = (
+  token: string,
+  quizId: number,
+  questionId: number
+): { newQuestionId: number } => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // If quizId is not valid, return an error object
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  const validQuestion = validQuiz.questions.find(
+    (question: Question) => question.questionId === questionId
+  );
+
+  if (!validQuestion) {
+    throw HTTPError(
+      400,
+      'Question Id does not refer to a valid question within this quiz'
+    );
+  }
+
+  const currPosition = validQuiz.questions.findIndex(
+    (question: Question) => question.questionId === questionId
+  );
+
+  const duplicateQuestion = {
+    questionId: data.nextQuestionId,
+    question: validQuestion.question,
+    duration: validQuestion.duration,
+    points: validQuestion.points,
+    answers: validQuestion.answers,
+    thumbnailUrl: validQuestion.thumbnailUrl
+  };
+
+  validQuiz.questions.splice(currPosition + 1, 0, duplicateQuestion);
+  validQuiz.timeLastEdited = getCurrentTimestamp();
+  validQuiz.numQuestions++;
+  validQuiz.duration += duplicateQuestion.duration;
+
+  data.nextQuestionId++;
+
+  setData(data);
+  return { newQuestionId: duplicateQuestion.questionId };
+};
+
 export {
   adminQuizCreate,
   adminQuizCreateV2,
@@ -1837,6 +1915,7 @@ export {
   adminQuizTransfer,
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
+  adminQuizDuplicateQuestionV2,
   adminQuizRestore,
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,

@@ -31,10 +31,10 @@ import {
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2
 } from './quiz';
-import{
+import {
   adminQuizSessionStart,
   adminQuizGetSessionStatus
-} from './session'
+} from './session';
 import { clear } from './other';
 import {
   adminAuthRegister,

@@ -165,4 +165,4 @@ const adminQuizGetSessionStatus = (
 export {
   adminQuizSessionStart,
   adminQuizGetSessionStatus
-}
+};

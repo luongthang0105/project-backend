@@ -899,17 +899,16 @@ describe('adminQuizQuestionUpdate', () => {
 
   test.each([
     {
-      thumbnailUrl: 'hihi.uwu',
+      thumbnailUrl: 'httpss://asodnasdn.png'
     },
     {
-      thumbnailUrl:
-        'https://sportt.optus.com.au/news/premier-league/os65707/chelsea-tottenham-mauricio-pochettino-history-catalyst-rebuild',
+      thumbnailUrl: 'htt://apcs.jpg'
     },
     {
-      thumbnailUrl: 'https://wwwwebcms3.cse.unsw.edu.au/COMP1531/23T3/',
+      thumbnailUrl: 'http:/taokhoroi.jpeg'
     },
   ])(
-    'Error: The thumbnailUrl does not return to a valid file',
+    'Error: The thumbnailUrl does not begin with "http://" or "https://"',
     ({ thumbnailUrl }) => {
       questInfo.thumbnailUrl = thumbnailUrl;
 
@@ -926,7 +925,7 @@ describe('adminQuizQuestionUpdate', () => {
       expect(result).toStrictEqual({
         statusCode: 400,
         content: {
-          error: 'The thumbnailUrl does not return to a valid file',
+          error: 'The thumbnailUrl does not begin with "http://" or "https://"',
         },
       });
     }
@@ -934,17 +933,28 @@ describe('adminQuizQuestionUpdate', () => {
 
   test.each([
     {
-      thumbnailUrl: 'hihi.com',
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jpp'
     },
     {
-      thumbnailUrl:
-        'https://sport.optus.com.au/news/premier-league/os65707/chelsea-tottenham-mauricio-pochettino-history-catalyst-rebuild',
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jppg'
     },
     {
-      thumbnailUrl: 'https://webcms3.cse.unsw.edu.au/COMP1531/23T3/',
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.pneg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jpegg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardjpeg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardpng'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardjpg'
     },
   ])(
-    'Error: The thumbnailUrl, when fetched, is not a JPG or PNG file type',
+    'Error: The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png',
     ({ thumbnailUrl }) => {
       questInfo.thumbnailUrl = thumbnailUrl;
 
@@ -962,7 +972,7 @@ describe('adminQuizQuestionUpdate', () => {
         statusCode: 400,
         content: {
           error:
-            'The thumbnailUrl, when fetched, is not a JPG or PNG file type',
+            'The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png',
         },
       });
     }

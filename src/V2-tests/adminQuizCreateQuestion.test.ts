@@ -342,15 +342,15 @@ describe('adminQuizCreateQuestion', () => {
 
   test.each([
     {
-      thumbnailUrl: 'https://asodnasdn.com'
+      thumbnailUrl: 'httpss://asodnasdn.png'
     },
     {
-      thumbnailUrl: 'https://apcs.com'
+      thumbnailUrl: 'htt://apcs.jpg'
     },
     {
-      thumbnailUrl: 'http://taokhoroi.com/'
+      thumbnailUrl: 'http:/taokhoroi.jpeg'
     },
-  ])('Error: The thumbnailUrl does not return to a valid file', ({ thumbnailUrl }) => {
+  ])('Error: The thumbnailUrl does not begin with "http://" or "https://"', ({ thumbnailUrl }) => {
     questInfo.thumbnailUrl = thumbnailUrl;
 
     const result = adminQuizCreateQuestion(
@@ -366,16 +366,34 @@ describe('adminQuizCreateQuestion', () => {
     expect(result).toStrictEqual({
       statusCode: 400,
       content: {
-        error: 'The thumbnailUrl does not return to a valid file',
+        error: 'The thumbnailUrl does not begin with "http://" or "https://"',
       },
     });
   });
 
   test.each([
     {
-      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard/'
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jpp'
     },
-  ])('Error: The thumbnailUrl, when fetched, is not a JPG or PNg file type', ({ thumbnailUrl }) => {
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jppg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.pneg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboard.jpegg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardjpeg'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardpng'
+    },
+    {
+      thumbnailUrl: 'https://cgi.cse.unsw.edu.au/~cs1531/23T3/leaderboardjpg'
+    },
+  ])('Error: The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png', ({ thumbnailUrl }) => {
     questInfo.thumbnailUrl = thumbnailUrl;
 
     const result = adminQuizCreateQuestion(
@@ -391,7 +409,7 @@ describe('adminQuizCreateQuestion', () => {
     expect(result).toStrictEqual({
       statusCode: 400,
       content: {
-        error: 'The thumbnailUrl, when fetched, is not a JPG or PNG file type',
+        error: 'The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png',
       },
     });
   });
@@ -488,7 +506,7 @@ describe('adminQuizCreateQuestion', () => {
       questInfo.duration,
       questInfo.points,
       questInfo.answers,
-      'https://t.ly/MkDJC'
+      'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
     );
 
     expect(result).toStrictEqual({
@@ -548,7 +566,7 @@ describe('adminQuizCreateQuestion', () => {
               answerId: expect.any(Number)
             },
           ],
-          thumbnailUrl: 'https://t.ly/MkDJC'
+          thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
         },
       ]
     );

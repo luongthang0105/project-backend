@@ -1611,6 +1611,7 @@ const adminQuizQuestionUpdateV2 = (
     throw HTTPError(400, 'The thumbnailUrl is an empty string');
   }
 
+/*
   // Error: The thumbnailUrl does not return to a valid file
   let res;
   try {
@@ -1627,6 +1628,22 @@ const adminQuizQuestionUpdateV2 = (
       400,
       'The thumbnailUrl, when fetched, is not a JPG or PNG file type'
     );
+  }
+*/
+   // Error: The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+   if (!isUrlEndWithImgExtension(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The thumbnailUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
+    )
+  }
+
+  // Error: The thumbnailUrl does not begin with 'http://' or 'https://'
+  if (!isUrlStartWithHTTP(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The thumbnailUrl does not begin with "http://" or "https://"'
+    )
   }
 
   // update quiz duration by subtracting it by the old duration and adding the new duration

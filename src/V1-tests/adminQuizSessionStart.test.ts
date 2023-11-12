@@ -1,12 +1,14 @@
 import {
   adminQuizCreate,
-  adminAuthRegister,
-  clear,
   adminAuthLogout,
-  adminQuizSessionStart,
   adminQuizCreateQuestion,
   adminQuizDeleteQuestion
-} from '../testWrappersV1';
+} from '../testWrappersV2';
+import {
+  adminAuthRegister,
+  adminQuizSessionStart,
+  clear
+} from '../testWrappersV1'
 import { Question, Quiz, ReturnedToken } from '../types';
 
 let user1: ReturnedToken;
@@ -45,7 +47,8 @@ beforeEach(() => {
     questInfo1.question,
     questInfo1.duration,
     questInfo1.points,
-    questInfo1.answers
+    questInfo1.answers,
+    questInfo1.thumbnailUrl,
   ).content.questionId;
 });
 

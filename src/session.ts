@@ -1,7 +1,8 @@
 import { getData, setData } from './dataStore';
 import {
   QuizObject,
-  QuizSession
+  QuizSession,
+  AdminAction
 } from './types';
 import HTTPError from 'http-errors';
 /**
@@ -161,6 +162,165 @@ const adminQuizGetSessionStatus = (
 
   return quizSessionStatus;
 };
+
+/**
+ * Update the state of a particular session by sending an action command
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @param {string} action - action command
+ * @returns {} -
+ */
+const adminQuizSessionStateUpdate = (
+  token: string,
+  quizId: number,
+  sessionId: number,
+  action: string
+): { } => {
+  const data = getData();
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is unauthorised to complete this action
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId) as QuizObject;
+
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not authorised to view this session'
+    );
+  }
+
+  const validQuizSesssion = data.quizSessions.find(session => session.quizSessionId === sessionId);
+  if (!validQuizSesssion) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+  if (validQuizSesssion.metadata.quizId !== quizId) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+  if (!['NEXT_QUESTION', 'SKIP_COUNTDOWN', 'GO_TO_ANSWER', 'GO_TO_FINAL_RESULTS', 'END'].includes(action as AdminAction)) {
+     throw HTTPError(
+      400,
+      'Action provided is not a valid Action enum'
+    );  
+  }
+
+  // Current state: LOBBY
+  if (validQuizSesssion.state === 'LOBBY') {
+    if (action !== 'NEXT_QUESTION' && action !== 'END') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'NEXT_QUESTION') {
+      validQuizSesssion.state = 'QUESTION_COUNTDOWN';
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    }
+  } else if (validQuizSesssion.state === 'QUESTION_COUNTDOWN') {
+    if (action !== 'SKIP_COUNTDOWN' && action !== 'END') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'SKIP_COUNTDOWN') {
+      validQuizSesssion.state = 'QUESTION_OPEN';
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    }
+  } else if (validQuizSesssion.state === 'QUESTION_OPEN') {
+    if (action !== 'GO_TO_ANSWER' && action !== 'END') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'GO_TO_ANSWER') {
+      validQuizSesssion.state = 'ANSWER_SHOW';
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    } 
+  } else if (validQuizSesssion.state === 'QUESTION_CLOSE') {
+    if (action === 'NEXT_QUESTION' || action === 'SKIP_COUNTDOWN') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'GO_TO_ANSWER') {
+      validQuizSesssion.state = 'ANSWER_SHOW';
+    }
+    if (action === 'GO_TO_FINAL_RESULTS') {
+      validQuizSesssion.state = 'FINAL_RESULTS';
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    } 
+  } else if (validQuizSesssion.state === 'ANSWER_SHOW') {
+    if (action === 'GO_TO_ANSWER' || action === 'SKIP_COUNTDOWN') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'NEXT_QUESTION') {
+      validQuizSesssion.state = 'QUESTION_COUNTDOWN';
+    }
+    if (action === 'GO_TO_FINAL_RESULTS') {
+      validQuizSesssion.state = 'FINAL_RESULTS';
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    } 
+  } else if (validQuizSesssion.state === 'FINAL_RESULTS') {
+    if (action !== 'END') {
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      ); 
+    }
+    if (action === 'END') {
+      validQuizSesssion.state = 'END';
+    } 
+  } else if (validQuizSesssion.state === 'END') {
+    throw HTTPError(
+      400,
+      'Action enum cannot be applied in the current state'
+    );  
+  } 
+
+  const duration = validQuizSesssion.metadata.questions[validQuizSesssion.atQuestion].duration * 1000;
+  if (validQuizSesssion.state === 'QUESTION_COUNTDOWN') {
+    setTimeout(validQuizSesssion.state = 'QUESTION_OPEN', 3000);
+  } else if (validQuizSesssion.state === 'QUESTION_OPEN') {
+    setTimeout(validQuizSesssion.state = 'QUESTION_CLOSE', duration);   
+  }
+  setData(data);
+  return {};
+}
+
 
 export {
   adminQuizSessionStart,

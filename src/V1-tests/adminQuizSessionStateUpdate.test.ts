@@ -53,7 +53,7 @@ beforeEach(() => {
   quizSession1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
 });
 
-describe('adminQuizGetSessionStatus', () => {
+describe.only('adminQuizGetSessionStatus', () => {
   test('Token is empty or invalid (does not refer to valid logged in user session): Logged out session', () => {
     adminAuthLogout(user1);
     const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
@@ -295,12 +295,13 @@ describe('adminQuizGetSessionStatus', () => {
       statusCode: 400
       ,
     });
-  });
+  });-
   // Action enums that cannot be applied to QUESTION_CLOSE
-  test('Action enum cannot be applied in the current state: QUESTION_CLOSE => NEXT_QUESTION', () => {
+  test('Action enum cannot be applied in the current state: QUESTION_CLOSE => NEXT_QUESTION', async () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    const result = setTimeout(adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION'), 4000);
+    setTimeout(function(){}, 4000);
+    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     expect(result).toStrictEqual({
       content: {
         error:
@@ -313,7 +314,8 @@ describe('adminQuizGetSessionStatus', () => {
   test('Action enum cannot be applied in the current state: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    const result = setTimeout(adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN'), 4000);
+    setTimeout(function(){}, 4000);
+    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     expect(result).toStrictEqual({
       content: {
         error:
@@ -573,7 +575,8 @@ describe('adminQuizGetSessionStatus', () => {
   test('SUCCESS: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    const result1 = setTimeout(adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER'), 4000);
+    setTimeout(function(){}, 4000);
+    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
       expect(result1).toStrictEqual({
         content: {},
@@ -585,7 +588,8 @@ describe('adminQuizGetSessionStatus', () => {
   test('SUCCESS: QUESTION_CLOSE => GO_TO_FINAL_RESULTS', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    const result1 = setTimeout(adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS'), 4000);
+    setTimeout(function(){}, 4000);
+    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
       expect(result1).toStrictEqual({
         content: {},
@@ -597,7 +601,8 @@ describe('adminQuizGetSessionStatus', () => {
   test('SUCCESS: QUESTION_CLOSE => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    const result1 = setTimeout(adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END'), 4000);
+    setTimeout(function(){}, 4000);
+    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
       expect(result1).toStrictEqual({
         content: {},

@@ -324,5 +324,6 @@ const adminQuizSessionStateUpdate = (
 
 export {
   adminQuizSessionStart,
-  adminQuizGetSessionStatus
+  adminQuizGetSessionStatus,
+  adminQuizSessionStateUpdate
 };

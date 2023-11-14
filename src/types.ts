@@ -182,6 +182,13 @@ type QuizObject = {
   thumbnailUrl?: string
 };
 
+type Message = {
+  messageBody: string,
+  playerId: number,
+  playerName: string[],
+  timeSent: number
+}
+
 type Player = {
   playerId: number,
   name: string,
@@ -237,7 +244,8 @@ type SessionState =
     state: SessionState,
     atQuestion: number,
     players: string[],
-    metadata: QuizObject
+    metadata: QuizObject,
+    messages: Message[]
   }
 
 export {
@@ -260,5 +268,6 @@ export {
   SessionState,
   AdminAction,
   QuizSession,
-  Player
+  Player,
+  Message
 };

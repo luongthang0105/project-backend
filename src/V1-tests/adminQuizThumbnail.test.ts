@@ -46,22 +46,22 @@ describe('adminQuizThumbnail', () => {
     });
   });
 
-  test('imgUrl when fetched does not return a valid file', () => {
-    const result = adminQuizThumbnail(user, quiz.quizId, '');
-    expect(result).toStrictEqual({
-      statusCode: 400,
-      content: {
-        error: 'imgUrl when fetched does not return a valid file'
-      }
-    });
-  });
-
-  test('imgUrl when fetch is not a JPG or PNG image', () => {
+  test('The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png', () => {
     const result = adminQuizThumbnail(user, quiz.quizId, 'https://i.pinimg.com/originals/57/61/5b/57615b8c0092a66c1d4058b1692955cc.gif');
     expect(result).toStrictEqual({
       statusCode: 400,
       content: {
-        error: 'imgUrl when fetch is not a JPG or PNG image'
+        error: 'The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
+      }
+    });
+  });
+
+  test('The thumbnailUrl does not begin with "http://" or "https://"', () => {
+    const result = adminQuizThumbnail(user, quiz.quizId, 'htt://apcs.jpg');
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'The thumbnailUrl does not begin with "http://" or "https://"'
       }
     });
   });

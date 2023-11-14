@@ -203,6 +203,7 @@ type DataStore = {
   nextQuestionId: number;
   nextAnswerId: number;
   nextQuizSessionId: number;
+  nextPlayerId: number
 };
 
 /**
@@ -257,5 +258,6 @@ export {
   DataStore,
   SessionState,
   AdminAction,
-  QuizSession
+  QuizSession,
+  Player
 };

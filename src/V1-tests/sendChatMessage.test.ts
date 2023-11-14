@@ -100,7 +100,7 @@ describe("sendChatMessage", () => {
     sendChatMessage(player2, "Hello Mikasa!");
 
     const messages = allChatMessages(player1);
-    expect(player2).toStrictEqual({
+    expect(messages).toStrictEqual({
       content: {
         messages: [
           {

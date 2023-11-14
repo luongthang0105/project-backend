@@ -88,8 +88,10 @@ describe('adminAllowPlayerJoin', () => {
       },
       statusCode: 200
     })
-
-    const player2 = playerJoinSession(session1, "Thomas");
+    
+    const sessionUpdate = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    
+    const player2 = playerJoinSession(session1, "Han");
     expect(player2).toStrictEqual({
       content: {
         error: 'Session is not in LOBBY state'

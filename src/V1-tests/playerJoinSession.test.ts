@@ -16,7 +16,7 @@ import { Question, Quiz, ReturnedToken } from '../types';
 import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
 
-describe('adminAllowPlayerJoin', () => {
+describe('playerJoinSession', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz
   let questInfo1;
@@ -90,7 +90,7 @@ describe('adminAllowPlayerJoin', () => {
     })
     
     const sessionUpdate = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
-    
+
     const player2 = playerJoinSession(session1, "Han");
     expect(player2).toStrictEqual({
       content: {

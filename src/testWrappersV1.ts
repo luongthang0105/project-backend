@@ -8,10 +8,51 @@ import {
   QuizObject,
   ReturnedToken,
   UserDetails,
-  QuizSession
+  QuizSession,
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
+
+/**
+ * Retrieves information about active and inactive sessions
+ * for a specific quiz, using the provided token and quizId.
+ *
+ * @param {ReturnedToken} tokenObject - Object containing the authentication token.
+ * @param {number} quizId - ID of the quiz for which sessions are to be retrieved.
+ *
+ * @returns {{
+*   content: {
+  *     activeSessions: Number[];
+  *     inactiveSessions: Number[];
+  *   };
+  *   statusCode: number;
+  * }} - An object containing the content (active and inactive sessions) and the HTTP status code.
+  */
+export const adminQuizViewSessions = (
+  tokenObject: ReturnedToken,
+  quizId: number
+): {
+  content: {
+    activeSessions: number[];
+    inactiveSessions: number[];
+  };
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/sessions',
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+    }
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
 
 /**
  * Update the state of a particular session by sending an action command
@@ -55,11 +96,15 @@ export const adminQuizGetSessionStatus = (
   quizId: number,
   sessionId: number
 ): { content: QuizSession; statusCode: number } => {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId, {
-    headers: {
-      token: tokenObject.token,
-    },
-  });
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId,
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+    }
+  );
 
   return {
     content: JSON.parse(res.body.toString()),
@@ -79,15 +124,19 @@ export const adminQuizSessionStart = (
   tokenObject: ReturnedToken,
   quizId: number,
   autoStartNum: number
-): { content: {sessionId: number}; statusCode: number } => {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/start', {
-    headers: {
-      token: tokenObject.token,
-    },
-    json: {
-      autoStartNum: autoStartNum,
-    },
-  });
+): { content: { sessionId: number }; statusCode: number } => {
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/start',
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+      json: {
+        autoStartNum: autoStartNum,
+      },
+    }
+  );
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
@@ -238,11 +287,15 @@ export const adminQuizRestore = (
   tokenObject: ReturnedToken,
   quizId: number
 ): { content: EmptyObject; statusCode: number } => {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
-    json: {
-      token: tokenObject.token
-    },
-  });
+  const res = request(
+    'POST',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore',
+    {
+      json: {
+        token: tokenObject.token,
+      },
+    }
+  );
 
   return {
     content: JSON.parse(res.body.toString()),
@@ -520,8 +573,7 @@ export const adminQuizDuplicateQuestion = (
 export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
-  content:
-    EmptyObject;
+  content: EmptyObject;
   statusCode: number;
 } => {
   const route = '/v1/admin/auth/logout';
@@ -560,7 +612,7 @@ export const adminQuizQuestionUpdate = (
   duration: number,
   points: number,
   answers: Answer[]
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('PUT', SERVER_URL + route, {
@@ -595,18 +647,18 @@ export const adminQuizDeleteQuestion = (
   tokenObject: ReturnedToken,
   quizId: number,
   questionId: number
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId;
 
   const res = request('DELETE', SERVER_URL + route, {
     qs: {
       token: tokenObject.token,
-    }
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 
@@ -626,7 +678,7 @@ export const adminUserDetailsUpdate = (
   email: string,
   nameFirst: string,
   nameLast: string
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/user/details';
 
   const res = request('PUT', SERVER_URL + route, {
@@ -635,12 +687,12 @@ export const adminUserDetailsUpdate = (
       email: email,
       nameFirst: nameFirst,
       nameLast: nameLast,
-    }
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 
@@ -658,19 +710,19 @@ export const adminQuizTransfer = (
   quizId: number,
   tokenObject: ReturnedToken,
   userEmail: string
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/' + quizId + '/transfer';
 
   const res = request('POST', SERVER_URL + route, {
     json: {
       token: tokenObject.token,
-      userEmail: userEmail
-    }
+      userEmail: userEmail,
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 
@@ -717,18 +769,18 @@ export const adminUserPasswordUpdate = (
 export const adminQuizTrashEmpty = (
   tokenObject: ReturnedToken,
   quizIds: string
-): {content: EmptyObject, statusCode: number} => {
+): { content: EmptyObject; statusCode: number } => {
   const route = '/v1/admin/quiz/trash/empty';
   const res = request('DELETE', SERVER_URL + route, {
     qs: {
       token: tokenObject.token,
-      quizIds: quizIds
-    }
+      quizIds: quizIds,
+    },
   });
 
   return {
     content: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode
+    statusCode: res.statusCode,
   };
 };
 

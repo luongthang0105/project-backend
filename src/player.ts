@@ -3,6 +3,8 @@ import HTTPError from "http-errors";
 import { generateRandomName } from "./playerHelper";
 import { Player } from "./types";
 import { randomSessionId } from "./authHelper";
+import { adminQuizSessionStateUpdate } from "./session";
+import { toQuestionCountDownState } from "./sessionHelper";
 
 export const playerJoinSession = (sessionId: number, name: string): { playerId: number } => {
   const data = getData();
@@ -55,6 +57,10 @@ export const playerJoinSession = (sessionId: number, name: string): { playerId: 
   // add players name to session players field
   validSession.players.push(name);
 
+  if (validSession.players.length === validSession.autoStartNum) {
+    // If number of players reach autoStartNum, then starts the game
+    toQuestionCountDownState(validSession, data);
+  }
   setData(data);
   
   return { playerId: newPlayer.playerId };

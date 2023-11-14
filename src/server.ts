@@ -346,7 +346,7 @@ app.put(
   }
 );
 
-// adminQuizGetSessionStatus V1
+// adminQuizViewSessionStatus V1
 app.get(
   '/v1/admin/quiz/:quizid/sessions',
   (req: Request, res: Response) => {

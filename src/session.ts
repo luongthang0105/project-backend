@@ -231,11 +231,11 @@ const adminQuizSessionStateUpdate = (
   // Current state: LOBBY
   switch(validQuizSesssion.state) {
     case "LOBBY":
-      handlesLobby(validQuizSesssion, action as AdminAction)
+      handlesLobby(validQuizSesssion, action as AdminAction, data)
       break;
     
     case "QUESTION_COUNTDOWN":
-      handlesQCD(validQuizSesssion, action as AdminAction)
+      handlesQCD(validQuizSesssion, action as AdminAction, data)
       break;
     
     case "QUESTION_OPEN":
@@ -243,11 +243,11 @@ const adminQuizSessionStateUpdate = (
       break;
     
     case "QUESTION_CLOSE":
-      handlesQC(validQuizSesssion, action as AdminAction)
+      handlesQC(validQuizSesssion, action as AdminAction, data)
       break;
     
     case "ANSWER_SHOW":
-      handlesAS(validQuizSesssion, action as AdminAction)
+      handlesAS(validQuizSesssion, action as AdminAction, data)
       break;
     
     case "FINAL_RESULTS":

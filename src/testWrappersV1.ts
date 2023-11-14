@@ -9,9 +9,29 @@ import {
   ReturnedToken,
   UserDetails,
   QuizSession,
+  Message
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
+
+export const allChatMessages = (
+  playerId: number
+): {
+  content: {
+    messages: Message[]
+  };
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/player/' + playerId + '/chat'
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
 
 /**
  * Retrieves information about active and inactive sessions

@@ -47,6 +47,7 @@ import {
   adminUserDetailsUpdate,
 } from './auth';
 import { playerJoinSession } from './player';
+import { allChatMessages } from './testWrappersV1';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -329,6 +330,19 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+
+// allChatMessages
+app.get(
+  '/v1/player/:playerid/chat',
+  (req: Request, res: Response) => {
+    const playerId = parseInt(req.params.quizid);
+
+    const result = allChatMessages(playerId);
+
+    res.json(result);
+  }
+);
+
 // adminQuizSessionStatusUpdate V1
 app.put(
   '/v1/admin/quiz/:quizid/session/:sessionid',

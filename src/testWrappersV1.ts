@@ -702,3 +702,35 @@ export const adminQuizTrashEmpty = (
     statusCode: res.statusCode
   };
 };
+
+/**
+ * Updates the thumbnail for the quiz.
+ *
+ * @param quizId - The unique identifier of the quiz to be restored.
+ * @param tokenObject - An object containing the authentication token for user logout.
+ * @param tokenObject.token - The authentication token for the request.
+ * @param thumbnailUrl - The URL of the image.
+ *
+ * @returns An object containing the response content (EmptyObject or ErrorObject) and the HTTP status code of the question update request.
+ */
+export const adminQuizThumbnail = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  thumbnailUrl: string
+): { content: EmptyObject; statusCode: number } => {
+  const route = '/v1/admin/quiz/' + quizId + '/thumbnail/';
+
+  const res = request('PUT', SERVER_URL + route, {
+    headers: {
+      token: tokenObject.token
+    },
+    json: {
+      thumbnailUrl: thumbnailUrl
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

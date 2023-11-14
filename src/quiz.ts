@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import request from 'sync-request-curl';
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -1739,6 +1740,69 @@ const adminQuizDuplicateQuestionV2 = (
   return { newQuestionId: duplicateQuestion.questionId };
 };
 
+/**
+ * Updates the thumbnail for the quiz.
+ *
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param token - The authentication token for the user performing the action.
+ * @param imgURL - The URL for the image used for the thumbnail.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizThumbnail = (
+  token: string,
+  quizId: number,
+  thumbnailUrl: string
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is not an owner of this quiz
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
+
+  /**
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+  */
+
+  // Error: The thumbnailUrl does not return to a valid file
+  let res;
+  try {
+    res = request('GET', thumbnailUrl);
+  } catch (err) {
+    throw HTTPError(400, 'The thumbnailUrl does not return to a valid file');
+  }
+
+  if (thumbnailUrl.match(/\.(jpg|png)$/) === null) {
+    throw HTTPError(
+      400,
+      'imgUrl when fetch is not a JPG or PNG image'
+    );
+  }
+
+  // Updates the quiz thumbnail
+  validQuiz.thumbnailUrl = thumbnailUrl;
+  setData(data);
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizCreateV2,
@@ -1759,5 +1823,6 @@ export {
   adminQuizRestore,
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
-  adminQuizQuestionUpdateV2
+  adminQuizQuestionUpdateV2,
+  adminQuizThumbnail
 };

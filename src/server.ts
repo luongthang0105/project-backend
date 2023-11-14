@@ -29,7 +29,8 @@ import {
   adminQuizInfoV2,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizDuplicateQuestionV2
+  adminQuizDuplicateQuestionV2,
+  adminQuizThumbnail
 } from './quiz';
 import {
   adminQuizSessionStart,
@@ -708,6 +709,26 @@ app.put(
     res.json(result);
   }
 );
+
+// adminQuizThumbnail
+app.put(
+  '/v1/admin/quiz/:quizid/thumbnail',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizId);
+    const token = req.headers.token as string;
+
+    const { thumbnailUrl } = req.body;
+
+    const result = adminQuizThumbnail(
+      token,
+      quizId,
+      thumbnailUrl
+    );
+
+    res.json(result);
+  }
+);
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

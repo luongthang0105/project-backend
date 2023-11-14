@@ -8,6 +8,7 @@ import {
   adminAuthRegister,
   adminQuizGetSessionStatus,
   adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear,
   playerJoinSession
   } from '../testWrappersV1'

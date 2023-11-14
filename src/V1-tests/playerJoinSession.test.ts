@@ -100,8 +100,7 @@ describe('adminAllowPlayerJoin', () => {
     })
   })
 
-  // NOT YET TO BE TESTED TIL MUTSUKI FINISHED UPDATE SESSION STATE
-  test('(NOT YET TO BE TESTED) Error: Session is not in LOBBY state', () => {
+  test('Error: Session is not in LOBBY state', () => {
     const player1 = playerJoinSession(session1, "Thomas");
     expect(player1).toStrictEqual({
       content: {
@@ -112,7 +111,7 @@ describe('adminAllowPlayerJoin', () => {
     
     const sessionUpdate = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     expect(sessionUpdate.statusCode).toBe(200);
-    
+
     const player2 = playerJoinSession(session1, "Han");
     expect(player2).toStrictEqual({
       content: {
@@ -186,8 +185,7 @@ describe('adminAllowPlayerJoin', () => {
     expect(sessionStatus.players).toStrictEqual(["Thomas", "Han"])
   })
 
-  // NOT DONE YET TIL MUTSUKI FINISH HER UPDATE ROUTE
-  test('(NOT YET TO BE TESTED) Success: 3 player join the game, which automatically starts the game', () => {
+  test('Success: 3 player join the game, which automatically starts the game', () => {
     const player1 = playerJoinSession(session1, "Thomas");
     expect(player1).toStrictEqual({
       content: {
@@ -211,7 +209,7 @@ describe('adminAllowPlayerJoin', () => {
     })
 
     const sessionStatus = adminQuizGetSessionStatus(user1, quiz1.quizId, session1).content;
-    expect(sessionStatus.state).toStrictEqual("NEXT_QUESTION")
+    expect(sessionStatus.state).toStrictEqual("QUESTION_COUNTDOWN")
   })
 
 })

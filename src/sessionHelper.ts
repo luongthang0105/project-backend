@@ -50,6 +50,12 @@ export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) =
  * @param quizSession - The current quiz session
  */
 export const toQuestionCountDownState = (quizSession: QuizSession, data: DataStore) => {
+  if (quizSession.atQuestion === quizSession.metadata.numQuestions) {
+    throw HTTPError(
+      400,
+      'Action enum cannot be applied in the current state'
+    )
+  }
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
 

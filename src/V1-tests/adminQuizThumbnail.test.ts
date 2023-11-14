@@ -5,21 +5,20 @@ import {
 } from '../testWrappersV1';
 
 import {
-  adminQuizCreate,
-  adminQuizCreateQuestion
+  adminQuizCreate
 } from '../testWrappersV2';
 
 import { expect, test } from '@jest/globals';
-import { ReturnedToken, Quiz } from '../types';
+import { ReturnedToken, QuizObject } from '../types';
 
 describe('adminQuizThumbnail', () => {
   let user: ReturnedToken;
-  let quiz: Quiz;
+  let quiz: QuizObject;
 
   beforeEach(() => {
     clear();
     user = adminAuthRegister('ryan@gmail.com', 'password4213', 'Ryan', 'Huynh').content as ReturnedToken;
-    quiz = adminQuizCreate(user, 'quiz', 'description').content as Quiz;
+    quiz = adminQuizCreate(user, 'quiz', 'description').content as QuizObject;
   });
 
   test('Token is empty or invalid (does not refer to valid logged in user session)', () => {
@@ -56,12 +55,12 @@ describe('adminQuizThumbnail', () => {
     });
   });
 
-  test('The thumbnailUrl does not begin with "http://" or "https://"', () => {
+  test('The imgUrl does not begin with "http://" or "https://"', () => {
     const result = adminQuizThumbnail(user, quiz.quizId, 'htt://apcs.jpg');
     expect(result).toStrictEqual({
       statusCode: 400,
       content: {
-        error: 'The thumbnailUrl does not begin with "http://" or "https://"'
+        error: 'The imgUrl does not begin with "http://" or "https://"'
       }
     });
   });

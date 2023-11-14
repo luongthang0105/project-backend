@@ -1770,11 +1770,8 @@ const adminQuizThumbnail = (
 
   // Error: Valid token is provided, but user is not an owner of this quiz
   const authUserId = validSession.authUserId;
-  const validQuiz = data.quizzes.find(
-    (quiz: QuizObject) => quiz.quizId === quizId
-  );
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
 
-  // check if the quiz does not exist or the user is not an owner of this quiz
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
@@ -1782,21 +1779,19 @@ const adminQuizThumbnail = (
     );
   }
 
-  // Error: imgUrl when fetched does not return a valid file
-  let res;
-  try {
-    res = request('GET', thumbnailUrl);
-  } catch (err) {
+  // Error: The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+  if (!isUrlEndWithImgExtension(thumbnailUrl)) {
     throw HTTPError(
       400,
-      'imgUrl when fetched does not return a valid file'
-      );
+      'The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
+    );
   }
 
-  if (thumbnailUrl.match(/\.(jpg|png)$/) === null) {
+  // Error: The imgUrl does not begin with 'http://' or 'https://'
+  if (!isUrlStartWithHTTP(thumbnailUrl)) {
     throw HTTPError(
       400,
-      'imgUrl when fetch is not a JPG or PNG image'
+      'The imgUrl does not begin with "http://" or "https://"'
     );
   }
 

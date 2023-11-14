@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { autoChangeState } from './sessionHelper';
 import {
   QuizObject,
   QuizSession,
@@ -232,6 +233,12 @@ const adminQuizSessionStateUpdate = (
     }
     if (action === 'NEXT_QUESTION') {
       validQuizSesssion.state = 'QUESTION_COUNTDOWN';
+      console.log('a')
+      setTimeout(() => {
+        if (validQuizSesssion.state === 'QUESTION_COUNTDOWN') {
+          validQuizSesssion.state = 'QUESTION_OPEN'
+        }
+      }, 3000);
     }
     if (action === 'END') {
       validQuizSesssion.state = 'END';
@@ -311,12 +318,8 @@ const adminQuizSessionStateUpdate = (
     );  
   } 
 
-  const duration = validQuizSesssion.metadata.questions[validQuizSesssion.atQuestion].duration * 1000;
-  if (validQuizSesssion.state === 'QUESTION_COUNTDOWN') {
-    setTimeout(validQuizSesssion.state = 'QUESTION_OPEN', 3000);
-  } else if (validQuizSesssion.state === 'QUESTION_OPEN') {
-    setTimeout(validQuizSesssion.state = 'QUESTION_CLOSE', duration);   
-  }
+
+
   setData(data);
   return {};
 }

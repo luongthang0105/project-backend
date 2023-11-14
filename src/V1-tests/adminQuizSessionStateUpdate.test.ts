@@ -300,30 +300,33 @@ describe.only('adminQuizGetSessionStatus', () => {
   test('Action enum cannot be applied in the current state: QUESTION_CLOSE => NEXT_QUESTION', async () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    setTimeout(function(){}, 4000);
-    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    expect(result).toStrictEqual({
-      content: {
-        error:
-          'Action enum cannot be applied in the current state',
-      },
-      statusCode: 400
-      ,
-    });
+    setTimeout(() => {
+      const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION')
+      expect(result).toStrictEqual({
+        content: {
+          error:
+            'Action enum cannot be applied in the current state',
+        },
+        statusCode: 400
+        ,
+      });
+    }, 4000);
+
   });
   test('Action enum cannot be applied in the current state: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    setTimeout(function(){}, 4000);
-    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    expect(result).toStrictEqual({
-      content: {
-        error:
-          'Action enum cannot be applied in the current state',
-      },
-      statusCode: 400
-      ,
-    });
+    setTimeout(() => {
+      const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+      expect(result).toStrictEqual({
+        content: {
+          error:
+            'Action enum cannot be applied in the current state',
+        },
+        statusCode: 400
+        ,
+      });
+    }, 4000);
   });
   // Action enums that cannot be applied to  ANSWER_SHOW
   test('Action enum cannot be applied in the current state: ANSWER_SHOW => SKIP_COUNTDOWN', () => {
@@ -340,11 +343,11 @@ describe.only('adminQuizGetSessionStatus', () => {
       ,
     });
   });
-  test('Action enum cannot be applied in the current state: ANSWER_SHOW => ANSWER_SHOW', () => {
+  test('Action enum cannot be applied in the current state: ANSWER_SHOW => GO_TO_ANSWER', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
-    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'ANSWER_SHOW');
+    const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     expect(result).toStrictEqual({
       content: {
         error:
@@ -507,6 +510,13 @@ describe.only('adminQuizGetSessionStatus', () => {
     });
     expect(result2).toStrictEqual('QUESTION_COUNTDOWN');
   });
+  test('SUCCESS: LOBBY => NEXT_QUESTION => 3seconds', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
+    setTimeout(() => {
+      const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+      expect(result2).toStrictEqual('QUESTION_OPEN');
+    }, 3000);
+  });
   test('SUCCESS: LOBBY => END', () => {
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
@@ -541,9 +551,10 @@ describe.only('adminQuizGetSessionStatus', () => {
     expect(result2).toStrictEqual('END');
   });
   // Successful state update: QUESTION_OPEN
-  test('SUCCESS: QUESTION_OPEN => SKIP_COUNTDOWN', () => {
+  test('SUCCESS: QUESTION_OPEN => GO_TO_ANSWER', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toBe('QUESTION_COUNTDOWN')
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN')
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
       expect(result1).toStrictEqual({
@@ -555,7 +566,7 @@ describe.only('adminQuizGetSessionStatus', () => {
   });
   test('SUCCESS: QUESTION_OPEN => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
       expect(result1).toStrictEqual({
@@ -567,54 +578,59 @@ describe.only('adminQuizGetSessionStatus', () => {
   });
   test('SUCCESS: QUESTION_OPEN => duration', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    const result1 = setTimeout(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state, 4000);
-    expect(result1).toStrictEqual('QUESTION_CLOSE');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    setTimeout(() => {
+      const result1 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+      expect(result1).toStrictEqual('QUESTION_CLOSE');    
+    }, 4000);
   });
   // Successful state update: QUESTION_CLOSE
   test('SUCCESS: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    setTimeout(function(){}, 4000);
-    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
-    const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('ANSWER_SHOW');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    setTimeout(() => {
+      const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
+      const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+        expect(result1).toStrictEqual({
+          content: {},
+          statusCode: 200
+          ,
+        });
+        expect(result2).toStrictEqual('ANSWER_SHOW');
+    }, 4000);
   });
   test('SUCCESS: QUESTION_CLOSE => GO_TO_FINAL_RESULTS', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    setTimeout(function(){}, 4000);
-    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
-    const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('FINAL_RESULTS');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    setTimeout(() => {
+      const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
+      const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+        expect(result1).toStrictEqual({
+          content: {},
+          statusCode: 200
+          ,
+        });
+        expect(result2).toStrictEqual('FINAL_RESULTS');
+    }, 4000);
   });
   test('SUCCESS: QUESTION_CLOSE => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
-    setTimeout(function(){}, 4000);
-    const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
-    const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('END');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    setTimeout(() => {
+      const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
+      const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+        expect(result1).toStrictEqual({
+          content: {},
+          statusCode: 200
+          ,
+        });
+        expect(result2).toStrictEqual('END');
+    }, 4000);
   });
   // Successful state update: ANSWER_SHOW
   test('SUCCESS: ANSWER_SHOW => NEXT_QUESTION', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
@@ -627,7 +643,7 @@ describe.only('adminQuizGetSessionStatus', () => {
   });
   test('SUCCESS: ANSWER_SHOW => GO_TO_FINAL_RESULTS', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
@@ -640,7 +656,7 @@ describe.only('adminQuizGetSessionStatus', () => {
   });
   test('SUCCESS: ANSWER_SHOW => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
@@ -654,7 +670,7 @@ describe.only('adminQuizGetSessionStatus', () => {
   // Successful state update: FINAL_RESULTS
   test('SUCCESS: ANSWER_SHOW => NEXT_QUESTION', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWNN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
@@ -665,6 +681,16 @@ describe.only('adminQuizGetSessionStatus', () => {
         ,
       });
       expect(result2).toStrictEqual('END');
+  });
+  // Successful state update: 
+  test.only('SUCCESS: ', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
+    const state1 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+    expect(state1).toStrictEqual('QUESTION_COUNTDOWN');
+    setTimeout(() => {
+    }, 5000);
+    const state2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
+    expect(state2).toStrictEqual('b');
   });
 });
 

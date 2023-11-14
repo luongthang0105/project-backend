@@ -9,7 +9,8 @@ import {
   adminQuizGetSessionStatus,
   adminQuizSessionStart,
   clear,
-  playerJoinSession
+  playerJoinSession,
+  playerStatus
   } from '../testWrappersV1'
 import { Question, Quiz, ReturnedToken } from '../types';
 

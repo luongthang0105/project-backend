@@ -73,7 +73,7 @@ export const playerJoinSession = (
   return { playerId: newPlayer.playerId }
 }
 
-const playerStatus = (
+export const playerStatus = (
   playerId: number,
 ): {
   state: string

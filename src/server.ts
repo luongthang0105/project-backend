@@ -718,6 +718,16 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
   }
 );
 
+// playerStatus V1
+app.get('/v1/player/playerid', (req: Request, res: Response) => {
+  const playerId: number = parseInt(req.params.playerid)
+
+  const result = playerStatus(playerId);
+
+  res.json(result);
+}
+);
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

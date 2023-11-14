@@ -327,7 +327,7 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
-// adminQuizGetSessionStatus V1
+// adminQuizSessionStatusUpdate V1
 app.put(
   '/v1/admin/quiz/:quizid/session/:sessionid',
   (req: Request, res: Response) => {

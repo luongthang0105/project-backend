@@ -1,3 +1,4 @@
+import { setData } from "./dataStore";
 import { AdminAction, DataStore, QuizSession, SessionState } from "./types";
 import HTTPError from "http-errors"
 // /**
@@ -29,7 +30,7 @@ import HTTPError from "http-errors"
  *
  * @param quizSession - The current quiz session
  */
-export const toQuestionOpenState = (quizSession: QuizSession) => {
+export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) => {
   quizSession.state = 'QUESTION_OPEN';
   const questionPosition = quizSession.atQuestion - 1;
   const duration = quizSession.metadata.questions[questionPosition].duration;
@@ -37,9 +38,10 @@ export const toQuestionOpenState = (quizSession: QuizSession) => {
   setTimeout(() => {
     if (quizSession.state === 'QUESTION_OPEN') {
       quizSession.state = 'QUESTION_CLOSE';
+      setData(data);
     }
   }, duration * 1000);
-
+  setData(data);
 }
 
 /**
@@ -47,13 +49,14 @@ export const toQuestionOpenState = (quizSession: QuizSession) => {
  *
  * @param quizSession - The current quiz session
  */
-export const toQuestionCountDownState = (quizSession: QuizSession) => {
+export const toQuestionCountDownState = (quizSession: QuizSession, data: DataStore) => {
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
 
   setTimeout(() => {
     if (quizSession.state === 'QUESTION_COUNTDOWN') {
-      toQuestionOpenState(quizSession)
+      // console.log("heloooooo")
+      toQuestionOpenState(quizSession, data)
     }
   }, 3000);
 }
@@ -84,7 +87,7 @@ export const toEndState = (quizSession: QuizSession) => {
  * @param quizSession - The current quiz session
  * @param action - The action given to this state of the session
  */
-export const handlesLobby = (quizSession: QuizSession, action: AdminAction) => {
+export const handlesLobby = (quizSession: QuizSession, action: AdminAction, data: DataStore) => {
   if (action !== 'NEXT_QUESTION' && action !== 'END') {
     throw HTTPError(
       400,
@@ -92,7 +95,7 @@ export const handlesLobby = (quizSession: QuizSession, action: AdminAction) => {
     ); 
   }
   if (action === 'NEXT_QUESTION') {
-    toQuestionCountDownState(quizSession);
+    toQuestionCountDownState(quizSession, data);
   }
   if (action === 'END') {
     toEndState(quizSession);
@@ -105,7 +108,7 @@ export const handlesLobby = (quizSession: QuizSession, action: AdminAction) => {
  * @param quizSession - The current quiz session
  * @param action - The action given to this state of the session
  */
-export const handlesQCD = (quizSession: QuizSession, action: AdminAction) => {
+export const handlesQCD = (quizSession: QuizSession, action: AdminAction, data: DataStore) => {
   if (action !== 'SKIP_COUNTDOWN' && action !== 'END') {
     throw HTTPError(
       400,
@@ -113,7 +116,7 @@ export const handlesQCD = (quizSession: QuizSession, action: AdminAction) => {
     ); 
   }
   if (action === 'SKIP_COUNTDOWN') {
-    toQuestionOpenState(quizSession);
+    toQuestionOpenState(quizSession, data);
   }
   if (action === 'END') {
     toEndState(quizSession);
@@ -147,7 +150,7 @@ export const handlesQO = (quizSession: QuizSession, action: AdminAction) => {
  * @param quizSession - The current quiz session
  * @param action - The action given to this state of the session
  */
-export const handlesQC = (quizSession: QuizSession, action: AdminAction) => {
+export const handlesQC = (quizSession: QuizSession, action: AdminAction, data: DataStore) => {
   if (action === 'SKIP_COUNTDOWN') {
     throw HTTPError(
       400,
@@ -164,7 +167,7 @@ export const handlesQC = (quizSession: QuizSession, action: AdminAction) => {
     toEndState(quizSession);
   } 
   if (action === 'NEXT_QUESTION') {
-    toQuestionCountDownState(quizSession)
+    toQuestionCountDownState(quizSession, data)
   }
 }
 
@@ -174,12 +177,12 @@ export const handlesQC = (quizSession: QuizSession, action: AdminAction) => {
  * @param quizSession - The current quiz session
  * @param action - The action given to this state of the session
  */
-export const handlesAS = (quizSession: QuizSession, action: AdminAction) => {
+export const handlesAS = (quizSession: QuizSession, action: AdminAction, data: DataStore) => {
   if (action === "GO_TO_ANSWER" || action === "SKIP_COUNTDOWN") {
     throw HTTPError(400, "Action enum cannot be applied in the current state")
   }
   if (action === "NEXT_QUESTION") {
-    toQuestionCountDownState(quizSession)
+    toQuestionCountDownState(quizSession, data)
   }
   if (action === "GO_TO_FINAL_RESULTS") {
     toFinalResultsState(quizSession);

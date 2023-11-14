@@ -34,6 +34,7 @@ import {
 import {
   adminQuizSessionStart,
   adminQuizGetSessionStatus,
+  adminQuizViewSessions,
   adminQuizSessionStateUpdate
 } from './session';
 import { clear } from './other';
@@ -346,22 +347,19 @@ app.put(
   }
 );
 
-// adminQuizGetSessionStatus V1
+// adminQuizViewSessionStatus V1
 app.get(
-  '/v1/admin/quiz/:quizid/session/:sessionid',
+  '/v1/admin/quiz/:quizid/sessions',
   (req: Request, res: Response) => {
     const quizId = parseInt(req.params.quizid);
 
     const token = req.headers.token as string;
 
-    const sessionId = parseInt(req.params.sessionid);
-
-    const result = adminQuizGetSessionStatus(token, quizId, sessionId);
+    const result = adminQuizViewSessions(token, quizId);
 
     res.json(result);
   }
 );
-
 // adminQuizSessionStart V1
 app.post(
   '/v1/admin/quiz/:quizid/session/start',
@@ -377,7 +375,21 @@ app.post(
     res.json(result);
   }
 );
+// adminQuizGetSessionStatus V1
+app.get(
+  '/v1/admin/quiz/:quizid/session/:sessionid',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
 
+    const token = req.headers.token as string;
+
+    const sessionId = parseInt(req.params.sessionid);
+
+    const result = adminQuizGetSessionStatus(token, quizId, sessionId);
+
+    res.json(result);
+  }
+);
 // adminAuthLogout V2
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -731,12 +743,12 @@ app.put(
 
 // playerJoinSession V1
 app.post('/v1/player/join', (req: Request, res: Response) => {
-    const { sessionId, name } = req.body
+  const { sessionId, name } = req.body;
 
-    const result = playerJoinSession(sessionId, name);
+  const result = playerJoinSession(sessionId, name);
 
-    res.json(result);
-  }
+  res.json(result);
+}
 );
 
 // playerStatus V1

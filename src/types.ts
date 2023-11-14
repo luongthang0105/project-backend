@@ -233,6 +233,7 @@ type SessionState =
  */
   type QuizSession = {
     quizSessionId?: number,
+    autoStartNum?: number,
     state: SessionState,
     atQuestion: number,
     players: string[],

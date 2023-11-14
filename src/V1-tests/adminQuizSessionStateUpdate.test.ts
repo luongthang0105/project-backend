@@ -61,7 +61,7 @@ beforeEach(() => {
     questInfo1.answers,
     questInfo1.thumbnailUrl
   ).content.questionId;
-  expect(question1).toBe(expect.any(Number));
+  expect(question1).toStrictEqual(expect.any(Number));
   quizSession1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
 });
 

@@ -1,5 +1,12 @@
 import { getData, setData } from './dataStore';
-import { handlesAS, handlesFR, handlesLobby, handlesQC, handlesQCD, handlesQO } from './sessionHelper';
+import {
+  handlesAS,
+  handlesFR,
+  handlesLobby,
+  handlesQC,
+  handlesQCD,
+  handlesQO,
+} from './sessionHelper';
 import { QuizObject, QuizSession, AdminAction, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 /**
@@ -68,6 +75,7 @@ const adminQuizSessionStart = (
     atQuestion: 0,
     players: [],
     metadata: validQuiz as QuizObject,
+    autoStartNum: autoStartNum
   };
 
   data.nextQuizSessionId += 1;
@@ -256,15 +264,85 @@ const adminQuizSessionStateUpdate = (
 
     // case "END"
     default:
-      throw HTTPError(400, 'Action enum cannot be applied in the current state');
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      );
   }
 
   setData(data);
   return {};
 };
 
+const adminQuizViewSessions = (token: string, quizId: number) => {
+  // Retrieve the current data
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currToken) => currToken.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Find the quiz with the specified quizId and check if it exists
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Return an error message if the quiz with the given quizId does not exist
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  const allSessions = data.quizSessions.filter(
+    (session) => session.metadata.quizId === quizId
+  );
+
+  const inactiveSessions = allSessions.filter(
+    (session) => session.state === 'END'
+  );
+
+  // let sortedInactive = inactiveSessions.sort((s1, s2) => {
+  //   if (s1.quizSessionId !== s2.quizSessionId) {
+  //     return s1.quizSessionId - s2.quizSessionId;
+  //   }
+  //   return 0;
+  // });
+  const inactiveSessionIds = inactiveSessions.map(
+    (session) => session.quizSessionId
+  );
+
+  const activeSessions = allSessions.filter(
+    (session) => session.state !== 'END'
+  );
+
+  // let sortedActive = activeSessions.sort((s1, s2) => {
+  //   if (s1.quizSessionId !== s2.quizSessionId) {
+  //     return s1.quizSessionId - s2.quizSessionId;
+  //   }
+  //   return 0;
+  // });
+  const activeSessionIds = activeSessions.map((session) => session.quizSessionId);
+
+  return {
+    activeSessions: activeSessionIds,
+    inactiveSessions: inactiveSessionIds,
+  };
+};
 export {
   adminQuizSessionStart,
   adminQuizGetSessionStatus,
+  adminQuizViewSessions,
   adminQuizSessionStateUpdate,
 };

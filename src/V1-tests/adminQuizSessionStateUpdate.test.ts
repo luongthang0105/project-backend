@@ -6,9 +6,8 @@ import {
   adminQuizGetSessionStatus,
   adminQuizSessionStateUpdate
 } from '../testWrappersV1';
-import { adminQuizCreate, adminQuizCreateQuestion, adminQuizInfo } from '../testWrappersV2';
+import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
 import { Question, Quiz, ReturnedToken } from '../types';
-import { jest } from '@jest/globals';
 import { sleepSync } from './sleepSync';
 
 // jest.useFakeTimers();
@@ -17,7 +16,7 @@ let quiz1: Quiz;
 let questInfo1: Question;
 let question1: number;
 let quizSession1: number;
-let duration = 2;
+const duration = 2;
 
 beforeEach(() => {
   clear();
@@ -62,7 +61,7 @@ beforeEach(() => {
     questInfo1.answers,
     questInfo1.thumbnailUrl
   ).content.questionId;
-
+  expect(question1).toBe(expect.any(Number));
   quizSession1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
 });
 
@@ -112,7 +111,7 @@ describe('adminQuizGetSessionStatus', () => {
       statusCode: 400
       ,
     });
-  });  
+  });
   test('Session Id does not refer to a valid session within this quiz: 2 quizzes', () => {
     const quiz2 = adminQuizCreate(user1, 'NewQuiz', 'nice quiz').content as Quiz;
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 3).content.sessionId;
@@ -190,7 +189,7 @@ describe('adminQuizGetSessionStatus', () => {
       statusCode: 403,
     });
   });
-  
+
   // Action enums that cannot be applied to LOBBY
   test('Action enum cannot be applied in the current state: LOBBY => SKIP_COUNTDOWN', () => {
     const result = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
@@ -308,8 +307,7 @@ describe('adminQuizGetSessionStatus', () => {
       statusCode: 400
       ,
     });
-  });-
-  // Action enums that cannot be applied to QUESTION_CLOSE
+  });
   test('Action enum cannot be applied in the current state: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
@@ -552,28 +550,28 @@ describe('adminQuizGetSessionStatus', () => {
   // Successful state update: QUESTION_OPEN
   test('SUCCESS: QUESTION_OPEN => GO_TO_ANSWER', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toBe('QUESTION_COUNTDOWN')
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN')
+    expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toBe('QUESTION_COUNTDOWN');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('ANSWER_SHOW');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('ANSWER_SHOW');
   });
   test('SUCCESS: QUESTION_OPEN => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('END');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('END');
   });
   test('SUCCESS: QUESTION_OPEN => duration', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
@@ -581,10 +579,10 @@ describe('adminQuizGetSessionStatus', () => {
     // setTimeout(() => {
     // }, 2000);
     sleepSync(duration);
-    
+
     expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toStrictEqual('QUESTION_CLOSE');
     const result1 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-    expect(result1).toStrictEqual('QUESTION_CLOSE');    
+    expect(result1).toStrictEqual('QUESTION_CLOSE');
   });
   // Successful state update: QUESTION_CLOSE
   test('SUCCESS: QUESTION_CLOSE => SKIP_COUNTDOWN', () => {
@@ -593,17 +591,17 @@ describe('adminQuizGetSessionStatus', () => {
     // setTimeout(() => {
     // }, 2000);
     sleepSync(duration);
-    
+
     expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toStrictEqual('QUESTION_CLOSE');
 
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('ANSWER_SHOW');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('ANSWER_SHOW');
   });
   test('SUCCESS: QUESTION_CLOSE => GO_TO_FINAL_RESULTS', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
@@ -611,17 +609,17 @@ describe('adminQuizGetSessionStatus', () => {
     // setTimeout(() => {
     // }, 2000);
     sleepSync(duration);
-    
+
     expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toStrictEqual('QUESTION_CLOSE');
 
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('FINAL_RESULTS');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('FINAL_RESULTS');
   });
   test('SUCCESS: QUESTION_CLOSE => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
@@ -629,16 +627,16 @@ describe('adminQuizGetSessionStatus', () => {
     // setTimeout(() => {
     // }, 2000);
     sleepSync(duration);
-    
+
     expect(adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state).toStrictEqual('QUESTION_CLOSE');
 
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-      });
-      expect(result2).toStrictEqual('END');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+    });
+    expect(result2).toStrictEqual('END');
   });
   // Successful state update: ANSWER_SHOW
   test('SUCCESS: ANSWER_SHOW => NEXT_QUESTION', () => {
@@ -681,7 +679,7 @@ describe('adminQuizGetSessionStatus', () => {
         error: 'Action enum cannot be applied in the current state'
       },
       statusCode: 400
-    })
+    });
     // sleepSync(1)
   });
   test('SUCCESS: ANSWER_SHOW => GO_TO_FINAL_RESULTS', () => {
@@ -690,12 +688,12 @@ describe('adminQuizGetSessionStatus', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('FINAL_RESULTS');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('FINAL_RESULTS');
   });
   test('SUCCESS: ANSWER_SHOW => END', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
@@ -703,12 +701,12 @@ describe('adminQuizGetSessionStatus', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_ANSWER');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('END');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('END');
   });
   // Successful state update: FINAL_RESULTS
   test('SUCCESS: FINAL_RESULTS => END', () => {
@@ -718,21 +716,21 @@ describe('adminQuizGetSessionStatus', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
     const result1 = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'END');
     const result2 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
-      expect(result1).toStrictEqual({
-        content: {},
-        statusCode: 200
-        ,
-      });
-      expect(result2).toStrictEqual('END');
+    expect(result1).toStrictEqual({
+      content: {},
+      statusCode: 200
+      ,
+    });
+    expect(result2).toStrictEqual('END');
   });
-  // Successful state update: 
+  // Successful state update:
   test('SUCCESS: Able to capture QUESTION_OPEN and QUESTION_CLOSE states', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     const state1 = adminQuizGetSessionStatus(user1, quiz1.quizId, quizSession1).content.state;
     expect(state1).toStrictEqual('QUESTION_COUNTDOWN');
-    
+
     // jest.useFakeTimers();
-    
+
     // Wait 3 seconds to QUESTION_OPEN
     sleepSync(3);
 
@@ -748,4 +746,3 @@ describe('adminQuizGetSessionStatus', () => {
     // jest.useRealTimers();
   });
 });
-

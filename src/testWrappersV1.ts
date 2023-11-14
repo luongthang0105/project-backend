@@ -27,7 +27,7 @@ export const adminQuizSessionStateUpdate = (
   quizId: number,
   sessionId: number,
   action: string
-): { content: {}; statusCode: number } => {
+): { content: EmptyObject; statusCode: number } => {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId, {
     headers: {
       token: tokenObject.token,
@@ -41,7 +41,6 @@ export const adminQuizSessionStateUpdate = (
     statusCode: res.statusCode,
   };
 };
-
 
 /**
  * Get the status of a particular quiz session

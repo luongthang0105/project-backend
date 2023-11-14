@@ -5,5 +5,3 @@ export function sleepSync(duration: number) {
     // zzzZZ - comment needed so eslint doesn't complain
   }
 }
-  
-  

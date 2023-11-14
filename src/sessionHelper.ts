@@ -1,6 +1,6 @@
-import { setData } from "./dataStore";
-import { AdminAction, DataStore, QuizSession, SessionState } from "./types";
-import HTTPError from "http-errors"
+import { setData } from './dataStore';
+import { AdminAction, DataStore, QuizSession } from './types';
+import HTTPError from 'http-errors';
 // /**
 //  * Auomatiacally transfer session states after fix amount of time
 //  *
@@ -42,7 +42,7 @@ export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) =
     }
   }, duration * 1000);
   setData(data);
-}
+};
 
 /**
  * Change session state to QUESTION_COUNTDOWN state, calls a timeout for changing to QUESTION_OPEN state
@@ -54,7 +54,7 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
     throw HTTPError(
       400,
       'Action enum cannot be applied in the current state'
-    )
+    );
   }
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
@@ -62,30 +62,30 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
   setTimeout(() => {
     if (quizSession.state === 'QUESTION_COUNTDOWN') {
       // console.log("heloooooo")
-      toQuestionOpenState(quizSession, data)
+      toQuestionOpenState(quizSession, data);
     }
   }, 3000);
-}
+};
 
 /**
- * Change session state to FINAL_RESULTS state, set atQuestion to 0 
+ * Change session state to FINAL_RESULTS state, set atQuestion to 0
  *
  * @param quizSession - The current quiz session
  */
 export const toFinalResultsState = (quizSession: QuizSession) => {
   quizSession.state = 'FINAL_RESULTS';
   quizSession.atQuestion = 0;
-}
+};
 
 /**
- * Change session state to END state, set atQuestion to 0 
+ * Change session state to END state, set atQuestion to 0
  *
  * @param quizSession - The current quiz session
  */
 export const toEndState = (quizSession: QuizSession) => {
   quizSession.state = 'END';
   quizSession.atQuestion = 0;
-}
+};
 
 /**
  * Handles LOBBY state actions
@@ -98,7 +98,7 @@ export const handlesLobby = (quizSession: QuizSession, action: AdminAction, data
     throw HTTPError(
       400,
       'Action enum cannot be applied in the current state'
-    ); 
+    );
   }
   if (action === 'NEXT_QUESTION') {
     toQuestionCountDownState(quizSession, data);
@@ -106,7 +106,7 @@ export const handlesLobby = (quizSession: QuizSession, action: AdminAction, data
   if (action === 'END') {
     toEndState(quizSession);
   }
-}
+};
 
 /**
  * Handles QUESTION_COUNTDOWN state actions
@@ -119,7 +119,7 @@ export const handlesQCD = (quizSession: QuizSession, action: AdminAction, data: 
     throw HTTPError(
       400,
       'Action enum cannot be applied in the current state'
-    ); 
+    );
   }
   if (action === 'SKIP_COUNTDOWN') {
     toQuestionOpenState(quizSession, data);
@@ -127,7 +127,7 @@ export const handlesQCD = (quizSession: QuizSession, action: AdminAction, data: 
   if (action === 'END') {
     toEndState(quizSession);
   }
-}
+};
 
 /**
  * Handles QUESTION_OPEN state actions
@@ -140,15 +140,15 @@ export const handlesQO = (quizSession: QuizSession, action: AdminAction) => {
     throw HTTPError(
       400,
       'Action enum cannot be applied in the current state'
-    ); 
+    );
   }
   if (action === 'GO_TO_ANSWER') {
     quizSession.state = 'ANSWER_SHOW';
   }
   if (action === 'END') {
     toEndState(quizSession);
-  } 
-}
+  }
+};
 
 /**
  * Handles QUESTION_CLOSE state actions
@@ -161,7 +161,7 @@ export const handlesQC = (quizSession: QuizSession, action: AdminAction, data: D
     throw HTTPError(
       400,
       'Action enum cannot be applied in the current state'
-    ); 
+    );
   }
   if (action === 'GO_TO_ANSWER') {
     quizSession.state = 'ANSWER_SHOW';
@@ -171,11 +171,11 @@ export const handlesQC = (quizSession: QuizSession, action: AdminAction, data: D
   }
   if (action === 'END') {
     toEndState(quizSession);
-  } 
-  if (action === 'NEXT_QUESTION') {
-    toQuestionCountDownState(quizSession, data)
   }
-}
+  if (action === 'NEXT_QUESTION') {
+    toQuestionCountDownState(quizSession, data);
+  }
+};
 
 /**
  * Handles ANSWER_SHOW state actions
@@ -184,19 +184,19 @@ export const handlesQC = (quizSession: QuizSession, action: AdminAction, data: D
  * @param action - The action given to this state of the session
  */
 export const handlesAS = (quizSession: QuizSession, action: AdminAction, data: DataStore) => {
-  if (action === "GO_TO_ANSWER" || action === "SKIP_COUNTDOWN") {
-    throw HTTPError(400, "Action enum cannot be applied in the current state")
+  if (action === 'GO_TO_ANSWER' || action === 'SKIP_COUNTDOWN') {
+    throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  if (action === "NEXT_QUESTION") {
-    toQuestionCountDownState(quizSession, data)
+  if (action === 'NEXT_QUESTION') {
+    toQuestionCountDownState(quizSession, data);
   }
-  if (action === "GO_TO_FINAL_RESULTS") {
+  if (action === 'GO_TO_FINAL_RESULTS') {
     toFinalResultsState(quizSession);
   }
-  if (action === "END") {
+  if (action === 'END') {
     toEndState(quizSession);
   }
-}
+};
 
 /**
  * Handles FINAL_RESUTLS state actions
@@ -205,10 +205,10 @@ export const handlesAS = (quizSession: QuizSession, action: AdminAction, data: D
  * @param action - The action given to this state of the session
  */
 export const handlesFR = (quizSession: QuizSession, action: AdminAction) => {
-  if (action !== "END") {
-    throw HTTPError(400, "Action enum cannot be applied in the current state")
+  if (action !== 'END') {
+    throw HTTPError(400, 'Action enum cannot be applied in the current state');
   }
-  if (action === "END") {
+  if (action === 'END') {
     toEndState(quizSession);
   }
-}
+};

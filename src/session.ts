@@ -1,5 +1,12 @@
 import { getData, setData } from './dataStore';
-import { handlesAS, handlesFR, handlesLobby, handlesQC, handlesQCD, handlesQO } from './sessionHelper';
+import {
+  handlesAS,
+  handlesFR,
+  handlesLobby,
+  handlesQC,
+  handlesQCD,
+  handlesQO,
+} from './sessionHelper';
 import { QuizObject, QuizSession, AdminAction, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 /**
@@ -256,7 +263,10 @@ const adminQuizSessionStateUpdate = (
 
     // case "END"
     default:
-      throw HTTPError(400, 'Action enum cannot be applied in the current state');
+      throw HTTPError(
+        400,
+        'Action enum cannot be applied in the current state'
+      );
   }
 
   setData(data);
@@ -302,25 +312,36 @@ const adminQuizViewSessions = (token: string, quizId: number) => {
     (session) => session.state === 'END'
   );
 
-  const sortedInactive = inactiveSessions.sort((s1, s2) => {
-    if (s1.quizSessionId !== s2.quizSessionId) {
-      return s1.quizSessionId - s2.quizSessionId;
-    }
-    return 0;
-  });
+  // let sortedInactive = inactiveSessions.sort((s1, s2) => {
+  //   if (s1.quizSessionId !== s2.quizSessionId) {
+  //     return s1.quizSessionId - s2.quizSessionId;
+  //   }
+  //   return 0;
+  // });
+  const inactiveSessionIds = inactiveSessions.map(
+    (session) => session.quizSessionId
+  );
 
-  const activeSessions = allSessions.filter((session) => session.state !== 'END');
+  const activeSessions = allSessions.filter(
+    (session) => session.state !== 'END'
+  );
 
-  const sortedActive = activeSessions.sort((s1, s2) => {
-    if (s1.quizSessionId !== s2.quizSessionId) {
-      return s1.quizSessionId - s2.quizSessionId;
-    }
-    return 0;
-  });
+  // let sortedActive = activeSessions.sort((s1, s2) => {
+  //   if (s1.quizSessionId !== s2.quizSessionId) {
+  //     return s1.quizSessionId - s2.quizSessionId;
+  //   }
+  //   return 0;
+  // });
+  const activeSessionIds = activeSessions.map((session) => session.quizSessionId);
 
   return {
-    activeSessions: sortedActive,
-    inactiveSessions: sortedInactive
+    activeSessions: activeSessionIds,
+    inactiveSessions: inactiveSessionIds,
   };
 };
-export { adminQuizSessionStart, adminQuizGetSessionStatus, adminQuizViewSessions };
+export {
+  adminQuizSessionStart,
+  adminQuizGetSessionStatus,
+  adminQuizViewSessions,
+  adminQuizSessionStateUpdate,
+};

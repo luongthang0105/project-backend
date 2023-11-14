@@ -8,6 +8,7 @@ import {
   adminAuthRegister,
   adminQuizGetSessionStatus,
   adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear,
   playerJoinSession
   } from '../testWrappersV1'
@@ -57,7 +58,7 @@ describe('adminAllowPlayerJoin', () => {
       questInfo1.answers,
       questInfo1.thumbnailUrl,
     ).content.questionId;
-
+    expect(question1).toStrictEqual(expect.any(Number))
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
   })
   
@@ -110,6 +111,7 @@ describe('adminAllowPlayerJoin', () => {
     })
     
     const sessionUpdate = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    expect(sessionUpdate.statusCode).toBe(200);
     
     const player2 = playerJoinSession(session1, "Han");
     expect(player2).toStrictEqual({

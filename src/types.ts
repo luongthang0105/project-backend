@@ -182,6 +182,12 @@ type QuizObject = {
   thumbnailUrl?: string
 };
 
+type Player = {
+  playerId: number,
+  name: string,
+  sessionJoined: number
+}
+
 /**
  * Represents the data store structure with arrays of users, quizzes, sessions, and counters.
  */
@@ -191,6 +197,7 @@ type DataStore = {
   trash: QuizObject[];
   sessions: Token[];
   quizSessions: QuizSession[];
+  players: Player[],
   nextUserId: number;
   nextQuizId: number;
   nextQuestionId: number;

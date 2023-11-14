@@ -1,15 +1,13 @@
 import { adminQuizCreate, adminQuizCreateQuestion } from "../testWrappersV2";
 import {
   adminAuthRegister,
-  adminQuizGetSessionStatus,
   adminQuizSessionStart,
-  adminQuizSessionStateUpdate,
   clear,
   playerJoinSession,
+  allChatMessages,
+  sendChatMessage
 } from "../testWrappersV1";
-import { Player, Quiz, ReturnedToken } from "../types";
-
-import "./toHaveValidRandomPlayerName";
+import { Quiz, ReturnedToken } from "../types";
 import { expect, test } from "@jest/globals";
 
 describe("allChatMessages", () => {

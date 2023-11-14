@@ -9,9 +9,8 @@ import {
 } from "../testWrappersV1";
 import { Quiz, ReturnedToken } from "../types";
 import { expect, test } from "@jest/globals";
-import { getData } from "../dataStore";
 
-describe("allChatMessages", () => {
+describe("sendChatMessage", () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1;
@@ -56,11 +55,10 @@ describe("allChatMessages", () => {
     expect(question1).toStrictEqual(expect.any(Number));
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
     player1 = playerJoinSession(session1, "Thomas").content.playerId;
-   
   });
 
   test("Error: PlayerId does not exist", () => {
-    const result = allChatMessages(player1 + 1);
+    const result = sendChatMessage(player1 + 1, "Hi everyone");
 
     expect(result).toStrictEqual({
       content: {
@@ -70,14 +68,39 @@ describe("allChatMessages", () => {
     });
   });
 
+  test("Error: Message body is less than 1 character", () => {
+
+    const result = sendChatMessage(player1, "");
+    expect(result).toStrictEqual({
+        content: {
+          error: "Message body is less than 1 character or more than 100 characters",
+        },
+        statusCode: 400,
+      });
+    
+  });
+
+  test("Error: Message body is more than 100 characters", () => {
+
+    const result = sendChatMessage(player1, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis nat");
+    expect(result).toStrictEqual({
+        content: {
+          error: "Message body is less than 1 character or more than 100 characters",
+        },
+        statusCode: 400,
+      });
+    
+  });
+
   test("Success: Return all chat messages in current session: have 1 session", () => {
     const player2 = playerJoinSession(session1, "Eren Yeager").content.playerId;
+
     sendChatMessage(player2, "Hello everyone! Nice to chat.");
     sendChatMessage(player1, "Hello Eren!");
     sendChatMessage(player2, "Hello Mikasa!");
 
     const messages = allChatMessages(player1);
-    expect(messages).toStrictEqual({
+    expect(player2).toStrictEqual({
       content: {
         messages: [
           {

@@ -185,7 +185,7 @@ type QuizObject = {
 type Message = {
   messageBody: string,
   playerId: number,
-  playerName: string[],
+  playerName: string,
   timeSent: number
 }
 

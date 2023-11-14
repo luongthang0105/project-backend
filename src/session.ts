@@ -164,6 +164,7 @@ const adminQuizGetSessionStatus = (
       duration: validQuizSesssion.metadata.duration,
       thumbnailUrl: thumbnail,
     },
+    messages: []
   };
 
   return quizSessionStatus;

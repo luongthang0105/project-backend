@@ -37,8 +37,7 @@ describe('adminQuizThumbnail', () => {
 
   test('Valid token is provided, but user is not an owner of this quiz', () => {
     const user2 = adminAuthRegister('nayr@gmail.com', 'password5213', 'Nayr', 'Hnyuh').content as ReturnedToken;
-    const quiz2 = adminQuizCreate(user2, 'quiz2', 'description').content as Quiz;
-    const result = adminQuizThumbnail(user, quiz2.quizId, 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg');
+    const result = adminQuizThumbnail(user2, quiz.quizId, 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg');
     expect(result).toStrictEqual({
       statusCode: 403,
       content: {

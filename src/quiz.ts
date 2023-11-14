@@ -1770,9 +1770,10 @@ const adminQuizThumbnail = (
 
   // Error: Valid token is provided, but user is not an owner of this quiz
   const authUserId = validSession.authUserId;
-  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
 
-  /**
   // check if the quiz does not exist or the user is not an owner of this quiz
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
@@ -1780,14 +1781,16 @@ const adminQuizThumbnail = (
       'Valid token is provided, but user is not an owner of this quiz'
     );
   }
-  */
 
-  // Error: The thumbnailUrl does not return to a valid file
+  // Error: imgUrl when fetched does not return a valid file
   let res;
   try {
     res = request('GET', thumbnailUrl);
   } catch (err) {
-    throw HTTPError(400, 'The thumbnailUrl does not return to a valid file');
+    throw HTTPError(
+      400,
+      'imgUrl when fetched does not return a valid file'
+      );
   }
 
   if (thumbnailUrl.match(/\.(jpg|png)$/) === null) {
@@ -1798,7 +1801,7 @@ const adminQuizThumbnail = (
   }
 
   // Updates the quiz thumbnail
-  validQuiz.thumbnailUrl = thumbnailUrl;
+  validQuiz.thumbnailUrl = thumbnailUrl
   setData(data);
   return {};
 };

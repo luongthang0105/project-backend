@@ -1,8 +1,6 @@
 import { getData, setData } from './dataStore';
-import {
-  QuizObject,
-  QuizSession
-} from './types';
+import { handlesAS, handlesFR, handlesLobby, handlesQC, handlesQCD, handlesQO } from './sessionHelper';
+import { QuizObject, QuizSession, AdminAction, EmptyObject } from './types';
 import HTTPError from 'http-errors';
 /**
  * Creates a new quiz session
@@ -16,7 +14,7 @@ const adminQuizSessionStart = (
   token: string,
   quizId: number,
   autoStartNum: number
-): { sessionId: number} => {
+): { sessionId: number } => {
   const data = getData();
   const validSession = data.sessions.find(
     (currSession) => currSession.identifier === token
@@ -32,7 +30,9 @@ const adminQuizSessionStart = (
 
   // Error: Valid token is provided, but user is unauthorised to complete this action
   const authUserId = validSession.authUserId;
-  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId) as QuizObject;
+  const validQuiz = data.quizzes.find(
+    (currQuiz) => currQuiz.quizId === quizId
+  ) as QuizObject;
 
   if (validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
@@ -41,10 +41,7 @@ const adminQuizSessionStart = (
     );
   }
   if (autoStartNum > 50) {
-    throw HTTPError(
-      400,
-      'autoStartNum is a number greater than 50'
-    );
+    throw HTTPError(400, 'autoStartNum is a number greater than 50');
   }
 
   let numNotEndState = 0;
@@ -62,10 +59,7 @@ const adminQuizSessionStart = (
   }
 
   if (validQuiz.questions.length === 0) {
-    throw HTTPError(
-      400,
-      'The quiz does not have any questions in it'
-    );
+    throw HTTPError(400, 'The quiz does not have any questions in it');
   }
 
   const newQuizSession: QuizSession = {
@@ -73,7 +67,7 @@ const adminQuizSessionStart = (
     state: 'LOBBY',
     atQuestion: 0,
     players: [],
-    metadata: validQuiz as QuizObject
+    metadata: validQuiz as QuizObject,
   };
 
   data.nextQuizSessionId += 1;
@@ -111,7 +105,9 @@ const adminQuizGetSessionStatus = (
 
   // Error: Valid token is provided, but user is unauthorised to complete this action
   const authUserId = validSession.authUserId;
-  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId) as QuizObject;
+  const validQuiz = data.quizzes.find(
+    (currQuiz) => currQuiz.quizId === quizId
+  ) as QuizObject;
 
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
@@ -120,7 +116,9 @@ const adminQuizGetSessionStatus = (
     );
   }
 
-  const validQuizSesssion = data.quizSessions.find(session => session.quizSessionId === sessionId);
+  const validQuizSesssion = data.quizSessions.find(
+    (session) => session.quizSessionId === sessionId
+  );
   if (!validQuizSesssion) {
     throw HTTPError(
       400,
@@ -155,14 +153,118 @@ const adminQuizGetSessionStatus = (
       numQuestions: validQuizSesssion.metadata.numQuestions,
       questions: validQuizSesssion.metadata.questions,
       duration: validQuizSesssion.metadata.duration,
-      thumbnailUrl: thumbnail
-    }
+      thumbnailUrl: thumbnail,
+    },
   };
 
   return quizSessionStatus;
 };
 
+/**
+ * Update the state of a particular session by sending an action command
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @param {string} action - action command
+ * @returns {} -
+ */
+const adminQuizSessionStateUpdate = (
+  token: string,
+  quizId: number,
+  sessionId: number,
+  action: string
+): EmptyObject => {
+  const data = getData();
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is unauthorised to complete this action
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find(
+    (currQuiz) => currQuiz.quizId === quizId
+  ) as QuizObject;
+
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not authorised to view this session'
+    );
+  }
+
+  const validQuizSesssion = data.quizSessions.find(
+    (session) => session.quizSessionId === sessionId
+  );
+  if (!validQuizSesssion) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+  if (validQuizSesssion.metadata.quizId !== quizId) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+  if (
+    ![
+      'NEXT_QUESTION',
+      'SKIP_COUNTDOWN',
+      'GO_TO_ANSWER',
+      'GO_TO_FINAL_RESULTS',
+      'END',
+    ].includes(action as AdminAction)
+  ) {
+    throw HTTPError(400, 'Action provided is not a valid Action enum');
+  }
+
+  // Current state: LOBBY
+  switch (validQuizSesssion.state) {
+    case 'LOBBY':
+      handlesLobby(validQuizSesssion, action as AdminAction, data);
+      break;
+
+    case 'QUESTION_COUNTDOWN':
+      handlesQCD(validQuizSesssion, action as AdminAction, data);
+      break;
+
+    case 'QUESTION_OPEN':
+      handlesQO(validQuizSesssion, action as AdminAction);
+      break;
+
+    case 'QUESTION_CLOSE':
+      handlesQC(validQuizSesssion, action as AdminAction, data);
+      break;
+
+    case 'ANSWER_SHOW':
+      handlesAS(validQuizSesssion, action as AdminAction, data);
+      break;
+
+    case 'FINAL_RESULTS':
+      handlesFR(validQuizSesssion, action as AdminAction);
+      break;
+
+    // case "END"
+    default:
+      throw HTTPError(400, 'Action enum cannot be applied in the current state');
+  }
+
+  setData(data);
+  return {};
+};
+
 export {
   adminQuizSessionStart,
-  adminQuizGetSessionStatus
+  adminQuizGetSessionStatus,
+  adminQuizSessionStateUpdate,
 };

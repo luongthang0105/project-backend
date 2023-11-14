@@ -43,7 +43,7 @@ export const allChatMessages = (
 ): {
   content: {
     messages: Message[]
-  }, 
+  },
   statusCode: number;
 } => {
   const res = request(

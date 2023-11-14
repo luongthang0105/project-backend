@@ -1,6 +1,6 @@
-import { getData, setData } from "./dataStore";
-import { QuizObject, QuizSession } from "./types";
-import HTTPError from "http-errors";
+import { getData, setData } from './dataStore';
+import { QuizObject, QuizSession } from './types';
+import HTTPError from 'http-errors';
 /**
  * Creates a new quiz session
  * This copies the quiz, so that any edits whilst a session is running does not affect active session
@@ -20,10 +20,10 @@ const adminQuizSessionStart = (
   );
 
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
-  if (token === "" || !validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
-      "Token is empty or invalid (does not refer to valid logged in user session)"
+      'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
 
@@ -36,16 +36,16 @@ const adminQuizSessionStart = (
   if (validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
-      "Valid token is provided, but user is not an owner of this quiz"
+      'Valid token is provided, but user is not an owner of this quiz'
     );
   }
   if (autoStartNum > 50) {
-    throw HTTPError(400, "autoStartNum is a number greater than 50");
+    throw HTTPError(400, 'autoStartNum is a number greater than 50');
   }
 
   let numNotEndState = 0;
   for (const session of data.quizSessions) {
-    if (session.state !== "END") {
+    if (session.state !== 'END') {
       numNotEndState += 1;
     }
   }
@@ -53,17 +53,17 @@ const adminQuizSessionStart = (
   if (numNotEndState >= 10) {
     throw HTTPError(
       400,
-      "A maximum of 10 sessions that are not in END state currently exist"
+      'A maximum of 10 sessions that are not in END state currently exist'
     );
   }
 
   if (validQuiz.questions.length === 0) {
-    throw HTTPError(400, "The quiz does not have any questions in it");
+    throw HTTPError(400, 'The quiz does not have any questions in it');
   }
 
   const newQuizSession: QuizSession = {
     quizSessionId: data.nextQuizSessionId,
-    state: "LOBBY",
+    state: 'LOBBY',
     atQuestion: 0,
     players: [],
     metadata: validQuiz as QuizObject,
@@ -95,10 +95,10 @@ const adminQuizGetSessionStatus = (
   );
 
   // Error: Token is empty or invalid (does not refer to valid logged in user session)
-  if (token === "" || !validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
-      "Token is empty or invalid (does not refer to valid logged in user session)"
+      'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
 
@@ -111,7 +111,7 @@ const adminQuizGetSessionStatus = (
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
-      "Valid token is provided, but user is not authorised to view this session"
+      'Valid token is provided, but user is not authorised to view this session'
     );
   }
 
@@ -121,20 +121,20 @@ const adminQuizGetSessionStatus = (
   if (!validQuizSesssion) {
     throw HTTPError(
       400,
-      "Session Id does not refer to a valid session within this quiz"
+      'Session Id does not refer to a valid session within this quiz'
     );
   }
 
   if (validQuizSesssion.metadata.quizId !== quizId) {
     throw HTTPError(
       400,
-      "Session Id does not refer to a valid session within this quiz"
+      'Session Id does not refer to a valid session within this quiz'
     );
   }
 
   let thumbnail: string;
   if (!validQuizSesssion.metadata.thumbnailUrl) {
-    thumbnail = "";
+    thumbnail = '';
   } else {
     thumbnail = validQuizSesssion.metadata.thumbnailUrl;
   }
@@ -167,10 +167,10 @@ const adminQuizViewSessions = (token: string, quizId: number) => {
     (currToken) => currToken.identifier === token
   );
 
-  if (token === "" || !validSession) {
+  if (token === '' || !validSession) {
     throw HTTPError(
       401,
-      "Token is empty or invalid (does not refer to valid logged in user session)"
+      'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
 
@@ -186,7 +186,7 @@ const adminQuizViewSessions = (token: string, quizId: number) => {
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
-      "Valid token is provided, but user is not an owner of this quiz"
+      'Valid token is provided, but user is not an owner of this quiz'
     );
   }
 
@@ -195,21 +195,23 @@ const adminQuizViewSessions = (token: string, quizId: number) => {
   );
 
   const inactiveSessions = allSessions.filter(
-    (session) => session.state === "END"
+    (session) => session.state === 'END'
   );
 
   const sortedInactive = inactiveSessions.sort((s1, s2) => {
-    if (s1.quizSessionId != s2.quizSessionId) {
+    if (s1.quizSessionId !== s2.quizSessionId) {
       return s1.quizSessionId - s2.quizSessionId;
     }
+    return 0;
   });
 
-  let activeSessions = allSessions.filter((session) => session.state !== "END");
+  const activeSessions = allSessions.filter((session) => session.state !== 'END');
 
   const sortedActive = activeSessions.sort((s1, s2) => {
-    if (s1.quizSessionId != s2.quizSessionId) {
+    if (s1.quizSessionId !== s2.quizSessionId) {
       return s1.quizSessionId - s2.quizSessionId;
     }
+    return 0;
   });
 
   return {

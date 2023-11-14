@@ -1,5 +1,6 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {};
+import fs from 'fs';
+import { DataStore } from './types';
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -11,6 +12,7 @@ Example usage
     names = store.names
 
     names.pop()
+
     names.push('Jake')
 
     console.log(store) # Prints { 'names': ['Hayden', 'Tam', 'Rani', 'Giuliana', 'Jake'] }
@@ -18,13 +20,11 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
-  return data;
-}
+const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')));
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
-  data = newData;
+function setData(newData: DataStore) {
+  fs.writeFileSync('./data.json', JSON.stringify(newData));
 }
 
 export { getData, setData };

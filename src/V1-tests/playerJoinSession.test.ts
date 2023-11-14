@@ -212,4 +212,26 @@ describe('adminAllowPlayerJoin', () => {
     expect(sessionStatus.state).toStrictEqual("QUESTION_COUNTDOWN")
   })
 
+  test('Success: 2 player join the game, autoStartNum is 0', () => {
+    const session2 = adminQuizSessionStart(user1, quiz1.quizId, 0).content.sessionId;
+
+    const player1 = playerJoinSession(session2, "Thomas");
+    expect(player1).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)
+      },
+      statusCode: 200
+    })
+    const player2 = playerJoinSession(session2, "Han");
+    expect(player2).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)
+      },
+      statusCode: 200
+    })
+
+    const sessionStatus = adminQuizGetSessionStatus(user1, quiz1.quizId, session1).content;
+    expect(sessionStatus.state).toStrictEqual("LOBBY")
+  })
+
 })

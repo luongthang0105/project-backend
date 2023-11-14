@@ -78,6 +78,26 @@ describe('playerJoinSession', () => {
       statusCode: 400
     })
   })
+  
+  test('Success: Same name but different session', () => {
+    const player1 = playerJoinSession(session1, "Thomas");
+    expect(player1).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)
+      },
+      statusCode: 200
+    })
+
+    const session2 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
+    
+    const player2 = playerJoinSession(session2, "Thomas");
+    expect(player2).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)  
+      },
+      statusCode: 200
+    })
+  })
 
   // NOT YET TO BE TESTED TIL MUTSUKI FINISHED UPDATE SESSION STATE
   test('(NOT YET TO BE TESTED) Error: Session is not in LOBBY state', () => {

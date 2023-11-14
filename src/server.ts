@@ -29,10 +29,13 @@ import {
   adminQuizInfoV2,
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
-  adminQuizSessionStart,
-  adminQuizGetSessionStatus,
   adminQuizDuplicateQuestionV2
 } from './quiz';
+import {
+  adminQuizSessionStart,
+  adminQuizGetSessionStatus,
+  adminQuizSessionStateUpdate
+} from './session';
 import { clear } from './other';
 import {
   adminAuthRegister,
@@ -325,6 +328,24 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+// adminQuizSessionStatusUpdate V1
+app.put(
+  '/v1/admin/quiz/:quizid/session/:sessionid',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+
+    const token = req.headers.token as string;
+
+    const sessionId = parseInt(req.params.sessionid);
+
+    const action = req.body.action as string;
+
+    const result = adminQuizSessionStateUpdate(token, quizId, sessionId, action);
+
+    res.json(result);
+  }
+);
+
 // adminQuizGetSessionStatus V1
 app.get(
   '/v1/admin/quiz/:quizid/session/:sessionid',

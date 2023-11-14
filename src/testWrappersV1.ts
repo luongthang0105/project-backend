@@ -14,6 +14,35 @@ import {
 const SERVER_URL = `${url}:${port}`
 
 /**
+ * Update the state of a particular session by sending an action command
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @param {string} action - action command
+ * @returns {} -
+ */
+export const adminQuizSessionStateUpdate = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  sessionId: number,
+  action: string
+): { content: EmptyObject; statusCode: number } => {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId, {
+    headers: {
+      token: tokenObject.token,
+    },
+    json: {
+      action: action,
+    },
+  });
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
  * Get the status of a particular quiz session
  *
  * @param {string} Token - Token of the quiz owner

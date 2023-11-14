@@ -1,11 +1,13 @@
 import {
   adminQuizCreate,
-  adminAuthRegister,
-  clear,
   adminAuthLogout,
-  adminQuizSessionStart,
   adminQuizCreateQuestion,
   adminQuizDeleteQuestion
+} from '../testWrappersV2';
+import {
+  adminAuthRegister,
+  adminQuizSessionStart,
+  clear
 } from '../testWrappersV1';
 import { Question, Quiz, ReturnedToken } from '../types';
 
@@ -45,7 +47,8 @@ beforeEach(() => {
     questInfo1.question,
     questInfo1.duration,
     questInfo1.points,
-    questInfo1.answers
+    questInfo1.answers,
+    questInfo1.thumbnailUrl
   ).content.questionId;
 });
 

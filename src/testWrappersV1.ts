@@ -731,3 +731,28 @@ export const adminQuizTrashEmpty = (
     statusCode: res.statusCode
   };
 };
+
+/**
+ * Allow a guest player to join a session
+ *
+ * @param {string} Token - Token of the quiz owner
+ * @param {number} quizId - ID of the quiz
+ * @param {number} sessionId - ID of the quiz session
+ * @returns {QuizSession} - Status of the quiz session
+ */
+export const playerJoinSession = (
+  sessionId: number,
+  name: string
+): { content: { playerId: number }; statusCode: number } => {
+  const res = request('POST', SERVER_URL + '/v1/player/join', {
+    json: {
+      sessionId: sessionId,
+      name: name
+    }
+  });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};

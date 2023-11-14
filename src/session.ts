@@ -75,7 +75,8 @@ const adminQuizSessionStart = (
     atQuestion: 0,
     players: [],
     metadata: validQuiz as QuizObject,
-    autoStartNum: autoStartNum
+    autoStartNum: autoStartNum,
+    messages: []
   };
 
   data.nextQuizSessionId += 1;

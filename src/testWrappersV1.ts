@@ -742,7 +742,7 @@ export const adminQuizTrashEmpty = (
  */
 export const playerJoinSession = (
   sessionId: number,
-  name: string,
+  name: string
 ): { content: { playerId: number }; statusCode: number } => {
   const res = request('POST', SERVER_URL + '/v1/player/join', {
     json: {

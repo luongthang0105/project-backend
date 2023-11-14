@@ -1,14 +1,14 @@
-import randomstring from "randomstring"
+import randomstring from 'randomstring';
 
 export const generateRandomName = (): string => {
   let finalName = '';
 
   // Generate a unique 5 letters string
-  while(true) {
+  while (true) {
     const randomString = randomstring.generate({
       length: 5,
-      charset: "alphabetic"
-    })
+      charset: 'alphabetic'
+    });
 
     if ((new Set(randomString.split(''))).size === 5) {
       finalName += randomString;
@@ -17,11 +17,11 @@ export const generateRandomName = (): string => {
   }
 
   // Generate a unique 3 numbers string
-  while(true) {
+  while (true) {
     const randomString = randomstring.generate({
       length: 3,
-      charset: "numeric"
-    })
+      charset: 'numeric'
+    });
 
     if ((new Set(randomString.split(''))).size === 3) {
       finalName += randomString;
@@ -30,4 +30,4 @@ export const generateRandomName = (): string => {
   }
 
   return finalName;
-}
+};

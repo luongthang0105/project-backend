@@ -731,12 +731,12 @@ app.put(
 
 // playerJoinSession V1
 app.post('/v1/player/join', (req: Request, res: Response) => {
-    const { sessionId, name } = req.body
+  const { sessionId, name } = req.body;
 
-    const result = playerJoinSession(sessionId, name);
+  const result = playerJoinSession(sessionId, name);
 
-    res.json(result);
-  }
+  res.json(result);
+}
 );
 
 // ====================================================================

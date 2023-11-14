@@ -42,6 +42,7 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
+import { playerJoinSession } from './player';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -706,6 +707,17 @@ app.put(
     res.json(result);
   }
 );
+
+// playerJoinSession V1
+app.post('/v1/player/join', (req: Request, res: Response) => {
+    const { sessionId, name } = req.body
+
+    const result = playerJoinSession(sessionId, name);
+
+    res.json(result);
+  }
+);
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

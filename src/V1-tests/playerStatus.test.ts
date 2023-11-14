@@ -125,4 +125,52 @@ describe('playerJoinSession', () => {
     })
   })
 
+  test('Success: At END state', () => {
+    const player1 = playerJoinSession(session1, "Thomas");
+    expect(player1).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)
+      },
+      statusCode: 200
+    })
+
+    const nextQ = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "END");
+    expect(nextQ.statusCode).toBe(200);
+
+    const status = playerStatus(player1.content.playerId);
+
+    expect(playerStatus).toStrictEqual({
+      content: {
+        state: "LOBBY",
+        numQuestions: 1,
+        atQuestion: 0
+      },
+      statusCode: 200
+    })
+  })
+  
+  test('Success: At FINAL_RESULTS state', () => {
+    const player1 = playerJoinSession(session1, "Thomas");
+    expect(player1).toStrictEqual({
+      content: {
+        playerId: expect.any(Number)
+      },
+      statusCode: 200
+    })
+
+    const nextQ = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_FINAL_RESULTS");
+    expect(nextQ.statusCode).toBe(200);
+
+    const status = playerStatus(player1.content.playerId);
+
+    expect(playerStatus).toStrictEqual({
+      content: {
+        state: "LOBBY",
+        numQuestions: 1,
+        atQuestion: 0
+      },
+      statusCode: 200
+    })
+  })
+
 })

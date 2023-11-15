@@ -1741,6 +1741,67 @@ const adminQuizDuplicateQuestionV2 = (
 };
 
 /**
+ * Updates the thumbnail for the quiz.
+ *
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param token - The authentication token for the user performing the action.
+ * @param imgURL - The URL for the image used for the thumbnail.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizThumbnail = (
+  token: string,
+  quizId: number,
+  thumbnailUrl: string
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is not an owner of this quiz
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
+
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Error: The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+  if (!isUrlEndWithImgExtension(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
+    );
+  }
+
+  // Error: The imgUrl does not begin with 'http://' or 'https://'
+  if (!isUrlStartWithHTTP(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The imgUrl does not begin with "http://" or "https://"'
+    );
+  }
+
+  // Updates the quiz thumbnail
+  validQuiz.thumbnailUrl = thumbnailUrl;
+  setData(data);
+  return {};
+};
+
+/**
  * Deletes a question within a quiz.
  *
  * @param token - The authentication token for the user performing the action.
@@ -1994,5 +2055,6 @@ export {
   adminQuizRestore,
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
-  adminQuizQuestionUpdateV2
+  adminQuizQuestionUpdateV2,
+  adminQuizThumbnail
 };

@@ -30,6 +30,7 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2,
+  adminQuizThumbnail
   adminQuizDeleteQuestionV2,
   adminQuizTransferV2,
   adminQuizRemoveV2,
@@ -762,6 +763,25 @@ app.put(
       questionBody.points,
       questionBody.answers,
       questionBody.thumbnailUrl
+    );
+
+    res.json(result);
+  }
+);
+
+// adminQuizThumbnail
+app.put(
+  '/v1/admin/quiz/:quizid/thumbnail',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const token = req.headers.token as string;
+
+    const { imgUrl } = req.body;
+
+    const result = adminQuizThumbnail(
+      token,
+      quizId,
+      imgUrl
     );
 
     res.json(result);

@@ -158,6 +158,7 @@ describe('adminQuizGetSessionStatus', () => {
     expect(result).toStrictEqual({
       content: {
         state: 'LOBBY',
+        messages: [],
         atQuestion: 0,
         players: [],
         metadata: {

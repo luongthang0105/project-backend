@@ -1,8 +1,9 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { generateRandomName } from './playerHelper';
-import { Player } from './types';
+import { Player, Message } from './types';
 import { toQuestionCountDownState } from './sessionHelper';
+import { getCurrentTimestamp } from './quizHelper';
 
 export const playerJoinSession = (
   sessionId: number,
@@ -73,4 +74,58 @@ export const playerJoinSession = (
   setData(data);
 
   return { playerId: newPlayer.playerId };
+};
+
+export const allChatMessages = (playerId: number) => {
+  const data = getData();
+
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  // Error: playerId does not exist
+  if (!validPlayer) {
+    throw HTTPError(400, 'PlayerId does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  return {
+    messages: currSession.messages,
+  };
+};
+
+export const sendChatMessage = (playerId: number, message: string) => {
+  const data = getData();
+
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+
+  // Error: playerId does not exist
+  if (!validPlayer) {
+    throw HTTPError(400, 'PlayerId does not exist');
+  }
+
+  if (message.length < 1 || message.length > 100) {
+    throw HTTPError(
+      400,
+      'Message body is less than 1 character or more than 100 characters'
+    );
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+  const newMessage: Message = {
+    messageBody: message,
+    playerId: validPlayer.playerId,
+    playerName: validPlayer.name, // Assuming the player's name is in the 'name' field
+    timeSent: getCurrentTimestamp(),
+  };
+
+  currSession.messages.push(newMessage);
+  setData(data);
+  return {};
 };

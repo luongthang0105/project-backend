@@ -19,7 +19,7 @@ export const playerJoinSession = (
   if (!validSession) {
     throw HTTPError(
       400,
-      "Session doesn't exist (this is undefined behaviour and won't be tested)"
+      "Session doesnt exist (this is undefined behaviour and wont be tested)"
     );
   }
 

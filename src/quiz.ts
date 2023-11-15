@@ -3,6 +3,7 @@ import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
   hasDuplicatedAnswers,
+  hasNonENDStateSession,
   isUrlEndWithImgExtension,
   isUrlStartWithHTTP,
   moveQuestion,
@@ -1739,6 +1740,82 @@ const adminQuizDuplicateQuestionV2 = (
   return { newQuestionId: duplicateQuestion.questionId };
 };
 
+/**
+ * Deletes a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be deleted.
+ *
+ * @returns An EmptyObject if the question is deleted successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizDeleteQuestionV2 = (
+  token: string,
+  quizId: number,
+  questionId: number
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Check if question Id does not refer to a valid question within this quiz
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
+  if (!validQuestion) {
+    throw HTTPError(
+      400,
+      'Question Id does not refer to a valid question within this quiz'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, data.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    )
+  }
+  
+  // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
+  // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
+  const indexOfDeletedQuestion = validQuiz.questions
+    .map((currQuestion) => currQuestion.questionId)
+    .indexOf(questionId);
+  validQuiz.questions.splice(indexOfDeletedQuestion, 1);
+
+  validQuiz.numQuestions -= 1;
+  validQuiz.duration -= validQuestion.duration;
+
+  setData(data);
+
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizCreateV2,
@@ -1751,6 +1828,7 @@ export {
   adminQuizCreateQuestion,
   adminQuizCreateQuestionV2,
   adminQuizDeleteQuestion,
+  adminQuizDeleteQuestionV2,
   adminQuizMoveQuestion,
   adminQuizTransfer,
   adminQuizViewTrash,

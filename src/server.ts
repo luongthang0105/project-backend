@@ -47,7 +47,7 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-import { playerJoinSession, allChatMessages, sendChatMessage } from './player';
+import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus } from './player';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -791,7 +791,18 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
   const result = playerJoinSession(sessionId, name);
 
   res.json(result);
-});
+}
+);
+
+// playerStatus V1
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId: number = parseInt(req.params.playerid);
+
+  const result = playerStatus(playerId);
+
+  res.json(result);
+}
+);
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

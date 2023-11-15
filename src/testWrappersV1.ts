@@ -250,7 +250,7 @@ export const adminAuthLogin = (
  * @returns An object containing the response content (UserDetails or ErrorObject) and the HTTP status code of the user details request.
  */
 export const adminUserDetails = (tokenObject: {
-  token: string;
+  token: string
 }): { content: UserDetails; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
     qs: {
@@ -273,7 +273,7 @@ export const adminUserDetails = (tokenObject: {
  * @returns An object containing the response content (QuizList or ErrorObject) and the HTTP status code of the quiz list request.
  */
 export const adminQuizList = (tokenObject: {
-  token: string;
+  token: string
 }): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
     qs: {
@@ -299,7 +299,7 @@ export const adminQuizList = (tokenObject: {
  */
 export const adminQuizCreate = (
   tokenObject: {
-    token: string;
+    token: string
   },
   name: string,
   description: string
@@ -387,8 +387,8 @@ export const adminQuizInfo = (
   tokenObject: ReturnedToken,
   quizId: number
 ): {
-  content: QuizObject;
-  statusCode: number;
+  content: QuizObject
+  statusCode: number
 } => {
   const route = '/v1/admin/quiz/' + quizId;
 
@@ -497,8 +497,7 @@ export const adminQuizMoveQuestion = (
   questionId: number,
   newPosition: number
 ): { content: EmptyObject; statusCode: number } => {
-  const route =
-    '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
+  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
   const res = request('PUT', SERVER_URL + route, {
     json: {
       token: tokenObject.token,
@@ -521,7 +520,7 @@ export const adminQuizMoveQuestion = (
  * @returns An object containing the response content (QuizList or ErrorObject) and the HTTP status code of the trash quiz list request.
  */
 export const adminQuizViewTrash = (tokenObject: {
-  token: string;
+  token: string
 }): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
     qs: {
@@ -617,8 +616,8 @@ export const adminQuizDuplicateQuestion = (
 export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
-  content: EmptyObject;
-  statusCode: number;
+  content: EmptyObject
+  statusCode: number
 } => {
   const route = '/v1/admin/auth/logout';
 
@@ -831,10 +830,9 @@ export const adminQuizTrashEmpty = (
 /**
  * Allow a guest player to join a session
  *
- * @param {string} Token - Token of the quiz owner
- * @param {number} quizId - ID of the quiz
  * @param {number} sessionId - ID of the quiz session
- * @returns {QuizSession} - Status of the quiz session
+ * @param {string} name - Player name
+ * @returns Returns playerId object and status code
  */
 export const playerJoinSession = (
   sessionId: number,
@@ -843,8 +841,8 @@ export const playerJoinSession = (
   const res = request('POST', SERVER_URL + '/v1/player/join', {
     json: {
       sessionId: sessionId,
-      name: name
-    }
+      name: name,
+    },
   });
 
   return {
@@ -878,6 +876,30 @@ export const adminQuizThumbnail = (
       imgUrl: imgUrl
     }
   });
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+/**
+ * Get the status of a guest player that has already joined a session
+ *
+ * @param {number} playerId - ID of the quiz session
+ * @returns Returns playerId object and status code
+ */
+export const playerStatus = (
+  playerId: number
+): {
+  content: {
+    state: string,
+    numQuestions: number,
+    atQuestion: number
+  },
+  statusCode: number
+} => {
+  const res = request('GET', SERVER_URL + '/v1/player/' + playerId);
 
   return {
     content: JSON.parse(res.body.toString()),

@@ -41,7 +41,7 @@ export const playerJoinSession = (
       if (!playerWithSameName) break;
     }
   } else {
-    // If name is not empty, check for this:
+  // If name is not empty, check for this:
     // Error: Name of user entered is not unique (compared to other users who have already joined)
     const playerWithSameName = validSession.players.find(
       (playerName) => playerName === name
@@ -128,4 +128,32 @@ export const sendChatMessage = (playerId: number, message: string) => {
   currSession.messages.push(newMessage);
   setData(data);
   return {};
+};
+
+export const playerStatus = (
+  playerId: number
+): {
+  state: string
+  numQuestions: number
+  atQuestion: number
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  return {
+    state: currSession.state,
+    atQuestion: currSession.atQuestion,
+    numQuestions: currSession.metadata.numQuestions
+  };
 };

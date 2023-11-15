@@ -15,7 +15,7 @@ import { Quiz, ReturnedToken } from '../types';
 import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
 
-describe('adminAllowPlayerJoin', () => {
+describe('playerJoinSession', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1;

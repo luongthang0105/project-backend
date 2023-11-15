@@ -75,12 +75,12 @@ describe('allChatMessages', () => {
     sendChatMessage(player1, 'Hello Eren!');
     sendChatMessage(player2, 'Hello Mikasa!');
 
-    const currTimestamp = getCurrentTimestamp()
-    
+    const currTimestamp = getCurrentTimestamp();
+
     const messages = allChatMessages(player1);
 
     for (const msg of messages.content.messages) {
-        expect(currTimestamp - msg.timeSent).toBeLessThan(1)
+      expect(currTimestamp - msg.timeSent).toBeLessThan(1);
     }
 
     expect(messages).toStrictEqual({
@@ -123,13 +123,12 @@ describe('allChatMessages', () => {
     sendChatMessage(player2, 'Hello Mikasa!');
 
     const messages1 = allChatMessages(player1);
-    const currTimestamp1 = getCurrentTimestamp()
-    
+    const currTimestamp1 = getCurrentTimestamp();
 
     for (const msg of messages1.content.messages) {
-        expect(currTimestamp1 - msg.timeSent).toBeLessThan(1)
+      expect(currTimestamp1 - msg.timeSent).toBeLessThan(1);
     }
-    
+
     expect(messages1).toStrictEqual({
       content: {
         messages: [
@@ -157,11 +156,10 @@ describe('allChatMessages', () => {
     });
 
     const messages2 = allChatMessages(player3);
-    const currTimestamp2 = getCurrentTimestamp()
-    
+    const currTimestamp2 = getCurrentTimestamp();
 
     for (const msg of messages2.content.messages) {
-        expect(currTimestamp2 - msg.timeSent).toBeLessThan(1)
+      expect(currTimestamp2 - msg.timeSent).toBeLessThan(1);
     }
 
     expect(messages2).toStrictEqual({

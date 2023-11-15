@@ -30,7 +30,7 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2,
-  adminQuizThumbnail
+  adminQuizThumbnail,
   adminQuizDeleteQuestionV2,
   adminQuizTransferV2,
   adminQuizRemoveV2,

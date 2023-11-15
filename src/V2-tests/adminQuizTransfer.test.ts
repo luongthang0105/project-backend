@@ -48,7 +48,7 @@ describe('adminQuizTransfer', () => {
       'oth',
       'other'
     ).content as ReturnedToken;
-    
+
     questInfo = {
       question: 'What is that pokemon',
       duration: 1,
@@ -77,7 +77,7 @@ describe('adminQuizTransfer', () => {
         questInfo.thumbnailUrl
       ).content as { questionId: number }
     ).questionId;
-    expect(questionId).toStrictEqual(expect.any(Number))
+    expect(questionId).toStrictEqual(expect.any(Number));
     user2Email = (adminUserDetails(user2).content as UserDetails).user.email;
   });
 
@@ -159,11 +159,11 @@ describe('adminQuizTransfer', () => {
       statusCode: 400,
     });
   });
-  
-  test("Error: All sessions for this quiz must be in END state", () => {
+
+  test('Error: All sessions for this quiz must be in END state', () => {
     const session1 = adminQuizSessionStart(user, quiz, 3);
     expect(session1).toStrictEqual({
-      statusCode: 200, 
+      statusCode: 200,
       content: {
         sessionId: expect.any(Number)
       }
@@ -171,24 +171,24 @@ describe('adminQuizTransfer', () => {
 
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {
-        error: "All sessions for this quiz must be in END state"
+        error: 'All sessions for this quiz must be in END state'
       },
       statusCode: 400,
-    })
-  })
-  
-  test("Success: All sessions are in END state", () => {
+    });
+  });
+
+  test('Success: All sessions are in END state', () => {
     const session1 = adminQuizSessionStart(user, quiz, 3).content.sessionId;
     expect(session1).toStrictEqual(expect.any(Number));
 
-    const toEndState = adminQuizSessionStateUpdate(user, quiz, session1, "END");
+    const toEndState = adminQuizSessionStateUpdate(user, quiz, session1, 'END');
     expect(toEndState.statusCode).toStrictEqual(200);
 
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {},
       statusCode: 200,
-    })
-  })
+    });
+  });
 
   test('Success: User 2 currently has no quiz', () => {
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({

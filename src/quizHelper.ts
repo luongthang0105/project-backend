@@ -145,8 +145,8 @@ const isUrlStartWithHTTP = (url: string): boolean => {
  * @returns True if there exist a quiz session (refers to quizId) that is not in END state, False otherwise.
  */
 const hasNonENDStateSession = (quizId: number, quizSessions: QuizSession[]): boolean => {
-  const sessionsOfQuizId = quizSessions.filter( (quizSession) => quizSession.metadata.quizId === quizId );
-  const sessionsNotInENDState = sessionsOfQuizId.filter( (quizSession) => quizSession.state !== 'END');
+  const sessionsOfQuizId = quizSessions.filter((quizSession) => quizSession.metadata.quizId === quizId);
+  const sessionsNotInENDState = sessionsOfQuizId.filter((quizSession) => quizSession.state !== 'END');
 
   return sessionsNotInENDState.length !== 0;
 };

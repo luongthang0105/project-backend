@@ -114,14 +114,13 @@ describe('adminQuizDeleteQuestion', () => {
         error: 'All sessions for this quiz must be in END state'
       }
     });
-
   });
 
   test('Success: All sessions are in END state', () => {
     const session1 = adminQuizSessionStart(user, quizId, 3).content.sessionId;
     expect(session1).toStrictEqual(expect.any(Number));
 
-    const toEndState = adminQuizSessionStateUpdate(user, quizId, session1, "END");
+    const toEndState = adminQuizSessionStateUpdate(user, quizId, session1, 'END');
     expect(toEndState.statusCode).toStrictEqual(200);
 
     const result = adminQuizDeleteQuestion(user, quizId, questionId);

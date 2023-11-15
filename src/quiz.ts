@@ -1798,7 +1798,7 @@ const adminQuizDeleteQuestionV2 = (
     throw HTTPError(
       400,
       'All sessions for this quiz must be in END state'
-    )
+    );
   }
 
   // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
@@ -1896,7 +1896,7 @@ const adminQuizTransferV2 = (
     throw HTTPError(
       400,
       'All sessions for this quiz must be in END state'
-    )
+    );
   }
 
   validQuiz.quizAuthorId = targetUser.authUserId;
@@ -1953,7 +1953,7 @@ const adminQuizRemoveV2 = (token: string, quizId: number): EmptyObject => {
     throw HTTPError(
       400,
       'All sessions for this quiz must be in END state'
-    )
+    );
   }
 
   currData.trash.push(existingQuiz);

@@ -230,7 +230,7 @@ describe('adminQuizDeleteQuestion', () => {
       {
         questionId: questionId,
         question: 'What is that pokemon',
-        duration: 4,
+        duration: 1,
         points: 5,
         answers: [
           { answer: 'Pikachu', correct: true, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
@@ -239,7 +239,7 @@ describe('adminQuizDeleteQuestion', () => {
         thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       }
     ]);
-    expect(quizInfo.duration).toStrictEqual(4);
+    expect(quizInfo.duration).toStrictEqual(1);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete both in numeric order ', () => {

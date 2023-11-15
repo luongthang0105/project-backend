@@ -30,6 +30,7 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2,
+  adminQuizDeleteQuestionV2,
 } from './quiz';
 import {
   adminQuizSessionStart,
@@ -621,7 +622,7 @@ app.delete(
 
     const token = req.headers.token as string;
 
-    const result = adminQuizDeleteQuestion(token, quizId, questionId);
+    const result = adminQuizDeleteQuestionV2(token, quizId, questionId);
 
     res.json(result);
   }

@@ -1,9 +1,9 @@
-import { getData, setData } from './dataStore';
-import HTTPError from 'http-errors';
-import { generateRandomName } from './playerHelper';
-import { Player, Message } from './types';
-import { toQuestionCountDownState } from './sessionHelper';
-import { getCurrentTimestamp } from './quizHelper';
+import { getData, setData } from "./dataStore";
+import HTTPError from "http-errors";
+import { generateRandomName } from "./playerHelper";
+import { Player, Message } from "./types";
+import { toQuestionCountDownState } from "./sessionHelper";
+import { getCurrentTimestamp, newAnswerList } from "./quizHelper";
 
 export const playerJoinSession = (
   sessionId: number,
@@ -24,13 +24,13 @@ export const playerJoinSession = (
   }
 
   // Error: Session is not in LOBBY state
-  if (validSession.state !== 'LOBBY') {
-    throw HTTPError(400, 'Session is not in LOBBY state');
+  if (validSession.state !== "LOBBY") {
+    throw HTTPError(400, "Session is not in LOBBY state");
   }
 
   // If name is empty, randomly generate it according to the structure [5 letters][3 numbers],
   // where there are no repetitions of numbers or characters within the same name
-  if (name === '') {
+  if (name === "") {
     // generate the random name and make sure it's unique among the others name in the session
     while (true) {
       name = generateRandomName();
@@ -41,7 +41,7 @@ export const playerJoinSession = (
       if (!playerWithSameName) break;
     }
   } else {
-  // If name is not empty, check for this:
+    // If name is not empty, check for this:
     // Error: Name of user entered is not unique (compared to other users who have already joined)
     const playerWithSameName = validSession.players.find(
       (playerName) => playerName === name
@@ -49,7 +49,7 @@ export const playerJoinSession = (
     if (playerWithSameName) {
       throw HTTPError(
         400,
-        'Name of user entered is not unique (compared to other users who have already joined)'
+        "Name of user entered is not unique (compared to other users who have already joined)"
       );
     }
   }
@@ -84,7 +84,7 @@ export const allChatMessages = (playerId: number) => {
   );
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, 'PlayerId does not exist');
+    throw HTTPError(400, "PlayerId does not exist");
   }
 
   const currSession = data.quizSessions.find(
@@ -105,13 +105,13 @@ export const sendChatMessage = (playerId: number, message: string) => {
 
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, 'PlayerId does not exist');
+    throw HTTPError(400, "PlayerId does not exist");
   }
 
   if (message.length < 1 || message.length > 100) {
     throw HTTPError(
       400,
-      'Message body is less than 1 character or more than 100 characters'
+      "Message body is less than 1 character or more than 100 characters"
     );
   }
 
@@ -133,9 +133,9 @@ export const sendChatMessage = (playerId: number, message: string) => {
 export const playerStatus = (
   playerId: number
 ): {
-  state: string
-  numQuestions: number
-  atQuestion: number
+  state: string;
+  numQuestions: number;
+  atQuestion: number;
 } => {
   const data = getData();
 
@@ -144,7 +144,7 @@ export const playerStatus = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, 'Player ID does not exist');
+    throw HTTPError(400, "Player ID does not exist");
   }
 
   const currSession = data.quizSessions.find(
@@ -154,6 +154,77 @@ export const playerStatus = (
   return {
     state: currSession.state,
     atQuestion: currSession.atQuestion,
-    numQuestions: currSession.metadata.numQuestions
+    numQuestions: currSession.metadata.numQuestions,
+  };
+};
+
+export const getQuestionResult = (
+  playerId: number,
+  questionPosition: number
+): {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, "Player ID does not exist");
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // if question Position is not in an approriate range
+  if (
+    questionPosition < 1 ||
+    questionPosition > currSession.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      "Question position is not valid for the session this player is in"
+    );
+  }
+
+  if (currSession.state !== "ANSWER_SHOW") {
+    throw HTTPError(400, "Session is not in ANSWER_SHOW state");
+  }
+  if (currSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, "Session is not yet up to this question");
+  }
+
+  const currQuestion = currSession.metadata.questions[questionPosition];
+  const correctSubmission = currSession.answerSubmission.filter(
+    (submission) => submission.answer.correct === true
+  );
+  const playersCorrectList = correctSubmission.map(
+    (submission) => submission.playerName
+  );
+
+  const totalPlayers = currSession.answerSubmission.length;
+  const numPlayersCorrect = playersCorrectList.length;
+  const percentCorrect = Math.round((numPlayersCorrect / totalPlayers) * 100);
+
+  const answerTimeList = currSession.answerSubmission.map(
+    (submission) => submission.answerTime
+  );
+
+  const totalAnswerTime = answerTimeList.reduce(
+    (accumulator, currValue) => accumulator + currValue,
+    0
+  );
+  const averageAnswerTime = totalAnswerTime / totalPlayers;
+
+  return {
+    questionId: currQuestion.questionId,
+    playersCorrectList: playersCorrectList,
+    averageAnswerTime: averageAnswerTime,
+    percentCorrect: percentCorrect,
   };
 };

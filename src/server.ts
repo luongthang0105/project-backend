@@ -30,7 +30,10 @@ import {
   adminQuizCreateV2,
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2,
-  adminQuizThumbnail
+  adminQuizThumbnail,
+  adminQuizDeleteQuestionV2,
+  adminQuizTransferV2,
+  adminQuizRemoveV2,
 } from './quiz';
 import {
   adminQuizSessionStart,
@@ -411,6 +414,17 @@ app.get(
     res.json(result);
   }
 );
+
+// adminQuizRemove V2
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+  // console.log("heloooooo")
+  const result = adminQuizRemoveV2(token, quizId);
+  res.json(result);
+});
+
 // adminAuthLogout V2
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -606,7 +620,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
   const { userEmail } = req.body;
 
-  const result = adminQuizTransfer(quizId, token, userEmail);
+  const result = adminQuizTransferV2(quizId, token, userEmail);
 
   res.json(result);
 });
@@ -622,7 +636,7 @@ app.delete(
 
     const token = req.headers.token as string;
 
-    const result = adminQuizDeleteQuestion(token, quizId, questionId);
+    const result = adminQuizDeleteQuestionV2(token, quizId, questionId);
 
     res.json(result);
   }
@@ -682,16 +696,6 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 
   const result = adminQuizCreateV2(token, name, description);
 
-  res.json(result);
-});
-
-// adminQuizRemove V2
-app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.headers.token as string;
-
-  const result = adminQuizRemove(token, quizId);
   res.json(result);
 });
 

@@ -1,5 +1,7 @@
 import {
   adminAuthRegister,
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear
 } from '../testWrappersV1';
 
@@ -7,7 +9,8 @@ import {
   adminQuizTransfer,
   adminQuizCreate,
   adminUserDetails,
-  adminQuizList
+  adminQuizList,
+  adminQuizCreateQuestion
 } from '../testWrappersV2';
 
 import { Quiz, QuizList, ReturnedToken, UserDetails } from '../types';
@@ -17,6 +20,8 @@ describe('adminQuizTransfer', () => {
   let user2: ReturnedToken;
   let user2Email: string;
   let quiz: number;
+  let questInfo;
+  let questionId: number;
 
   const invalidToken = {
     token: '-1'
@@ -44,6 +49,35 @@ describe('adminQuizTransfer', () => {
       'other'
     ).content as ReturnedToken;
 
+    questInfo = {
+      question: 'What is that pokemon',
+      duration: 1,
+      points: 5,
+      answers: [
+        {
+          answer: 'Pikachu',
+          correct: true,
+        },
+        {
+          answer: 'Thomas',
+          correct: false,
+        },
+      ],
+      thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
+    };
+
+    questionId = (
+      adminQuizCreateQuestion(
+        user,
+        quiz,
+        questInfo.question,
+        questInfo.duration,
+        questInfo.points,
+        questInfo.answers,
+        questInfo.thumbnailUrl
+      ).content as { questionId: number }
+    ).questionId;
+    expect(questionId).toStrictEqual(expect.any(Number));
     user2Email = (adminUserDetails(user2).content as UserDetails).user.email;
   });
 
@@ -125,17 +159,37 @@ describe('adminQuizTransfer', () => {
       statusCode: 400,
     });
   });
-  /*
-  // Not done
-  test.skip("All sessions for this quiz must be in END state", () => {
-    expect(adminQuizTransfer(quiz, user, user2.email)).toStrictEqual({
+
+  test('Error: All sessions for this quiz must be in END state', () => {
+    const session1 = adminQuizSessionStart(user, quiz, 3);
+    expect(session1).toStrictEqual({
+      statusCode: 200,
       content: {
-        error: "All sessions for this quiz must be in END state"
+        sessionId: expect.any(Number)
+      }
+    });
+
+    expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
+      content: {
+        error: 'All sessions for this quiz must be in END state'
       },
       statusCode: 400,
-    })
-  })
-*/
+    });
+  });
+
+  test('Success: All sessions are in END state', () => {
+    const session1 = adminQuizSessionStart(user, quiz, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+
+    const toEndState = adminQuizSessionStateUpdate(user, quiz, session1, 'END');
+    expect(toEndState.statusCode).toStrictEqual(200);
+
+    expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+  });
+
   test('Success: User 2 currently has no quiz', () => {
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {},

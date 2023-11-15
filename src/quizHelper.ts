@@ -1,5 +1,5 @@
 import { getData } from './dataStore';
-import { Answer, Colour } from './types';
+import { Answer, Colour, QuizSession } from './types';
 import { Question } from './types';
 
 /**
@@ -137,6 +137,20 @@ const isUrlStartWithHTTP = (url: string): boolean => {
   return true;
 };
 
+/**
+ * Determine whether there any quiz session, associated with the given quiz id, that is in non-END state
+ *
+ * @param quizId - Id of quiz.
+ * @param quizSessions - List of all quiz sessions.
+ * @returns True if there exist a quiz session (refers to quizId) that is not in END state, False otherwise.
+ */
+const hasNonENDStateSession = (quizId: number, quizSessions: QuizSession[]): boolean => {
+  const sessionsOfQuizId = quizSessions.filter((quizSession) => quizSession.metadata.quizId === quizId);
+  const sessionsNotInENDState = sessionsOfQuizId.filter((quizSession) => quizSession.state !== 'END');
+
+  return sessionsNotInENDState.length !== 0;
+};
+
 export {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -145,5 +159,6 @@ export {
   hasDuplicatedAnswers,
   newAnswerList,
   isUrlEndWithImgExtension,
-  isUrlStartWithHTTP
+  isUrlStartWithHTTP,
+  hasNonENDStateSession
 };

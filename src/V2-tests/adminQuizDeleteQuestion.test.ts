@@ -1,6 +1,8 @@
 import { getCurrentTimestamp } from '../quizHelper';
 import {
   adminAuthRegister,
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear,
 } from '../testWrappersV1';
 
@@ -29,7 +31,7 @@ describe('adminQuizDeleteQuestion', () => {
     quizId = (adminQuizCreate(user, 'Quiz 1', 'Description').content as Quiz).quizId;
     questInfo = {
       question: 'What is that pokemon',
-      duration: 4,
+      duration: 1,
       points: 5,
       answers: [
         {
@@ -98,6 +100,33 @@ describe('adminQuizDeleteQuestion', () => {
       content: {
         error: 'Question Id does not refer to a valid question within this quiz'
       }
+    });
+  });
+
+  test('Error: All sessions for this quiz must be in END state', () => {
+    const session1 = adminQuizSessionStart(user, quizId, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+
+    const result = adminQuizDeleteQuestion(user, quizId, questionId);
+    expect(result).toStrictEqual({
+      statusCode: 400,
+      content: {
+        error: 'All sessions for this quiz must be in END state'
+      }
+    });
+  });
+
+  test('Success: All sessions are in END state', () => {
+    const session1 = adminQuizSessionStart(user, quizId, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+
+    const toEndState = adminQuizSessionStateUpdate(user, quizId, session1, 'END');
+    expect(toEndState.statusCode).toStrictEqual(200);
+
+    const result = adminQuizDeleteQuestion(user, quizId, questionId);
+    expect(result).toStrictEqual({
+      statusCode: 200,
+      content: {}
     });
   });
 
@@ -200,7 +229,7 @@ describe('adminQuizDeleteQuestion', () => {
       {
         questionId: questionId,
         question: 'What is that pokemon',
-        duration: 4,
+        duration: 1,
         points: 5,
         answers: [
           { answer: 'Pikachu', correct: true, answerId: expect.any(Number), colour: expect.toHaveValidColour() },
@@ -209,7 +238,7 @@ describe('adminQuizDeleteQuestion', () => {
         thumbnailUrl: 'https://as2.ftcdn.net/v2/jpg/00/97/58/97/1000_F_97589769_t45CqXyzjz0KXwoBZT9PRaWGHRk5hQqQ.jpg'
       }
     ]);
-    expect(quizInfo.duration).toStrictEqual(4);
+    expect(quizInfo.duration).toStrictEqual(1);
   });
 
   test('Success: Successfully delete a question, 2 questions, delete both in numeric order ', () => {

@@ -19,6 +19,8 @@ Example usage
     setData(store)
 */
 
+let timers: NodeJS.Timeout[] = []
+
 // Use get() to access the data
 const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')));
 
@@ -27,4 +29,7 @@ function setData(newData: DataStore) {
   fs.writeFileSync('./data.json', JSON.stringify(newData));
 }
 
-export { getData, setData };
+// Use getTimers() to access all timers during the session of the program
+const getTimers = (): NodeJS.Timeout[] => timers;
+
+export { getData, setData, getTimers };

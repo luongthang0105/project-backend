@@ -1906,12 +1906,78 @@ const adminQuizTransferV2 = (
   return {};
 };
 
+/**
+ * Permanently removes a particular quiz owned by the authenticated user.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {number} quizId - The ID of the quiz to be removed.
+ * @returns { ErrorObject | EmptyObject}
+ *   - An empty object if the quiz is successfully removed.
+ *     If any validation errors occur, it returns an error object with a message.
+ */
+const adminQuizRemoveV2 = (token: string, quizId: number): EmptyObject => {
+  // Retrieve the current data
+  const currData = getData();
+
+  // Check if authUserId is valid by searching for it in the list of users
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  // If authUserId is not valid, return an error object
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const existingQuiz = currData.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Check if the quiz with the given quizId does not exist
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, currData.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    )
+  }
+
+  currData.trash.push(existingQuiz);
+
+  // Remove the quiz from the data
+  for (let i = 0; i < currData.quizzes.length; i++) {
+    if (currData.quizzes[i].quizId === quizId) {
+      currData.quizzes.splice(i, 1);
+    }
+  }
+
+  setData(currData);
+
+  // Return an empty object to indicate a successful removal
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizCreateV2,
   adminQuizInfo,
   adminQuizInfoV2,
   adminQuizRemove,
+  adminQuizRemoveV2,
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,

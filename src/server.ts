@@ -32,6 +32,7 @@ import {
   adminQuizDuplicateQuestionV2,
   adminQuizDeleteQuestionV2,
   adminQuizTransferV2,
+  adminQuizRemoveV2,
 } from './quiz';
 import {
   adminQuizSessionStart,
@@ -692,7 +693,7 @@ app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   const token = req.headers.token as string;
 
-  const result = adminQuizRemove(token, quizId);
+  const result = adminQuizRemoveV2(token, quizId);
   res.json(result);
 });
 

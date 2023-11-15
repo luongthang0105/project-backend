@@ -19,6 +19,8 @@ Example usage
     setData(store)
 */
 
+const timers: ReturnType<typeof setTimeout>[] = [];
+
 // Use get() to access the data
 const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')));
 
@@ -27,4 +29,7 @@ function setData(newData: DataStore) {
   fs.writeFileSync('./data.json', JSON.stringify(newData));
 }
 
-export { getData, setData };
+// Use getTimers() to access all timers during the session of the program
+const getTimers = (): ReturnType<typeof setTimeout>[] => timers;
+
+export { getData, setData, getTimers };

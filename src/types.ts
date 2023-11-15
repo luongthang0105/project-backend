@@ -234,7 +234,12 @@ type SessionState =
   | 'GO_TO_ANSWER'
   | 'GO_TO_FINAL_RESULTS'
   | 'END'
-
+type Submission = {
+  questionId: number,
+  playerName: string,
+  answerTime: number,
+  answer: Answer
+}
 /**
  * Represents the structure of quiz sessions which describe a particular instance of a quiz being run
  */
@@ -246,11 +251,7 @@ type SessionState =
     players: string[],
     metadata: QuizObject,
     messages: Message[],
-    answerSubmission: [{
-      playerName: string,
-      answerTime: number,
-      answer: Answer
-    }]
+    answerSubmitted: Submission[]
   }
 
 export {

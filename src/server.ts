@@ -332,7 +332,7 @@ app.post(
 // getQuestionResult
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
-  const questionPosition = parseInt(req.params.questionposition)
+  const questionPosition = parseInt(req.params.questionposition);
 
   const result = getQuestionResult(playerId, questionPosition);
 

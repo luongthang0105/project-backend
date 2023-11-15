@@ -1,9 +1,9 @@
-import { getData, setData } from "./dataStore";
-import HTTPError from "http-errors";
-import { generateRandomName } from "./playerHelper";
-import { Player, Message } from "./types";
-import { toQuestionCountDownState } from "./sessionHelper";
-import { getCurrentTimestamp, newAnswerList } from "./quizHelper";
+import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
+import { generateRandomName } from './playerHelper';
+import { Player, Message } from './types';
+import { toQuestionCountDownState } from './sessionHelper';
+import { getCurrentTimestamp, newAnswerList } from './quizHelper';
 
 export const playerJoinSession = (
   sessionId: number,
@@ -24,13 +24,13 @@ export const playerJoinSession = (
   }
 
   // Error: Session is not in LOBBY state
-  if (validSession.state !== "LOBBY") {
-    throw HTTPError(400, "Session is not in LOBBY state");
+  if (validSession.state !== 'LOBBY') {
+    throw HTTPError(400, 'Session is not in LOBBY state');
   }
 
   // If name is empty, randomly generate it according to the structure [5 letters][3 numbers],
   // where there are no repetitions of numbers or characters within the same name
-  if (name === "") {
+  if (name === '') {
     // generate the random name and make sure it's unique among the others name in the session
     while (true) {
       name = generateRandomName();
@@ -49,7 +49,7 @@ export const playerJoinSession = (
     if (playerWithSameName) {
       throw HTTPError(
         400,
-        "Name of user entered is not unique (compared to other users who have already joined)"
+        'Name of user entered is not unique (compared to other users who have already joined)'
       );
     }
   }
@@ -84,7 +84,7 @@ export const allChatMessages = (playerId: number) => {
   );
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, "PlayerId does not exist");
+    throw HTTPError(400, 'PlayerId does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -105,13 +105,13 @@ export const sendChatMessage = (playerId: number, message: string) => {
 
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, "PlayerId does not exist");
+    throw HTTPError(400, 'PlayerId does not exist');
   }
 
   if (message.length < 1 || message.length > 100) {
     throw HTTPError(
       400,
-      "Message body is less than 1 character or more than 100 characters"
+      'Message body is less than 1 character or more than 100 characters'
     );
   }
 
@@ -144,7 +144,7 @@ export const playerStatus = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, "Player ID does not exist");
+    throw HTTPError(400, 'Player ID does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -174,7 +174,7 @@ export const getQuestionResult = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, "Player ID does not exist");
+    throw HTTPError(400, 'Player ID does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -188,15 +188,15 @@ export const getQuestionResult = (
   ) {
     throw HTTPError(
       400,
-      "Question position is not valid for the session this player is in"
+      'Question position is not valid for the session this player is in'
     );
   }
 
-  if (currSession.state !== "ANSWER_SHOW") {
-    throw HTTPError(400, "Session is not in ANSWER_SHOW state");
+  if (currSession.state !== 'ANSWER_SHOW') {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
   }
   if (currSession.atQuestion !== questionPosition) {
-    throw HTTPError(400, "Session is not yet up to this question");
+    throw HTTPError(400, 'Session is not yet up to this question');
   }
 
   const currQuestion = currSession.metadata.questions[questionPosition];

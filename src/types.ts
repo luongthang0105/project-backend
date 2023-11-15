@@ -241,7 +241,6 @@ type SessionState =
   type QuizSession = {
     quizSessionId?: number,
     autoStartNum?: number,
-    stateTimer?: NodeJS.Timeout,
     state: SessionState,
     atQuestion: number,
     players: string[],

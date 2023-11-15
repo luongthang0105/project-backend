@@ -161,7 +161,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test.only('Success: At FINAL_RESULTS state', () => {
+  test('Success: At FINAL_RESULTS state', () => {
     const player1 = playerJoinSession(session1, 'Thomas');
     expect(player1).toStrictEqual({
       content: {

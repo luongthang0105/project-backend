@@ -1,11 +1,11 @@
-import { getData, getTimers, setData } from './dataStore';
+import { getTimers, setData } from './dataStore';
 import { Player, QuizObject, QuizSession, Token, UserObject } from './types';
 
 // This function resets the state of the application back to the start.
 function clear() {
   // clearing any pending timeouts so it doesnt affect the tests
   const timers = getTimers();
-  timers.forEach(timer => clearTimeout(timer))
+  timers.forEach(timer => clearTimeout(timer));
 
   setData({
     users: [] as UserObject[],

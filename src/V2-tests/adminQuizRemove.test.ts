@@ -1,5 +1,7 @@
 import {
   adminAuthRegister,
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear,
 } from '../testWrappersV1';
 import {
@@ -108,6 +110,47 @@ describe('adminQuizRemove', () => {
         error: 'Valid token is provided, but user is not an owner of this quiz',
       },
       statusCode: 403,
+    });
+  });
+
+  test('Error: All sessions for this quiz must be in END state', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content as ReturnedToken;
+    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
+
+    const session1 = adminQuizSessionStart(user, quiz.quizId, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+    
+    const result = adminQuizRemove(user, quiz.quizId);
+    expect(result).toStrictEqual({
+      content: { error: 'All sessions for this quiz must be in END state' },
+      statusCode: 400,
+    });
+  });
+
+  test('Success: All sessions are in END state', () => {
+    const user = adminAuthRegister(
+      'han@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Han',
+      'Hanh'
+    ).content as ReturnedToken;
+    const quiz = adminQuizCreate(user, 'Hi', 'This is my quiz').content as Quiz;
+
+    const session1 = adminQuizSessionStart(user, quiz.quizId, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+    
+    const toEndState = adminQuizSessionStateUpdate(user, quiz.quizId, session1, "END");
+    expect(toEndState.statusCode).toStrictEqual(200);
+
+    const result = adminQuizRemove(user, quiz.quizId);
+    expect(result).toStrictEqual({
+      content: {},
+      statusCode: 200,
     });
   });
 

@@ -1,5 +1,7 @@
 import {
   adminAuthRegister,
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
   clear
 } from '../testWrappersV1';
 
@@ -125,17 +127,32 @@ describe('adminQuizTransfer', () => {
       statusCode: 400,
     });
   });
-  /*
-  // Not done
-  test.skip("All sessions for this quiz must be in END state", () => {
-    expect(adminQuizTransfer(quiz, user, user2.email)).toStrictEqual({
+  
+  test("Error: All sessions for this quiz must be in END state", () => {
+    const session1 = adminQuizSessionStart(user, quiz, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+
+    expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {
         error: "All sessions for this quiz must be in END state"
       },
       statusCode: 400,
     })
   })
-*/
+  
+  test("Success: All sessions are in END state", () => {
+    const session1 = adminQuizSessionStart(user, quiz, 3).content.sessionId;
+    expect(session1).toStrictEqual(expect.any(Number));
+
+    const toEndState = adminQuizSessionStateUpdate(user, quiz, session1, "END");
+    expect(toEndState.statusCode).toStrictEqual(200);
+
+    expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    })
+  })
+
   test('Success: User 2 currently has no quiz', () => {
     expect(adminQuizTransfer(quiz, user, user2Email)).toStrictEqual({
       content: {},

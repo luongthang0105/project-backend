@@ -1800,7 +1800,7 @@ const adminQuizDeleteQuestionV2 = (
       'All sessions for this quiz must be in END state'
     )
   }
-  
+
   // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
   // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
   const indexOfDeletedQuestion = validQuiz.questions
@@ -1810,6 +1810,96 @@ const adminQuizDeleteQuestionV2 = (
 
   validQuiz.numQuestions -= 1;
   validQuiz.duration -= validQuestion.duration;
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * Transfer ownership of a quiz to a different user based on their email
+ *
+ * @param {number} quizId - ID of the quiz
+ * @param {string} Token - Token of the quiz owner
+ * @param {string} userEmail - The email of the targeted user
+ * @returns
+ */
+const adminQuizTransferV2 = (
+  quizId: number,
+  token: string,
+  userEmail: string
+): EmptyObject => {
+  const data = getData();
+
+  // Find the logged in user
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Finds the user object of the targeted email
+  const targetUser = data.users.find(
+    (targetEmail) => targetEmail.email === userEmail
+  );
+
+  if (!targetUser) {
+    throw HTTPError(400, 'userEmail is not a real user');
+  }
+
+  // Finds the user that owns this token
+  const currentUser = data.users.find((curr) => curr.authUserId === authUserId);
+
+  // If this user has the same email as the targeted email, then throw error
+  if (currentUser.email === userEmail) {
+    throw HTTPError(400, 'userEmail is the current logged in user');
+  }
+
+  // Filters an array of quizzes that this target user owns
+  const quizzesFromTargetedUsers = data.quizzes.filter(
+    (curr) => curr.quizAuthorId === targetUser.authUserId
+  );
+
+  // Finds a quiz owned by the target user that has the same name of the transferred quiz
+  const quizSameName = quizzesFromTargetedUsers.find(
+    (quiz) => quiz.name === validQuiz.name
+  );
+
+  if (quizSameName) {
+    throw HTTPError(
+      400,
+      'Quiz ID refers to a quiz that has a name that is already used by the target user'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, data.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    )
+  }
+
+  validQuiz.quizAuthorId = targetUser.authUserId;
 
   setData(data);
 
@@ -1831,6 +1921,7 @@ export {
   adminQuizDeleteQuestionV2,
   adminQuizMoveQuestion,
   adminQuizTransfer,
+  adminQuizTransferV2,
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizDuplicateQuestionV2,

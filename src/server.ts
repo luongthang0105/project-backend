@@ -31,6 +31,7 @@ import {
   adminQuizQuestionUpdateV2,
   adminQuizDuplicateQuestionV2,
   adminQuizDeleteQuestionV2,
+  adminQuizTransferV2,
 } from './quiz';
 import {
   adminQuizSessionStart,
@@ -606,7 +607,7 @@ app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
   const { userEmail } = req.body;
 
-  const result = adminQuizTransfer(quizId, token, userEmail);
+  const result = adminQuizTransferV2(quizId, token, userEmail);
 
   res.json(result);
 });

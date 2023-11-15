@@ -413,6 +413,17 @@ app.get(
     res.json(result);
   }
 );
+
+// adminQuizRemove V2
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.headers.token as string;
+  // console.log("heloooooo")
+  const result = adminQuizRemoveV2(token, quizId);
+  res.json(result);
+});
+
 // adminAuthLogout V2
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -684,16 +695,6 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 
   const result = adminQuizCreateV2(token, name, description);
 
-  res.json(result);
-});
-
-// adminQuizRemove V2
-app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-
-  const token = req.headers.token as string;
-
-  const result = adminQuizRemoveV2(token, quizId);
   res.json(result);
 });
 

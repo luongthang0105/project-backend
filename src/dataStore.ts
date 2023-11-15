@@ -19,7 +19,7 @@ Example usage
     setData(store)
 */
 
-let timers: NodeJS.Timeout[] = []
+const timers: ReturnType<typeof setTimeout>[] = [];
 
 // Use get() to access the data
 const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json')));
@@ -30,6 +30,6 @@ function setData(newData: DataStore) {
 }
 
 // Use getTimers() to access all timers during the session of the program
-const getTimers = (): NodeJS.Timeout[] => timers;
+const getTimers = (): ReturnType<typeof setTimeout>[] => timers;
 
 export { getData, setData, getTimers };

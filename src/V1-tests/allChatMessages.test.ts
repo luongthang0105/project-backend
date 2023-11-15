@@ -9,7 +9,7 @@ import {
 } from '../testWrappersV1';
 import { Quiz, ReturnedToken } from '../types';
 import { expect, test } from '@jest/globals';
-
+import { getCurrentTimestamp } from '../quizHelper';
 describe('allChatMessages', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
@@ -70,11 +70,19 @@ describe('allChatMessages', () => {
 
   test('Success: Return all chat messages in current session: have 1 session', () => {
     const player2 = playerJoinSession(session1, 'Eren Yeager').content.playerId;
+
     sendChatMessage(player2, 'Hello everyone! Nice to chat.');
     sendChatMessage(player1, 'Hello Eren!');
     sendChatMessage(player2, 'Hello Mikasa!');
 
+    const currTimestamp = getCurrentTimestamp()
+    
     const messages = allChatMessages(player1);
+
+    for (const msg of messages.content.messages) {
+        expect(currTimestamp - msg.timeSent).toBeLessThan(1)
+    }
+
     expect(messages).toStrictEqual({
       content: {
         messages: [
@@ -98,6 +106,7 @@ describe('allChatMessages', () => {
           },
         ],
       },
+
       statusCode: 200,
     });
   });
@@ -114,6 +123,13 @@ describe('allChatMessages', () => {
     sendChatMessage(player2, 'Hello Mikasa!');
 
     const messages1 = allChatMessages(player1);
+    const currTimestamp1 = getCurrentTimestamp()
+    
+
+    for (const msg of messages1.content.messages) {
+        expect(currTimestamp1 - msg.timeSent).toBeLessThan(1)
+    }
+    
     expect(messages1).toStrictEqual({
       content: {
         messages: [
@@ -141,6 +157,13 @@ describe('allChatMessages', () => {
     });
 
     const messages2 = allChatMessages(player3);
+    const currTimestamp2 = getCurrentTimestamp()
+    
+
+    for (const msg of messages2.content.messages) {
+        expect(currTimestamp2 - msg.timeSent).toBeLessThan(1)
+    }
+
     expect(messages2).toStrictEqual({
       content: {
         messages: [

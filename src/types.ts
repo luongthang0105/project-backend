@@ -238,7 +238,7 @@ type Submission = {
   questionId: number,
   playerName: string,
   answerTime: number,
-  answer: Answer
+  answer: number[]
 }
 /**
  * Represents the structure of quiz sessions which describe a particular instance of a quiz being run

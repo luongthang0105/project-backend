@@ -1,5 +1,4 @@
 import { getData, setData } from './dataStore';
-import request from 'sync-request-curl';
 import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
@@ -1796,7 +1795,7 @@ const adminQuizThumbnail = (
   }
 
   // Updates the quiz thumbnail
-  validQuiz.thumbnailUrl = thumbnailUrl
+  validQuiz.thumbnailUrl = thumbnailUrl;
   setData(data);
   return {};
 };

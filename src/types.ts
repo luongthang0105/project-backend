@@ -182,6 +182,19 @@ type QuizObject = {
   thumbnailUrl?: string
 };
 
+type Message = {
+  messageBody: string,
+  playerId: number,
+  playerName: string,
+  timeSent: number
+}
+
+type Player = {
+  playerId: number,
+  name: string,
+  sessionJoined: number
+}
+
 /**
  * Represents the data store structure with arrays of users, quizzes, sessions, and counters.
  */
@@ -191,11 +204,13 @@ type DataStore = {
   trash: QuizObject[];
   sessions: Token[];
   quizSessions: QuizSession[];
+  players: Player[],
   nextUserId: number;
   nextQuizId: number;
   nextQuestionId: number;
   nextAnswerId: number;
   nextQuizSessionId: number;
+  nextPlayerId: number
 };
 
 /**
@@ -225,10 +240,12 @@ type SessionState =
  */
   type QuizSession = {
     quizSessionId?: number,
+    autoStartNum?: number,
     state: SessionState,
     atQuestion: number,
     players: string[],
-    metadata: QuizObject
+    metadata: QuizObject,
+    messages: Message[]
   }
 
 export {
@@ -250,5 +267,7 @@ export {
   DataStore,
   SessionState,
   AdminAction,
-  QuizSession
+  QuizSession,
+  Player,
+  Message
 };

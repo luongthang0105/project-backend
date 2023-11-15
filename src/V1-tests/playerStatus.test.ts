@@ -23,7 +23,7 @@ describe('playerJoinSession', () => {
   let questInfo1;
   let question1;
   let session1: number;
-  const duration = 2;
+  const duration = 1;
 
   beforeEach(() => {
     clear();
@@ -161,7 +161,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test.only('Success: At FINAL_RESULTS state', () => {
+  test('Success: At FINAL_RESULTS state', () => {
     const player1 = playerJoinSession(session1, 'Thomas');
     expect(player1).toStrictEqual({
       content: {

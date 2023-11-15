@@ -3,6 +3,7 @@ import {
   alphanumericAndSpaceCheck,
   getCurrentTimestamp,
   hasDuplicatedAnswers,
+  hasNonENDStateSession,
   isUrlEndWithImgExtension,
   isUrlStartWithHTTP,
   moveQuestion,
@@ -1739,25 +1740,321 @@ const adminQuizDuplicateQuestionV2 = (
   return { newQuestionId: duplicateQuestion.questionId };
 };
 
+/**
+ * Updates the thumbnail for the quiz.
+ *
+ * @param quizId - The unique identifier of the quiz containing the question to be duplicated.
+ * @param token - The authentication token for the user performing the action.
+ * @param imgURL - The URL for the image used for the thumbnail.
+ *
+ * @returns An EmptyObject if the question is updated successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizThumbnail = (
+  token: string,
+  quizId: number,
+  thumbnailUrl: string
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  // Error: Valid token is provided, but user is not an owner of this quiz
+  const authUserId = validSession.authUserId;
+  const validQuiz = data.quizzes.find((currQuiz) => currQuiz.quizId === quizId);
+
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Error: The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png
+  if (!isUrlEndWithImgExtension(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png'
+    );
+  }
+
+  // Error: The imgUrl does not begin with 'http://' or 'https://'
+  if (!isUrlStartWithHTTP(thumbnailUrl)) {
+    throw HTTPError(
+      400,
+      'The imgUrl does not begin with "http://" or "https://"'
+    );
+  }
+
+  // Updates the quiz thumbnail
+  validQuiz.thumbnailUrl = thumbnailUrl;
+  setData(data);
+  return {};
+};
+
+/**
+ * Deletes a question within a quiz.
+ *
+ * @param token - The authentication token for the user performing the action.
+ * @param quizId - The unique identifier of the quiz containing the question.
+ * @param questionId - The unique identifier of the question to be deleted.
+ *
+ * @returns An EmptyObject if the question is deleted successfully or an ErrorObject if any validation checks fail.
+ */
+const adminQuizDeleteQuestionV2 = (
+  token: string,
+  quizId: number,
+  questionId: number
+): EmptyObject => {
+  const data = getData();
+
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Check if question Id does not refer to a valid question within this quiz
+  const validQuestion = validQuiz.questions.find(
+    (currQuestion) => currQuestion.questionId === questionId
+  );
+  if (!validQuestion) {
+    throw HTTPError(
+      400,
+      'Question Id does not refer to a valid question within this quiz'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, data.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    );
+  }
+
+  // Make an array of questionId (type number) only by using map, then find the index of the wanted question by indexOf
+  // We need to map validQuiz.questions to another array of numbers because .indexOf only works for array of primitive values
+  const indexOfDeletedQuestion = validQuiz.questions
+    .map((currQuestion) => currQuestion.questionId)
+    .indexOf(questionId);
+  validQuiz.questions.splice(indexOfDeletedQuestion, 1);
+
+  validQuiz.numQuestions -= 1;
+  validQuiz.duration -= validQuestion.duration;
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * Transfer ownership of a quiz to a different user based on their email
+ *
+ * @param {number} quizId - ID of the quiz
+ * @param {string} Token - Token of the quiz owner
+ * @param {string} userEmail - The email of the targeted user
+ * @returns
+ */
+const adminQuizTransferV2 = (
+  quizId: number,
+  token: string,
+  userEmail: string
+): EmptyObject => {
+  const data = getData();
+
+  // Find the logged in user
+  const validSession = data.sessions.find(
+    (currSession) => currSession.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // check if the quiz does not exist or the user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Finds the user object of the targeted email
+  const targetUser = data.users.find(
+    (targetEmail) => targetEmail.email === userEmail
+  );
+
+  if (!targetUser) {
+    throw HTTPError(400, 'userEmail is not a real user');
+  }
+
+  // Finds the user that owns this token
+  const currentUser = data.users.find((curr) => curr.authUserId === authUserId);
+
+  // If this user has the same email as the targeted email, then throw error
+  if (currentUser.email === userEmail) {
+    throw HTTPError(400, 'userEmail is the current logged in user');
+  }
+
+  // Filters an array of quizzes that this target user owns
+  const quizzesFromTargetedUsers = data.quizzes.filter(
+    (curr) => curr.quizAuthorId === targetUser.authUserId
+  );
+
+  // Finds a quiz owned by the target user that has the same name of the transferred quiz
+  const quizSameName = quizzesFromTargetedUsers.find(
+    (quiz) => quiz.name === validQuiz.name
+  );
+
+  if (quizSameName) {
+    throw HTTPError(
+      400,
+      'Quiz ID refers to a quiz that has a name that is already used by the target user'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, data.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    );
+  }
+
+  validQuiz.quizAuthorId = targetUser.authUserId;
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * Permanently removes a particular quiz owned by the authenticated user.
+ *
+ * @param {number} authUserId - The ID of the authenticated user.
+ * @param {number} quizId - The ID of the quiz to be removed.
+ * @returns { ErrorObject | EmptyObject}
+ *   - An empty object if the quiz is successfully removed.
+ *     If any validation errors occur, it returns an error object with a message.
+ */
+const adminQuizRemoveV2 = (token: string, quizId: number): EmptyObject => {
+  // Retrieve the current data
+  const currData = getData();
+
+  // Check if authUserId is valid by searching for it in the list of users
+  const validSession = currData.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  // If authUserId is not valid, return an error object
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const existingQuiz = currData.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Check if the quiz with the given quizId does not exist
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!existingQuiz || existingQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Check if all sessions for this quiz must be in END state
+  if (hasNonENDStateSession(quizId, currData.quizSessions)) {
+    throw HTTPError(
+      400,
+      'All sessions for this quiz must be in END state'
+    );
+  }
+
+  currData.trash.push(existingQuiz);
+
+  // Remove the quiz from the data
+  for (let i = 0; i < currData.quizzes.length; i++) {
+    if (currData.quizzes[i].quizId === quizId) {
+      currData.quizzes.splice(i, 1);
+    }
+  }
+
+  setData(currData);
+
+  // Return an empty object to indicate a successful removal
+  return {};
+};
+
 export {
   adminQuizCreate,
   adminQuizCreateV2,
   adminQuizInfo,
   adminQuizInfoV2,
   adminQuizRemove,
+  adminQuizRemoveV2,
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizDescriptionUpdate,
   adminQuizCreateQuestion,
   adminQuizCreateQuestionV2,
   adminQuizDeleteQuestion,
+  adminQuizDeleteQuestionV2,
   adminQuizMoveQuestion,
   adminQuizTransfer,
+  adminQuizTransferV2,
   adminQuizViewTrash,
   adminQuizDuplicateQuestion,
   adminQuizDuplicateQuestionV2,
   adminQuizRestore,
   adminQuizQuestionUpdate,
   adminQuizTrashEmpty,
-  adminQuizQuestionUpdateV2
+  adminQuizQuestionUpdateV2,
+  adminQuizThumbnail
 };

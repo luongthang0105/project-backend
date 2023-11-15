@@ -245,7 +245,12 @@ type SessionState =
     atQuestion: number,
     players: string[],
     metadata: QuizObject,
-    messages: Message[]
+    messages: Message[],
+    answerSubmission: [{
+      playerName: string,
+      answerTime: number,
+      answer: Answer
+    }]
   }
 
 export {

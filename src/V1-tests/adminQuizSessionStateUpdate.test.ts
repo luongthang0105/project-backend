@@ -16,7 +16,7 @@ let quiz1: Quiz;
 let questInfo1: Question;
 let question1: number;
 let quizSession1: number;
-const duration = 2;
+const duration = 1;
 
 beforeEach(() => {
   clear();

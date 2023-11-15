@@ -78,6 +78,16 @@ describe('playerJoinSession', () => {
     });
   });
 
+  test('Error: Session doesnt exist (this is undefined behaviour and wont be tested)', () => {
+    const player2 = playerJoinSession(session1 + 1, 'Thomas');
+    expect(player2).toStrictEqual({
+      content: {
+        error: 'Session doesnt exist (this is undefined behaviour and wont be tested)'
+      },
+      statusCode: 400
+    });
+  });
+
   test('Success: Same name but different session', () => {
     const player1 = playerJoinSession(session1, 'Thomas');
     expect(player1).toStrictEqual({

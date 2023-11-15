@@ -1,4 +1,4 @@
-import { setData } from './dataStore';
+import { getTimers, setData } from './dataStore';
 import { AdminAction, DataStore, QuizSession } from './types';
 import HTTPError from 'http-errors';
 // /**
@@ -35,12 +35,13 @@ export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) =
   const questionPosition = quizSession.atQuestion - 1;
   const duration = quizSession.metadata.questions[questionPosition].duration;
 
-  setTimeout(() => {
+  const timers = getTimers();
+  timers.push(setTimeout(() => {
     if (quizSession.state === 'QUESTION_OPEN') {
       quizSession.state = 'QUESTION_CLOSE';
       setData(data);
     }
-  }, duration * 1000);
+  }, duration * 1000));
   setData(data);
 };
 
@@ -59,12 +60,12 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
 
-  setTimeout(() => {
+  const timers = getTimers();
+  timers.push(setTimeout(() => {
     if (quizSession.state === 'QUESTION_COUNTDOWN') {
-      // console.log("heloooooo")
       toQuestionOpenState(quizSession, data);
     }
-  }, 3000);
+  }, 3000));
 };
 
 /**

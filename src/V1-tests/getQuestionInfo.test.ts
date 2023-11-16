@@ -133,8 +133,19 @@ describe('getQuestionInfo', () => {
     });
   });
 
-  test('Session is in LOBBY or END state', () => {
+  test('Session is in LOBBYstate', () => {
     const result = getQuestionInfo(player1, 2);
+    expect(result).toStrictEqual({
+      content: {
+        error: 'Session is in LOBBY or END state',
+      },
+      statusCode: 400,
+    });
+  });
+
+  test('Session is in END state', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'END');
+    const result = getQuestionInfo(player1, 1);
     expect(result).toStrictEqual({
       content: {
         error: 'Session is in LOBBY or END state',
@@ -181,7 +192,7 @@ describe('getQuestionInfo', () => {
       session1,
       'SKIP_COUNTDOWN'
     );
-    sleepSync(1);
+    sleepSync(0.5);
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     const result = getQuestionInfo(player1, 2);
     expect(result).toStrictEqual({

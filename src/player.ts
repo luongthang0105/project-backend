@@ -175,12 +175,7 @@ export const getQuestionInfo = (
   const currSession = data.quizSessions.find(
     (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
   );
-
-  // undefined behavior
-  if (!currSession) {
-    throw HTTPError(400, 'This session does not exist');
-  }
-
+  
   // if question Position is not in an approriate range
   if (
     questionPosition < 1 ||

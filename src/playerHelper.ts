@@ -33,5 +33,5 @@ export const generateRandomName = (): string => {
 };
 
 export const areAnswersTheSame = (answerIds1: number[], answerIds2: number[]): boolean => {
-  return JSON.stringify(new Set(answerIds1)) === JSON.stringify(new Set(answerIds2));
+  return JSON.stringify([...answerIds1].sort()) === JSON.stringify([...answerIds2].sort());
 };

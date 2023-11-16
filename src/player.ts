@@ -175,7 +175,7 @@ export const getQuestionInfo = (
   const currSession = data.quizSessions.find(
     (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
   );
-  
+
   // if question Position is not in an approriate range
   if (
     questionPosition < 1 ||

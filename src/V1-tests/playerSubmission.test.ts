@@ -7,6 +7,7 @@ import {
   clear,
   playerJoinSession,
   playerStatus,
+  playerSubmission,
 } from "../testWrappersV1"
 import { Quiz, ReturnedToken } from "../types"
 
@@ -91,7 +92,7 @@ describe("playerJoinSession", () => {
     { questionPos: -1 },
   ])(
     "Error: Question position is not valid for the session this player is in",
-    (questionPos) => {
+    ({questionPos}) => {
       const player1 = playerJoinSession(session1, "Thomas").content.playerId
       expect(player1).toStrictEqual(expect.any(Number))
 
@@ -139,8 +140,8 @@ describe("playerJoinSession", () => {
     expect(status.statusCode).toBe(200);
     expect(status.content.state).toBe("QUESTION_COUNTDOWN");
     
-    status = playerSubmission([0], player1, 1)
-    expect(status).toStrictEqual({
+    const res = playerSubmission([0], player1, 1)
+    expect(res).toStrictEqual({
       content: {
         error: "Session is not in QUESTION_OPEN state",
       },
@@ -179,8 +180,8 @@ describe("playerJoinSession", () => {
     expect(status.content.state).toBe("QUESTION_OPEN");
     
     // Currently at question 1, now submit to question 2
-    status = playerSubmission([0], player1, 2)
-    expect(status).toStrictEqual({
+    const res = playerSubmission([0], player1, 2)
+    expect(res).toStrictEqual({
       content: {
         error: "If session is not yet up to this question",
       },
@@ -201,7 +202,7 @@ describe("playerJoinSession", () => {
     { answerIds: [2, -1] },
     // Out of bound id and neg id mix with valid id
     { answerIds: [2, -1, 3, 0] },
-  ])("Error: Answer IDs are not valid for this particular question", (answerId) => {
+  ])("Error: Answer IDs are not valid for this particular question", ({answerIds}) => {
     const player1 = playerJoinSession(session1, "Thomas").content.playerId
     expect(player1).toStrictEqual(expect.any(Number))
 
@@ -232,8 +233,8 @@ describe("playerJoinSession", () => {
     expect(status.content.state).toBe("QUESTION_OPEN");
     
     // Valid answer ids are 0 or 1
-    status = playerSubmission(answerId, player1, 1)
-    expect(status).toStrictEqual({
+    const res = playerSubmission(answerIds, player1, 1)
+    expect(res).toStrictEqual({
       content: {
         error: "Answer IDs are not valid for this particular question",
       },
@@ -245,7 +246,7 @@ describe("playerJoinSession", () => {
     { answerIds: [0, 1, 1, 0] },
     { answerIds: [0, 1, 1] },
     { answerIds: [0, 1, 0] },
-  ])("Error: There are duplicate answer IDs provided", (answerId) => {
+  ])("Error: There are duplicate answer IDs provided", ({answerIds}) => {
     const player1 = playerJoinSession(session1, "Thomas").content.playerId
     expect(player1).toStrictEqual(expect.any(Number))
 
@@ -276,8 +277,8 @@ describe("playerJoinSession", () => {
     expect(status.content.state).toBe("QUESTION_OPEN");
     
     // Valid answer ids are 0 or 1
-    status = playerSubmission(answerId, player1, 1)
-    expect(status).toStrictEqual({
+    const res = playerSubmission(answerIds, player1, 1)
+    expect(res).toStrictEqual({
       content: {
         error: "There are duplicate answer IDs provided",
       },
@@ -316,8 +317,8 @@ describe("playerJoinSession", () => {
     expect(status.content.state).toBe("QUESTION_OPEN");
     
     // Empty answer ids
-    status = playerSubmission([], player1, 1)
-    expect(status).toStrictEqual({
+    const res = playerSubmission([], player1, 1)
+    expect(res).toStrictEqual({
       content: {
         error: "Less than 1 answer ID was submitted",
       },

@@ -133,9 +133,9 @@ export const sendChatMessage = (playerId: number, message: string) => {
 export const playerStatus = (
   playerId: number
 ): {
-  state: string
-  numQuestions: number
-  atQuestion: number
+  state: string;
+  numQuestions: number;
+  atQuestion: number;
 } => {
   const data = getData();
 
@@ -155,6 +155,56 @@ export const playerStatus = (
     state: currSession.state,
     atQuestion: currSession.atQuestion,
     numQuestions: currSession.metadata.numQuestions,
+  };
+};
+
+export const getQuestionInfo = (
+  playerId: number,
+  questionPosition: number
+) => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // if question Position is not in an approriate range
+  if (
+    questionPosition < 1 ||
+    questionPosition > currSession.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      'Question position is not valid for the session this player is in'
+    );
+  }
+
+  if (currSession.state === 'LOBBY' || currSession.state === 'END') {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
+  }
+
+  if (currSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, 'Session is not currently on this question');
+  }
+
+  // since questionPostion starts at 1, we have to deduct one
+  const currQuestion = currSession.metadata.questions[questionPosition - 1];
+
+  return {
+    questionId: currQuestion.questionId,
+    question: currQuestion.question,
+    duration: currQuestion.duration,
+    thumbnailUrl: currQuestion.thumbnailUrl,
+    points: currQuestion.points,
+    answers: currQuestion.answers,
   };
 };
 

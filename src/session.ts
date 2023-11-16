@@ -78,7 +78,6 @@ const adminQuizSessionStart = (
     autoStartNum: autoStartNum,
     messages: [] as Message[],
     answerSubmitted: [] as Submission[],
-    numCorrectAnswersAtThisQuestion: 0,
     timeQuestionOpened: 0
   };
 

@@ -258,11 +258,6 @@ type QuizSession = {
   // Info about the submission of a player
   answerSubmitted?: Submission[],
   
-  // To determine which player answers first => their score
-  // Also help finding out percent correct
-  // Reset to 0 after going to new question
-  numCorrectAnswersAtThisQuestion?: number,
-
   // Timestamp when a new question is opened
   // Reset to a new timestamp when session enters QUESTION_OPEN state
   timeQuestionOpened?: number

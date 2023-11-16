@@ -289,5 +289,6 @@ export {
   AdminAction,
   QuizSession,
   Player,
-  Message
+  Message,
+  Submission
 };

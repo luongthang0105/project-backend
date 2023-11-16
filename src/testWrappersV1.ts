@@ -10,13 +10,55 @@ import {
   UserDetails,
   QuizSession,
   Message,
+  Question
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
 
+export const getQuestionInfo = (
+  playerId: number,
+  questionPosition: number
+): {
+  content: Question,
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/player/' + playerId + '/question/' + questionPosition
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
+export const playerSubmission = (
+  answerIds: number[],
+  playerId: number,
+  questionPosition: number
+): {
+  content: EmptyObject,
+  statusCode: number;
+} => {
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/player/' + playerId + '/question/' + questionPosition + '/answer', {
+      json: {
+        answerIds: answerIds
+      },
+    }
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const getQuestionResult = (
   playerId: number,
-  questionPosition: string
+  questionPosition: number
 ): {
   content: {
     questionId: number;

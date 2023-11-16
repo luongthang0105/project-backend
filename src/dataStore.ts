@@ -26,6 +26,7 @@ const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json'
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: DataStore) {
+  console.log('newData', newData.quizSessions[0]);
   fs.writeFileSync('./data.json', JSON.stringify(newData));
 }
 

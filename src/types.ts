@@ -192,6 +192,7 @@ type Message = {
 type Player = {
   playerId: number,
   name: string,
+  // Id of the session the player joined
   sessionJoined: number
 }
 
@@ -235,27 +236,32 @@ type SessionState =
   | 'GO_TO_FINAL_RESULTS'
   | 'END'
 
-
-
 type Submission = {
   questionId: number,
   playerName: string,
   answerTime: number,
-  answer: boolean
+  // True if the answer was correct
+  correct: boolean
 }
 /**
  * Represents the structure of quiz sessions which describe a particular instance of a quiz being run
  */
-  type QuizSession = {
-    quizSessionId?: number,
-    autoStartNum?: number,
-    state: SessionState,
-    atQuestion: number,
-    players: string[],
-    metadata: QuizObject,
-    messages: Message[],
-    answerSubmitted: Submission[]
-  }
+type QuizSession = {
+  quizSessionId?: number,
+  autoStartNum?: number,
+  state: SessionState,
+  atQuestion: number,
+  players: string[],
+  metadata: QuizObject,
+  messages: Message[],
+
+  // Info about the submission of a player
+  answerSubmitted?: Submission[],
+
+  // Timestamp when a new question is opened
+  // Reset to a new timestamp when session enters QUESTION_OPEN state
+  timeQuestionOpened?: number
+}
 
 export {
   EmptyObject,
@@ -278,5 +284,6 @@ export {
   AdminAction,
   QuizSession,
   Player,
-  Message
+  Message,
+  Submission
 };

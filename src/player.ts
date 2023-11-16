@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import { generateRandomName } from './playerHelper';
-import { Player, Message } from './types';
+import { areAnswersTheSame, generateRandomName } from './playerHelper';
+import { Player, Message, EmptyObject } from './types';
 import { toQuestionCountDownState } from './sessionHelper';
 import { getCurrentTimestamp, newAnswerList } from './quizHelper';
 
@@ -199,15 +199,18 @@ export const getQuestionResult = (
     throw HTTPError(400, 'Session is not yet up to this question');
   }
 
-  const currQuestion = currSession.metadata.questions[questionPosition];
+  const currQuestion = currSession.metadata.questions[questionPosition - 1];
   const correctSubmission = currSession.answerSubmitted.filter(
-    (submission) => submission.answer === true && submission.questionId === currQuestion.questionId
+    (submission) =>
+      submission.correct === true &&
+      submission.questionId === currQuestion.questionId
   );
   const playersCorrectList = correctSubmission.map(
     (submission) => submission.playerName
   );
 
   const totalPlayers = currSession.answerSubmitted.length;
+  console.log('answersubmission', currSession);
   const numPlayersCorrect = playersCorrectList.length;
   const percentCorrect = Math.round((numPlayersCorrect / totalPlayers) * 100);
 
@@ -227,4 +230,159 @@ export const getQuestionResult = (
     averageAnswerTime: averageAnswerTime,
     percentCorrect: percentCorrect,
   };
+};
+
+export const getQuestionInfo = (playerId: number, questionPosition: number) => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // if question Position is not in an approriate range
+  if (
+    questionPosition < 1 ||
+    questionPosition > currSession.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      'Question position is not valid for the session this player is in'
+    );
+  }
+
+  if (currSession.state === 'LOBBY' || currSession.state === 'END') {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
+  }
+
+  if (currSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, 'Session is not currently on this question');
+  }
+
+  // since questionPostion starts at 1, we have to deduct one
+  const currQuestion = currSession.metadata.questions[questionPosition - 1];
+
+  return {
+    questionId: currQuestion.questionId,
+    question: currQuestion.question,
+    duration: currQuestion.duration,
+    thumbnailUrl: currQuestion.thumbnailUrl,
+    points: currQuestion.points,
+    answers: currQuestion.answers,
+  };
+};
+
+export const playerSubmission = (
+  answerIds: number[],
+  playerId: number,
+  questionPosition: number
+): EmptyObject => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const sessionJoined = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // Error: If question position is not valid for the session this player is in
+  if (
+    questionPosition <= 0 ||
+    questionPosition > sessionJoined.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      'Question position is not valid for the session this player is in'
+    );
+  }
+
+  // Error: Session is not in QUESTION_OPEN state
+  if (sessionJoined.state !== 'QUESTION_OPEN') {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  }
+
+  // Error: If session is not yet up to this question
+  if (questionPosition !== sessionJoined.atQuestion) {
+    throw HTTPError(400, 'If session is not yet up to this question');
+  }
+
+  // Error: Answer IDs are not valid for this particular question
+  const currentQuestion =
+    sessionJoined.metadata.questions[questionPosition - 1];
+  const allAnswers = currentQuestion.answers;
+
+  if (
+    // If we find an answerId that does not exist in the allAnswers array, then
+    // its not valid
+    answerIds.find(
+      (answerId) =>
+        // Check if it exists in the allAnswers array. Returns True if it does not.
+        !allAnswers.find((validAnswer) => validAnswer.answerId === answerId)
+    )
+  ) {
+    throw HTTPError(
+      400,
+      'Answer IDs are not valid for this particular question'
+    );
+  }
+
+  // Error: There are duplicate answer IDs provided
+  if (answerIds.length !== new Set(answerIds).size) {
+    throw HTTPError(400, 'There are duplicate answer IDs provided');
+  }
+
+  // Error: Less than 1 answer ID was submitted
+  if (answerIds.length === 0) {
+    throw HTTPError(400, 'Less than 1 answer ID was submitted');
+  }
+
+  const playerName = validPlayer.name;
+  const questionId =
+    sessionJoined.metadata.questions[questionPosition - 1].questionId;
+
+  // Check if this player has submitted an answer already
+  const submittedAnswerFromPlayer = sessionJoined.answerSubmitted.find(
+    (answer) =>
+      answer.playerName === playerName && answer.questionId === questionId
+  );
+  // If already submitted, delete that answer and submit this one instead
+  if (submittedAnswerFromPlayer) {
+    const indexOfAnswer = sessionJoined.answerSubmitted.indexOf(
+      submittedAnswerFromPlayer
+    );
+    sessionJoined.answerSubmitted.splice(indexOfAnswer);
+  }
+
+  const currTime = getCurrentTimestamp();
+  const answerTime = currTime - sessionJoined.timeQuestionOpened;
+
+  // Now we need to extract correct answerIds from allAnswers
+  const correctAnswerIds = allAnswers
+    .filter((answer) => answer.correct)
+    .map((answer) => answer.answerId);
+
+  // Check if the correctAnswers array is the same as player answerIds
+  const correct = areAnswersTheSame(answerIds, correctAnswerIds);
+  sessionJoined.answerSubmitted.push({
+    questionId: questionId,
+    playerName: playerName,
+    answerTime: answerTime,
+    correct: correct,
+  });
+
+  setData(data);
+  return {};
 };

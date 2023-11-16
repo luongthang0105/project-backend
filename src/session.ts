@@ -7,7 +7,7 @@ import {
   handlesQCD,
   handlesQO,
 } from './sessionHelper';
-import { QuizObject, QuizSession, AdminAction, EmptyObject } from './types';
+import { QuizObject, QuizSession, AdminAction, EmptyObject, Message, Submission } from './types';
 import HTTPError from 'http-errors';
 /**
  * Creates a new quiz session
@@ -73,10 +73,12 @@ const adminQuizSessionStart = (
     quizSessionId: data.nextQuizSessionId,
     state: 'LOBBY',
     atQuestion: 0,
-    players: [],
+    players: [] as string[],
     metadata: validQuiz as QuizObject,
     autoStartNum: autoStartNum,
-    messages: []
+    messages: [] as Message[],
+    answerSubmitted: [] as Submission[],
+    timeQuestionOpened: 0
   };
 
   data.nextQuizSessionId += 1;

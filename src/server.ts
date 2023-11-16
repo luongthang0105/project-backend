@@ -50,7 +50,7 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus, getQuestionResult } from './player';
+import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus, playerSubmission, getQuestionInfo, getQuestionResult } from './player';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -333,6 +333,7 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+
 // getQuestionResult
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
@@ -343,6 +344,24 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
   res.json(result);
 });
 
+// playerSubmission
+app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  const answerIds = req.body.answerIds;
+
+  const result = playerSubmission(answerIds, playerId, questionPosition);
+
+  res.json(result);
+});
+
+// getCurrentQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  const result = getQuestionInfo(playerId, questionPosition);
+  res.json(result);
+});
 // sendChatMessage
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
@@ -351,6 +370,7 @@ app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
 // allChatMessages
 app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);

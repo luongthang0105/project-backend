@@ -33,6 +33,29 @@ export const getQuestionInfo = (
   };
 };
 
+export const playerSubmission = (
+  answerIds: number[],
+  playerId: number,
+  questionPosition: number
+): {
+  content: EmptyObject,
+  statusCode: number;
+} => {
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/player/' + playerId + '/question/' + questionPosition + '/answer', {
+      json: {
+        answerIds: answerIds
+      },
+    }
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const sendChatMessage = (
   playerId: number,
   message: string

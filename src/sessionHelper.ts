@@ -1,4 +1,5 @@
 import { getTimers, setData } from './dataStore';
+import { getCurrentTimestamp } from './quizHelper';
 import { AdminAction, DataStore, QuizSession } from './types';
 import HTTPError from 'http-errors';
 // /**
@@ -32,6 +33,8 @@ import HTTPError from 'http-errors';
  */
 export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) => {
   quizSession.state = 'QUESTION_OPEN';
+  quizSession.timeQuestionOpened = getCurrentTimestamp();
+
   const questionPosition = quizSession.atQuestion - 1;
   const duration = quizSession.metadata.questions[questionPosition].duration;
 
@@ -59,6 +62,7 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
   }
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
+  quizSession.numCorrectAnswersAtThisQuestion = 0;
 
   const timers = getTimers();
   timers.push(setTimeout(() => {

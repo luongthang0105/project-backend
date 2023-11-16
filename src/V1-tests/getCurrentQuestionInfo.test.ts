@@ -5,12 +5,13 @@ import {
   clear,
   playerJoinSession,
   getQuestionInfo,
-  adminQuizGetSessionStatus,
   adminQuizSessionStateUpdate,
-  adminQuizInfo,
+  adminQuizGetSessionStatus,
 } from "../testWrappersV1";
-import { Question, Quiz, ReturnedToken } from "../types";
+import { Quiz, ReturnedToken } from "../types";
 import { expect, test } from "@jest/globals";
+import { sleepSync } from "./sleepSync";
+import exp from "constants";
 
 describe("getQuestionInfo", () => {
   let user1: ReturnedToken;
@@ -33,7 +34,7 @@ describe("getQuestionInfo", () => {
       .content as Quiz;
     questInfo1 = {
       question: "What is that pokemon",
-      duration: 4,
+      duration: 0.25,
       points: 5,
       answers: [
         {
@@ -59,7 +60,7 @@ describe("getQuestionInfo", () => {
     ).content.questionId;
     questInfo2 = {
       question: "What is that football player",
-      duration: 8,
+      duration: 0.25,
       points: 10,
       answers: [
         {
@@ -113,34 +114,6 @@ describe("getQuestionInfo", () => {
   });
 
   test("Question position is not valid for the session this player is in", () => {
-    const questInfo2 = {
-      question: "What is that football player",
-      duration: 8,
-      points: 10,
-      answers: [
-        {
-          answer: "Eden Hazard",
-          correct: true,
-        },
-        {
-          answer: "Cole Palmer",
-          correct: false,
-        },
-      ],
-      thumbnailUrl:
-        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
-    };
-
-    const question2 = adminQuizCreateQuestion(
-      user1,
-      quiz1.quizId,
-      questInfo2.question,
-      questInfo2.duration,
-      questInfo2.points,
-      questInfo2.answers,
-      questInfo2.thumbnailUrl
-    ).content as Question;
-
     const result = getQuestionInfo(player1, 3);
     expect(result).toStrictEqual({
       content: {
@@ -172,14 +145,14 @@ describe("getQuestionInfo", () => {
     });
   });
 
-  test("Success: Return current question in current session: have 1 session", () => {
+  test("Success: Return current question in current session: get 1st qs info", () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     const result = getQuestionInfo(player1, 1);
     expect(result).toStrictEqual({
       content: {
         questionId: 0,
         question: "What is that pokemon",
-        duration: 4,
+        duration: 0.25,
         thumbnailUrl:
           "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
         points: 5,
@@ -193,6 +166,44 @@ describe("getQuestionInfo", () => {
           {
             answer: "Thomas",
             answerId: 1,
+            colour: expect.any(String),
+            correct: false,
+          },
+        ],
+      },
+      statusCode: 200,
+    });
+  });
+
+  test("Success: Return current question in current session: get 2nd qs info", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      "SKIP_COUNTDOWN"
+    );
+    sleepSync(1);
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    const result = getQuestionInfo(player1, 2);
+    expect(result).toStrictEqual({
+      content: {
+        questionId: 1,
+        question: "What is that football player",
+        duration: 0.25,
+        thumbnailUrl:
+          "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+        points: 10,
+        answers: [
+          {
+            answer: "Eden Hazard",
+            answerId: expect.any(Number),
+            colour: expect.any(String),
+            correct: true,
+          },
+          {
+            answer: "Cole Palmer",
+            answerId: expect.any(Number),
             colour: expect.any(String),
             correct: false,
           },

@@ -69,7 +69,6 @@ app.use(
     swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' },
   })
 );
-
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
@@ -729,6 +728,8 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
+app.use('/static', express.static('public'));
+
 app.use((req: Request, res: Response) => {
   const error = `
     404 Not found - This could be because:
@@ -743,7 +744,6 @@ app.use((req: Request, res: Response) => {
   `;
   res.status(404).json({ error });
 });
-
 // For handling errors
 app.use(errorHandler());
 

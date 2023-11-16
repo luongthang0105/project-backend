@@ -1,9 +1,9 @@
-import { getData, setData } from './dataStore';
-import HTTPError from 'http-errors';
-import { areAnswersTheSame, generateRandomName } from './playerHelper';
-import { Player, Message, EmptyObject } from './types';
-import { toQuestionCountDownState } from './sessionHelper';
-import { getCurrentTimestamp } from './quizHelper';
+import { getData, setData } from "./dataStore";
+import HTTPError from "http-errors";
+import { areAnswersTheSame, generateRandomName } from "./playerHelper";
+import { QuizObject, Player, Message, EmptyObject } from "./types";
+import { toQuestionCountDownState } from "./sessionHelper";
+import { getCurrentTimestamp } from "./quizHelper";
 
 export const playerJoinSession = (
   sessionId: number,
@@ -19,18 +19,18 @@ export const playerJoinSession = (
   if (!validSession) {
     throw HTTPError(
       400,
-      'Session doesnt exist (this is undefined behaviour and wont be tested)'
+      "Session doesnt exist (this is undefined behaviour and wont be tested)"
     );
   }
 
   // Error: Session is not in LOBBY state
-  if (validSession.state !== 'LOBBY') {
-    throw HTTPError(400, 'Session is not in LOBBY state');
+  if (validSession.state !== "LOBBY") {
+    throw HTTPError(400, "Session is not in LOBBY state");
   }
 
   // If name is empty, randomly generate it according to the structure [5 letters][3 numbers],
   // where there are no repetitions of numbers or characters within the same name
-  if (name === '') {
+  if (name === "") {
     // generate the random name and make sure it's unique among the others name in the session
     while (true) {
       name = generateRandomName();
@@ -49,7 +49,7 @@ export const playerJoinSession = (
     if (playerWithSameName) {
       throw HTTPError(
         400,
-        'Name of user entered is not unique (compared to other users who have already joined)'
+        "Name of user entered is not unique (compared to other users who have already joined)"
       );
     }
   }
@@ -84,7 +84,7 @@ export const allChatMessages = (playerId: number) => {
   );
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, 'PlayerId does not exist');
+    throw HTTPError(400, "PlayerId does not exist");
   }
 
   const currSession = data.quizSessions.find(
@@ -105,13 +105,13 @@ export const sendChatMessage = (playerId: number, message: string) => {
 
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, 'PlayerId does not exist');
+    throw HTTPError(400, "PlayerId does not exist");
   }
 
   if (message.length < 1 || message.length > 100) {
     throw HTTPError(
       400,
-      'Message body is less than 1 character or more than 100 characters'
+      "Message body is less than 1 character or more than 100 characters"
     );
   }
 
@@ -144,7 +144,7 @@ export const playerStatus = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, 'Player ID does not exist');
+    throw HTTPError(400, "Player ID does not exist");
   }
 
   const currSession = data.quizSessions.find(
@@ -158,10 +158,7 @@ export const playerStatus = (
   };
 };
 
-export const getQuestionInfo = (
-  playerId: number,
-  questionPosition: number
-) => {
+export const getQuestionInfo = (playerId: number, questionPosition: number) => {
   const data = getData();
 
   // Error: Player ID does not exist
@@ -169,7 +166,7 @@ export const getQuestionInfo = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, 'Player ID does not exist');
+    throw HTTPError(400, "Player ID does not exist");
   }
 
   const currSession = data.quizSessions.find(
@@ -183,16 +180,16 @@ export const getQuestionInfo = (
   ) {
     throw HTTPError(
       400,
-      'Question position is not valid for the session this player is in'
+      "Question position is not valid for the session this player is in"
     );
   }
 
-  if (currSession.state === 'LOBBY' || currSession.state === 'END') {
-    throw HTTPError(400, 'Session is in LOBBY or END state');
+  if (currSession.state === "LOBBY" || currSession.state === "END") {
+    throw HTTPError(400, "Session is in LOBBY or END state");
   }
 
   if (currSession.atQuestion !== questionPosition) {
-    throw HTTPError(400, 'Session is not currently on this question');
+    throw HTTPError(400, "Session is not currently on this question");
   }
 
   // since questionPostion starts at 1, we have to deduct one
@@ -220,7 +217,7 @@ export const playerSubmission = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, 'Player ID does not exist');
+    throw HTTPError(400, "Player ID does not exist");
   }
 
   const sessionJoined = data.quizSessions.find(
@@ -234,22 +231,23 @@ export const playerSubmission = (
   ) {
     throw HTTPError(
       400,
-      'Question position is not valid for the session this player is in'
+      "Question position is not valid for the session this player is in"
     );
   }
 
   // Error: Session is not in QUESTION_OPEN state
-  if (sessionJoined.state !== 'QUESTION_OPEN') {
-    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  if (sessionJoined.state !== "QUESTION_OPEN") {
+    throw HTTPError(400, "Session is not in QUESTION_OPEN state");
   }
 
   // Error: If session is not yet up to this question
   if (questionPosition !== sessionJoined.atQuestion) {
-    throw HTTPError(400, 'If session is not yet up to this question');
+    throw HTTPError(400, "If session is not yet up to this question");
   }
 
   // Error: Answer IDs are not valid for this particular question
-  const currentQuestion = sessionJoined.metadata.questions[questionPosition - 1];
+  const currentQuestion =
+    sessionJoined.metadata.questions[questionPosition - 1];
   const allAnswers = currentQuestion.answers;
 
   if (
@@ -263,30 +261,34 @@ export const playerSubmission = (
   ) {
     throw HTTPError(
       400,
-      'Answer IDs are not valid for this particular question'
+      "Answer IDs are not valid for this particular question"
     );
   }
 
   // Error: There are duplicate answer IDs provided
   if (answerIds.length !== new Set(answerIds).size) {
-    throw HTTPError(400, 'There are duplicate answer IDs provided');
+    throw HTTPError(400, "There are duplicate answer IDs provided");
   }
 
   // Error: Less than 1 answer ID was submitted
   if (answerIds.length === 0) {
-    throw HTTPError(400, 'Less than 1 answer ID was submitted');
+    throw HTTPError(400, "Less than 1 answer ID was submitted");
   }
 
   const playerName = validPlayer.name;
-  const questionId = sessionJoined.metadata.questions[questionPosition - 1].questionId;
+  const questionId =
+    sessionJoined.metadata.questions[questionPosition - 1].questionId;
 
   // Check if this player has submitted an answer already
   const submittedAnswerFromPlayer = sessionJoined.answerSubmitted.find(
-    (answer) => answer.playerName === playerName && answer.questionId === questionId
+    (answer) =>
+      answer.playerName === playerName && answer.questionId === questionId
   );
   // If already submitted, delete that answer and submit this one instead
   if (submittedAnswerFromPlayer) {
-    const indexOfAnswer = sessionJoined.answerSubmitted.indexOf(submittedAnswerFromPlayer);
+    const indexOfAnswer = sessionJoined.answerSubmitted.indexOf(
+      submittedAnswerFromPlayer
+    );
     sessionJoined.answerSubmitted.splice(indexOfAnswer);
   }
 
@@ -305,9 +307,62 @@ export const playerSubmission = (
     questionId: questionId,
     playerName: playerName,
     answerTime: answerTime,
-    correct: correct
+    correct: correct,
   });
 
   setData(data);
   return {};
+};
+
+export const getCSVResult = (
+  token: string,
+  quizId: number,
+  sessionId: number
+) => {
+  const data = getData();
+
+  const validUserSession = data.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === "" || !validUserSession) {
+    throw HTTPError(
+      401,
+      "Token is empty or invalid (does not refer to valid logged in user session)"
+    );
+  }
+  const authUserId = validUserSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // If quizId is not valid, return an error object
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      "Valid token is provided, but user is not an owner of this quiz"
+    );
+  }
+
+  const validQuizSession = data.quizSessions.find(
+    (session) => session.metadata.quizId === quizId
+  );
+
+  if (!validQuizSession) {
+    throw HTTPError(
+      403,
+      "Session Id does not refer to a valid session within this quiz"
+    );
+  }
+
+  if (validQuizSession.state !== "FINAL_RESULTS") {
+    throw HTTPError(403, "Session is not in FINAL_RESULTS state");
+  }
+
+
+  
+  
 };

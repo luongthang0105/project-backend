@@ -371,7 +371,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test.only('Success: 2 players successfully submit answer', () => {
+  test('Success: 2 players successfully submit answer', () => {
     const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(Number));
 
@@ -465,7 +465,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test.only('Success: Multiple correct answers on Q2', () => {
+  test('Success: Multiple correct answers on Q2', () => {
     const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(Number));
 

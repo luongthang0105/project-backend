@@ -337,8 +337,8 @@ app.post(
 // playerSubmission
 app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
-  const questionPosition = parseInt(req.params.questionposition)
-  const answerIds = req.body.answerIds
+  const questionPosition = parseInt(req.params.questionposition);
+  const answerIds = req.body.answerIds;
 
   const result = playerSubmission(answerIds, playerId, questionPosition);
 

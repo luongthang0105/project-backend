@@ -37,7 +37,7 @@ export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) =
 
   const questionPosition = quizSession.atQuestion - 1;
   const duration = quizSession.metadata.questions[questionPosition].duration;
-  
+
   const timers = getTimers();
   timers.push(setTimeout(() => {
     if (quizSession.state === 'QUESTION_OPEN') {

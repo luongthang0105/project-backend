@@ -80,7 +80,7 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
       (newQuizSession) => quizSession.quizSessionId === newQuizSession.quizSessionId
     );
     if (newQuizSession.state === 'QUESTION_COUNTDOWN') {
-      toQuestionOpenState(newQuizSession, data);
+      toQuestionOpenState(newQuizSession, newData);
     }
   }, 3000));
 };

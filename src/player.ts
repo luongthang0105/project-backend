@@ -3,7 +3,7 @@ import HTTPError from 'http-errors';
 import { areAnswersTheSame, generateRandomName } from './playerHelper';
 import { Player, Message, EmptyObject } from './types';
 import { toQuestionCountDownState } from './sessionHelper';
-import { getCurrentTimestamp, newAnswerList } from './quizHelper';
+import { getCurrentTimestamp } from './quizHelper';
 
 export const playerJoinSession = (
   sessionId: number,
@@ -210,7 +210,6 @@ export const getQuestionResult = (
   );
 
   const totalPlayers = currSession.answerSubmitted.length;
-  console.log('answersubmission', currSession);
   const numPlayersCorrect = playersCorrectList.length;
   const percentCorrect = Math.round((numPlayersCorrect / totalPlayers) * 100);
 

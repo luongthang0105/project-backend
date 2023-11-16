@@ -8,7 +8,6 @@ import {
   playerJoinSession,
   getQuestionResult,
   playerSubmission,
-  getQuestionInfo
 } from '../testWrappersV1';
 import { Question, Quiz, ReturnedToken } from '../types';
 
@@ -20,7 +19,6 @@ describe('getQuestionResult', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1: Question;
-  let question1: Question;
   let session1: number;
   let player1: number;
   beforeEach(() => {
@@ -45,7 +43,7 @@ describe('getQuestionResult', () => {
       thumbnailUrl:
         'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
     };
-    question1 = adminQuizCreateQuestion(
+    adminQuizCreateQuestion(
       user1,
       quiz1.quizId,
       questInfo1.question,
@@ -81,6 +79,7 @@ describe('getQuestionResult', () => {
       questInfo2.answers,
       questInfo2.thumbnailUrl
     );
+
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
     player1 = playerJoinSession(session1, 'Thomas').content.playerId;
   });
@@ -108,33 +107,6 @@ describe('getQuestionResult', () => {
   });
 
   test('Question position is not valid for the session this player is in', () => {
-    const questInfo2 = {
-      question: 'What is that football player',
-      duration: duration,
-      points: 10,
-      answers: [
-        {
-          answer: 'Eden Hazard',
-          correct: true,
-        },
-        {
-          answer: 'Cole Palmer',
-          correct: false,
-        },
-      ],
-      thumbnailUrl:
-        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
-    };
-    const question2 = adminQuizCreateQuestion(
-      user1,
-      quiz1.quizId,
-      questInfo2.question,
-      questInfo2.duration,
-      questInfo2.points,
-      questInfo2.answers,
-      questInfo2.thumbnailUrl
-    ).content as Question;
-
     const result = getQuestionResult(player1, 3);
     expect(result).toStrictEqual({
       content: {
@@ -186,19 +158,19 @@ describe('getQuestionResult', () => {
       session1,
       'SKIP_COUNTDOWN'
     );
-    console.log('playersubmission', playerSubmission([0], player1, 1));
+    playerSubmission([0], player1, 1);
     sleepSync(duration);
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {
         questionId: 0,
-        playersCorrectList: [ 'Thomas' ],
+        playersCorrectList: ['Thomas'],
         averageAnswerTime: 0,
         percentCorrect: 100
       },
       statusCode: 200
-    })
+    });
   });
 
   test('Successful case: get question 2 result', () => {
@@ -218,20 +190,18 @@ describe('getQuestionResult', () => {
       session1,
       'SKIP_COUNTDOWN'
     );
-    console.log("question 2 info", getQuestionInfo(player1, 2).content.answers)
-    playerSubmission([2], player1, 2);
+    playerSubmission([1], player1, 2);
     sleepSync(duration);
-    console.log("state", adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER'));
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 2);
-    // console.log(result)
-    // expect(result).toStrictEqual({
-    //   content: {
-    //     questionId: 0,
-    //     playersCorrectList: [ 'Thomas' ],
-    //     averageAnswerTime: 0,
-    //     percentCorrect: 100
-    //   },
-    //   statusCode: 200
-    // })
+    expect(result).toStrictEqual({
+      content: {
+        questionId: 1,
+        playersCorrectList: [],
+        averageAnswerTime: 0,
+        percentCorrect: 0
+      },
+      statusCode: 200
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { getTimers, setData } from './dataStore';
+import { getData, getTimers, setData } from './dataStore';
 import { getCurrentTimestamp } from './quizHelper';
 import { AdminAction, DataStore, QuizSession } from './types';
 import HTTPError from 'http-errors';
@@ -10,7 +10,7 @@ import HTTPError from 'http-errors';
 //  *
 //  * @returns `true` if the email address is already in use, `false` otherwise.
 //  */
-// const autoChangeState = async (session: QuizSession, state: SessionState, duration: number): Promise<{}> => {
+// const autoChangeState = async (session: QuizSession, state: SessionState, duration): Promise<{}> => {
 //   if (state === 'QUESTION_COUNTDOWN') {
 //     await new Promise((resolve) => setTimeout(resolve, 3000));
 //   } else {
@@ -34,18 +34,25 @@ import HTTPError from 'http-errors';
 export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) => {
   quizSession.state = 'QUESTION_OPEN';
   quizSession.timeQuestionOpened = getCurrentTimestamp();
+  setData(data);
 
   const questionPosition = quizSession.atQuestion - 1;
   const duration = quizSession.metadata.questions[questionPosition].duration;
 
   const timers = getTimers();
   timers.push(setTimeout(() => {
-    if (quizSession.state === 'QUESTION_OPEN') {
-      quizSession.state = 'QUESTION_CLOSE';
-      setData(data);
+    // In during "duration" seconds, quizSession might get some new answers.
+    // We need to get that new state of quizSession. If not, we will be overwriting old data
+    // into data.json, which results in a quizSession with no answers submitted.
+    const newData = getData();
+    const newQuizSession = newData.quizSessions.find(
+      (newQuizSession) => quizSession.quizSessionId === newQuizSession.quizSessionId
+    );
+    if (newQuizSession.state === 'QUESTION_OPEN') {
+      newQuizSession.state = 'QUESTION_CLOSE';
+      setData(newData);
     }
   }, duration * 1000));
-  setData(data);
 };
 
 /**
@@ -62,12 +69,18 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
   }
   quizSession.state = 'QUESTION_COUNTDOWN';
   quizSession.atQuestion += 1;
-  // quizSession.numCorrectAnswersAtThisQuestion = 0;
 
   const timers = getTimers();
   timers.push(setTimeout(() => {
-    if (quizSession.state === 'QUESTION_COUNTDOWN') {
-      toQuestionOpenState(quizSession, data);
+    // In during "duration" seconds, quizSession might get some new answers.
+    // We need to consider that NEW state of quizSession.
+    // If not, we are just considering the old quizSession, which doesnt have the state change.
+    const newData = getData();
+    const newQuizSession = newData.quizSessions.find(
+      (newQuizSession) => quizSession.quizSessionId === newQuizSession.quizSessionId
+    );
+    if (newQuizSession.state === 'QUESTION_COUNTDOWN') {
+      toQuestionOpenState(newQuizSession, newData);
     }
   }, 3000));
 };

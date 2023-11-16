@@ -2,13 +2,13 @@ import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
 
 import {
   adminAuthRegister,
-  adminQuizGetSessionStatus,
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
   clear,
   playerJoinSession,
   getQuestionResult,
   playerSubmission,
+  getQuestionInfo
 } from '../testWrappersV1';
 import { Question, Quiz, ReturnedToken } from '../types';
 
@@ -21,7 +21,6 @@ describe('getQuestionResult', () => {
   let quiz1: Quiz;
   let questInfo1: Question;
   let question1: Question;
-  let submission;
   let session1: number;
   let player1: number;
   beforeEach(() => {
@@ -179,7 +178,7 @@ describe('getQuestionResult', () => {
     });
   });
 
-  test('Successful case', () => {
+  test('Successful case: get question 1 result', () => {
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
@@ -191,15 +190,48 @@ describe('getQuestionResult', () => {
     sleepSync(duration);
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 1);
+    expect(result).toStrictEqual({
+      content: {
+        questionId: 0,
+        playersCorrectList: [ 'Thomas' ],
+        averageAnswerTime: 0,
+        percentCorrect: 100
+      },
+      statusCode: 200
+    })
+  });
+
+  test('Successful case: get question 2 result', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+    adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      'SKIP_COUNTDOWN'
+    );
+    playerSubmission([0], player1, 1);
+    sleepSync(duration);
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+    adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      'SKIP_COUNTDOWN'
+    );
+    console.log("question 2 info", getQuestionInfo(player1, 2).content.answers)
+    playerSubmission([2], player1, 2);
+    sleepSync(duration);
+    console.log("state", adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER'));
+    const result = getQuestionResult(player1, 2);
+    // console.log(result)
     // expect(result).toStrictEqual({
     //   content: {
-    //     questionId: question1,
-    //     playersCorrectList: [],
-    //     averageAnswerTime: null,
-    //     percentCorrect: null
+    //     questionId: 0,
+    //     playersCorrectList: [ 'Thomas' ],
+    //     averageAnswerTime: 0,
+    //     percentCorrect: 100
     //   },
     //   statusCode: 200
-    // });
-    console.log(result);
+    // })
   });
 });

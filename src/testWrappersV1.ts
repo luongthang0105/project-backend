@@ -9,10 +9,29 @@ import {
   ReturnedToken,
   UserDetails,
   QuizSession,
-  Message
+  Message,
+  Question
 } from './types';
 
 const SERVER_URL = `${url}:${port}`;
+
+export const getQuestionInfo = (
+  playerId: number,
+  questionPosition: number
+): {
+  content: Question,
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/player/' + playerId + '/question/' + questionPosition
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
 
 export const sendChatMessage = (
   playerId: number,

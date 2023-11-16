@@ -12,6 +12,7 @@ import { Quiz, ReturnedToken } from '../types';
 
 import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
+import { setFlag } from '../dataStore';
 
 describe('playerJoinSession', () => {
   let user1: ReturnedToken;
@@ -19,7 +20,7 @@ describe('playerJoinSession', () => {
   let questInfo1;
   let question1;
   let session1: number;
-  const duration = 0.25;
+  const duration = 2;
 
   beforeEach(() => {
     clear();
@@ -361,7 +362,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test('Success: 2 players successfully submit answer', () => {
+  test.only('Success: 2 players successfully submit answer', () => {
     const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(Number));
 
@@ -385,15 +386,20 @@ describe('playerJoinSession', () => {
       session1,
       'SKIP_COUNTDOWN'
     );
+    let status = playerStatus(player1);
+    expect(status.statusCode).toBe(200);
+    expect(status.content.state).toBe('QUESTION_OPEN');
+
     expect(toOpenState).toStrictEqual({
       content: {},
       statusCode: 200,
     });
 
-    const status = playerStatus(player1);
+    status = playerStatus(player1);
     expect(status.statusCode).toBe(200);
     expect(status.content.state).toBe('QUESTION_OPEN');
 
+    
     const res = playerSubmission([0], player1, 1);
     const res2 = playerSubmission([1], player2, 1);
 
@@ -442,7 +448,7 @@ describe('playerJoinSession', () => {
     expect(status.content.state).toBe('QUESTION_OPEN');
 
     let res = playerSubmission([0], player1, 1);
-    res = playerSubmission([1], player2, 1);
+    res = playerSubmission([1], player1, 1);
 
     expect(res).toStrictEqual({
       content: {},

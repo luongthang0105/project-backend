@@ -12,6 +12,7 @@ import { Quiz, ReturnedToken } from '../types';
 
 import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
+import { sleepSync } from './sleepSync';
 
 describe('playerJoinSession', () => {
   let user1: ReturnedToken;
@@ -19,7 +20,7 @@ describe('playerJoinSession', () => {
   let questInfo1;
   let question1;
   let session1: number;
-  const duration = 2;
+  const duration = 0.2;
 
   beforeEach(() => {
     clear();
@@ -63,7 +64,16 @@ describe('playerJoinSession', () => {
       questInfo1.question,
       questInfo1.duration,
       questInfo1.points,
-      questInfo1.answers,
+      [
+        {
+          answer: 'Pikachu',
+          correct: true,
+        },
+        {
+          answer: 'Thomas',
+          correct: true,
+        },
+      ],
       questInfo1.thumbnailUrl
     ).content.questionId;
     expect(question1).toStrictEqual(expect.any(Number));
@@ -413,7 +423,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test.only('Success: 1 player resubmit answer', () => {
+  test('Success: 1 player resubmit answer', () => {
     const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(Number));
 
@@ -448,6 +458,65 @@ describe('playerJoinSession', () => {
 
     let res = playerSubmission([0], player1, 1);
     res = playerSubmission([1], player1, 1);
+
+    expect(res).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+  });
+
+  test.only('Success: Multiple correct answers on Q2', () => {
+    const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
+    expect(player1).toStrictEqual(expect.any(Number));
+
+    const player2 = playerJoinSession(session1, 'Han').content.playerId;
+    expect(player2).toStrictEqual(expect.any(Number));
+
+    let nextQ = adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      'NEXT_QUESTION'
+    );
+    expect(nextQ).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    let toOpenState = adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      'SKIP_COUNTDOWN'
+    );
+    expect(toOpenState).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    let status = playerStatus(player1);
+    expect(status.content.state).toBe('QUESTION_OPEN');
+
+    // Wait for QUESTION_CLOSE
+    sleepSync(duration);
+
+    status = playerStatus(player1);
+    expect(status.content.state).toBe('QUESTION_CLOSE');
+
+    nextQ = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+    expect(nextQ).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    toOpenState = adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'SKIP_COUNTDOWN');
+    expect(toOpenState).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    });
+
+    // sleepSync(2);
+    let res = playerSubmission([1, 0], player1, 2);
 
     expect(res).toStrictEqual({
       content: {},

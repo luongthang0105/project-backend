@@ -184,7 +184,7 @@ export const playerSubmission = (
   ) {
     throw HTTPError(
       400,
-      "If question position is not valid for the session this player is in",
+      "Question position is not valid for the session this player is in",
     )
   }
 

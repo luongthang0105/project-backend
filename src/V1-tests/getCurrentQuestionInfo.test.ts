@@ -1,4 +1,4 @@
-import { adminQuizCreate, adminQuizCreateQuestion } from "../testWrappersV2";
+import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
 import {
   adminAuthRegister,
   adminQuizSessionStart,
@@ -6,14 +6,12 @@ import {
   playerJoinSession,
   getQuestionInfo,
   adminQuizSessionStateUpdate,
-  adminQuizGetSessionStatus,
-} from "../testWrappersV1";
-import { Quiz, ReturnedToken } from "../types";
-import { expect, test } from "@jest/globals";
-import { sleepSync } from "./sleepSync";
-import exp from "constants";
+} from '../testWrappersV1';
+import { Quiz, ReturnedToken } from '../types';
+import { expect, test } from '@jest/globals';
+import { sleepSync } from './sleepSync';
 
-describe("getQuestionInfo", () => {
+describe('getQuestionInfo', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1;
@@ -25,29 +23,29 @@ describe("getQuestionInfo", () => {
   beforeEach(() => {
     clear();
     user1 = adminAuthRegister(
-      "sasaki@gmai.com",
-      "2705uwuwuwuwuwuw",
-      "Mutsuki",
-      "Sasaki"
+      'sasaki@gmai.com',
+      '2705uwuwuwuwuwuw',
+      'Mutsuki',
+      'Sasaki'
     ).content as ReturnedToken;
-    quiz1 = adminQuizCreate(user1, "Hihihihihih", "This is my quiz")
+    quiz1 = adminQuizCreate(user1, 'Hihihihihih', 'This is my quiz')
       .content as Quiz;
     questInfo1 = {
-      question: "What is that pokemon",
+      question: 'What is that pokemon',
       duration: 0.25,
       points: 5,
       answers: [
         {
-          answer: "Pikachu",
+          answer: 'Pikachu',
           correct: true,
         },
         {
-          answer: "Thomas",
+          answer: 'Thomas',
           correct: false,
         },
       ],
       thumbnailUrl:
-        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
     };
     question1 = adminQuizCreateQuestion(
       user1,
@@ -59,21 +57,21 @@ describe("getQuestionInfo", () => {
       questInfo1.thumbnailUrl
     ).content.questionId;
     questInfo2 = {
-      question: "What is that football player",
+      question: 'What is that football player',
       duration: 0.25,
       points: 10,
       answers: [
         {
-          answer: "Eden Hazard",
+          answer: 'Eden Hazard',
           correct: true,
         },
         {
-          answer: "Cole Palmer",
+          answer: 'Cole Palmer',
           correct: false,
         },
       ],
       thumbnailUrl:
-        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
     };
 
     question2 = adminQuizCreateQuestion(
@@ -89,82 +87,82 @@ describe("getQuestionInfo", () => {
     expect(question2).toStrictEqual(expect.any(Number));
 
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
-    player1 = playerJoinSession(session1, "Thomas").content.playerId;
+    player1 = playerJoinSession(session1, 'Thomas').content.playerId;
   });
 
-  test("Error: PlayerId does not exist", () => {
+  test('Error: PlayerId does not exist', () => {
     const result = getQuestionInfo(player1 + 1, 1);
 
     expect(result).toStrictEqual({
       content: {
-        error: "Player ID does not exist",
+        error: 'Player ID does not exist',
       },
       statusCode: 400,
     });
   });
-  test("Question position is not valid for the session this player is in", () => {
+  test('Question position is not valid for the session this player is in', () => {
     const result = getQuestionInfo(player1, 0);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Question position is not valid for the session this player is in",
+          'Question position is not valid for the session this player is in',
       },
       statusCode: 400,
     });
   });
 
-  test("Question position is not valid for the session this player is in", () => {
+  test('Question position is not valid for the session this player is in', () => {
     const result = getQuestionInfo(player1, 3);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Question position is not valid for the session this player is in",
+          'Question position is not valid for the session this player is in',
       },
       statusCode: 400,
     });
   });
 
-  test("Session is not currently on this question", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Session is not currently on this question', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     const result = getQuestionInfo(player1, 2);
     expect(result).toStrictEqual({
       content: {
-        error: "Session is not currently on this question",
+        error: 'Session is not currently on this question',
       },
       statusCode: 400,
     });
   });
 
-  test("Session is in LOBBY or END state", () => {
+  test('Session is in LOBBY or END state', () => {
     const result = getQuestionInfo(player1, 2);
     expect(result).toStrictEqual({
       content: {
-        error: "Session is in LOBBY or END state",
+        error: 'Session is in LOBBY or END state',
       },
       statusCode: 400,
     });
   });
 
-  test("Success: Return current question in current session: get 1st qs info", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Success: Return current question in current session: get 1st qs info', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     const result = getQuestionInfo(player1, 1);
     expect(result).toStrictEqual({
       content: {
         questionId: 0,
-        question: "What is that pokemon",
+        question: 'What is that pokemon',
         duration: 0.25,
         thumbnailUrl:
-          "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+          'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
         points: 5,
         answers: [
           {
-            answer: "Pikachu",
+            answer: 'Pikachu',
             answerId: 0,
             colour: expect.any(String),
             correct: true,
           },
           {
-            answer: "Thomas",
+            answer: 'Thomas',
             answerId: 1,
             colour: expect.any(String),
             correct: false,
@@ -175,34 +173,34 @@ describe("getQuestionInfo", () => {
     });
   });
 
-  test("Success: Return current question in current session: get 2nd qs info", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Success: Return current question in current session: get 2nd qs info', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     sleepSync(1);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     const result = getQuestionInfo(player1, 2);
     expect(result).toStrictEqual({
       content: {
         questionId: 1,
-        question: "What is that football player",
+        question: 'What is that football player',
         duration: 0.25,
         thumbnailUrl:
-          "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+          'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
         points: 10,
         answers: [
           {
-            answer: "Eden Hazard",
+            answer: 'Eden Hazard',
             answerId: expect.any(Number),
             colour: expect.any(String),
             correct: true,
           },
           {
-            answer: "Cole Palmer",
+            answer: 'Cole Palmer',
             answerId: expect.any(Number),
             colour: expect.any(String),
             correct: false,

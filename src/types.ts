@@ -235,18 +235,34 @@ type SessionState =
   | 'GO_TO_FINAL_RESULTS'
   | 'END'
 
+type Submission = {
+  questionId: number,
+  playerName: string,
+  answerTime: string,
+  // True if the answer was correct
+  correct: boolean,
+  // How fast is this submission, 1st, 2nd, ...
+  rank: number,
+  // The actual points that the player receive, based on their ranks
+  points: number
+}
 /**
  * Represents the structure of quiz sessions which describe a particular instance of a quiz being run
  */
-  type QuizSession = {
-    quizSessionId?: number,
-    autoStartNum?: number,
-    state: SessionState,
-    atQuestion: number,
-    players: string[],
-    metadata: QuizObject,
-    messages: Message[]
-  }
+type QuizSession = {
+  quizSessionId?: number,
+  autoStartNum?: number,
+  state: SessionState,
+  atQuestion: number,
+  players: string[],
+  metadata: QuizObject,
+  messages: Message[],
+  // Info about the submission of a player
+  answerSubmitted?: Submission[],
+  // To determine which player answer first => their score
+  // Also help finding out percent correct
+  numAnswersAtThisQuestion?: number
+}
 
 export {
   EmptyObject,

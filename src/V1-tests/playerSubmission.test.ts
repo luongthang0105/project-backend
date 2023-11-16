@@ -19,7 +19,7 @@ describe('playerJoinSession', () => {
   let questInfo1;
   let question1;
   let session1: number;
-  const duration = 1;
+  const duration = 0.25;
 
   beforeEach(() => {
     clear();

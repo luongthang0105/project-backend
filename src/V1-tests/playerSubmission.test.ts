@@ -325,4 +325,42 @@ describe("playerJoinSession", () => {
       statusCode: 400,
     })
   })
+
+  test("Success: Player successfully submit answer", () => {
+    const player1 = playerJoinSession(session1, "Thomas").content.playerId
+    expect(player1).toStrictEqual(expect.any(Number))
+
+    const nextQ = adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      "NEXT_QUESTION",
+    )
+    expect(nextQ).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    })
+    
+    const toOpenState = adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      "SKIP_COUNTDOWN",
+    )
+    expect(toOpenState).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    })
+
+    let status = playerStatus(player1)
+    expect(status.statusCode).toBe(200);
+    expect(status.content.state).toBe("QUESTION_OPEN");
+    
+    // Empty answer ids
+    const res = playerSubmission([0], player1, 1)
+    expect(res).toStrictEqual({
+      content: {},
+      statusCode: 200,
+    })
+  })
 })

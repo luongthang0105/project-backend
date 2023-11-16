@@ -209,7 +209,7 @@ export const getQuestionResult = (
     (submission) => submission.playerName
   );
 
-  const totalPlayers = currSession.answerSubmitted.length;
+  const totalPlayers = currSession.players.length;
   const numPlayersCorrect = playersCorrectList.length;
   const percentCorrect = Math.round((numPlayersCorrect / totalPlayers) * 100);
 

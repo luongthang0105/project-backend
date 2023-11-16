@@ -200,18 +200,18 @@ export const getQuestionResult = (
   }
 
   const currQuestion = currSession.metadata.questions[questionPosition];
-  const correctSubmission = currSession.answerSubmission.filter(
-    (submission) => submission.answer.correct === true
+  const correctSubmission = currSession.answerSubmitted.filter(
+    (submission) => submission.answer === true && submission.questionId === currQuestion.questionId
   );
   const playersCorrectList = correctSubmission.map(
     (submission) => submission.playerName
   );
 
-  const totalPlayers = currSession.answerSubmission.length;
+  const totalPlayers = currSession.answerSubmitted.length;
   const numPlayersCorrect = playersCorrectList.length;
   const percentCorrect = Math.round((numPlayersCorrect / totalPlayers) * 100);
 
-  const answerTimeList = currSession.answerSubmission.map(
+  const answerTimeList = currSession.answerSubmitted.map(
     (submission) => submission.answerTime
   );
 

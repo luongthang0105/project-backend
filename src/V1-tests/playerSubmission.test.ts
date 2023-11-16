@@ -408,7 +408,6 @@ describe('playerJoinSession', () => {
     expect(status.statusCode).toBe(200);
     expect(status.content.state).toBe('QUESTION_OPEN');
 
-    
     const res = playerSubmission([0], player1, 1);
     const res2 = playerSubmission([1], player2, 1);
 
@@ -516,7 +515,7 @@ describe('playerJoinSession', () => {
     });
 
     // sleepSync(2);
-    let res = playerSubmission([1, 0], player1, 2);
+    const res = playerSubmission([1, 0], player1, 2);
 
     expect(res).toStrictEqual({
       content: {},

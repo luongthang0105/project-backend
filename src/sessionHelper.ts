@@ -41,11 +41,11 @@ export const toQuestionOpenState = (quizSession: QuizSession, data: DataStore) =
 
   const timers = getTimers();
   timers.push(setTimeout(() => {
-    // In during "duration" seconds, quizSession might get some new answers. 
-    // We need to get that new state of quizSession. If not, we will be overwriting old data 
+    // In during "duration" seconds, quizSession might get some new answers.
+    // We need to get that new state of quizSession. If not, we will be overwriting old data
     // into data.json, which results in a quizSession with no answers submitted.
     const newData = getData();
-    const newQuizSession = newData.quizSessions.find( 
+    const newQuizSession = newData.quizSessions.find(
       (newQuizSession) => quizSession.quizSessionId === newQuizSession.quizSessionId
     );
     if (newQuizSession.state === 'QUESTION_OPEN') {
@@ -72,11 +72,11 @@ export const toQuestionCountDownState = (quizSession: QuizSession, data: DataSto
 
   const timers = getTimers();
   timers.push(setTimeout(() => {
-    // In during "duration" seconds, quizSession might get some new answers. 
-    // We need to consider that NEW state of quizSession. 
+    // In during "duration" seconds, quizSession might get some new answers.
+    // We need to consider that NEW state of quizSession.
     // If not, we are just considering the old quizSession, which doesnt have the state change.
     const newData = getData();
-    const newQuizSession = newData.quizSessions.find( 
+    const newQuizSession = newData.quizSessions.find(
       (newQuizSession) => quizSession.quizSessionId === newQuizSession.quizSessionId
     );
     if (newQuizSession.state === 'QUESTION_COUNTDOWN') {

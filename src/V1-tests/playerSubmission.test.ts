@@ -87,6 +87,8 @@ describe("playerJoinSession", () => {
     { questionPos: 0 },
     // Out of bounds
     { questionPos: 3 },
+    // Out of bounds
+    { questionPos: -1 },
   ])(
     "Error: Question position is not valid for the session this player is in",
     (questionPos) => {
@@ -188,17 +190,17 @@ describe("playerJoinSession", () => {
   
   test.each([
     // Neg id mix with valid ids
-    { answerId: [-1, 0, 1] },
+    { answerIds: [-1, 0, 1] },
     // Neg id only
-    { answerId: [-1] },
+    { answerIds: [-1] },
     // Out of bound id mix with valid id
-    { answerId: [2, 0] },
+    { answerIds: [2, 0] },
     // Out of bound id only
-    { answerId: [2] },
+    { answerIds: [2] },
     // Out of bound id and neg id
-    { answerId: [2, -1] },
+    { answerIds: [2, -1] },
     // Out of bound id and neg id mix with valid id
-    { answerId: [2, -1, 3, 0] },
+    { answerIds: [2, -1, 3, 0] },
   ])("Error: Answer IDs are not valid for this particular question", (answerId) => {
     const player1 = playerJoinSession(session1, "Thomas").content.playerId
     expect(player1).toStrictEqual(expect.any(Number))
@@ -240,9 +242,9 @@ describe("playerJoinSession", () => {
   })
 
   test.each([
-    { answerId: [0, 1, 1, 0] },
-    { answerId: [0, 1, 1] },
-    { answerId: [0, 1, 0] },
+    { answerIds: [0, 1, 1, 0] },
+    { answerIds: [0, 1, 1] },
+    { answerIds: [0, 1, 0] },
   ])("Error: There are duplicate answer IDs provided", (answerId) => {
     const player1 = playerJoinSession(session1, "Thomas").content.playerId
     expect(player1).toStrictEqual(expect.any(Number))

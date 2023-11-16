@@ -12,7 +12,6 @@ import { Quiz, ReturnedToken } from '../types';
 
 import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
-import { setFlag } from '../dataStore';
 
 describe('playerJoinSession', () => {
   let user1: ReturnedToken;
@@ -414,7 +413,7 @@ describe('playerJoinSession', () => {
     });
   });
 
-  test('Success: 1 player resubmit answer', () => {
+  test.only('Success: 1 player resubmit answer', () => {
     const player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(Number));
 

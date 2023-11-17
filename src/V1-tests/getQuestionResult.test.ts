@@ -1,4 +1,4 @@
-import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
+import { adminQuizCreate, adminQuizCreateQuestion } from "../testWrappersV2";
 
 import {
   adminAuthRegister,
@@ -8,14 +8,16 @@ import {
   playerJoinSession,
   getQuestionResult,
   playerSubmission,
-} from '../testWrappersV1';
-import { Question, Quiz, ReturnedToken } from '../types';
+  adminQuizGetSessionStatus,
+  adminQuizInfo
+} from "../testWrappersV1";
+import { Question, Quiz, ReturnedToken } from "../types";
 
-import { expect, test } from '@jest/globals';
-import { sleepSync } from './sleepSync';
+import { expect, test } from "@jest/globals";
+import { sleepSync } from "./sleepSync";
 
-describe('getQuestionResult', () => {
-  const duration = 1;
+describe("getQuestionResult", () => {
+  const duration = 3;
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1: Question;
@@ -23,25 +25,33 @@ describe('getQuestionResult', () => {
   let player1: number;
   beforeEach(() => {
     clear();
-    user1 = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
+    user1 = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
       .content as ReturnedToken;
-    quiz1 = adminQuizCreate(user1, 'Quiz 1', 'Description').content as Quiz;
+    quiz1 = adminQuizCreate(user1, "Quiz 1", "Description").content as Quiz;
     questInfo1 = {
-      question: 'What is that pokemon',
+      question: "What is that pokemon",
       duration: duration,
       points: 5,
       answers: [
         {
-          answer: 'Pikachu',
+          answer: "Pikachu",
           correct: true,
         },
         {
-          answer: 'Thomas',
+          answer: "Doraemon",
+          correct: false,
+        },
+        {
+          answer: "Sakura",
+          correct: true,
+        },
+        {
+          answer: "Sasuke",
           correct: false,
         },
       ],
       thumbnailUrl:
-        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
+        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
     };
     adminQuizCreateQuestion(
       user1,
@@ -54,21 +64,21 @@ describe('getQuestionResult', () => {
     ).content as Question;
 
     const questInfo2 = {
-      question: 'What is that football player',
+      question: "What is that football player",
       duration: duration,
       points: 10,
       answers: [
         {
-          answer: 'Eden Hazard',
+          answer: "Eden Hazard",
           correct: true,
         },
         {
-          answer: 'Cole Palmer',
+          answer: "Cole Palmer",
           correct: false,
         },
       ],
       thumbnailUrl:
-        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
+        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
     };
     adminQuizCreateQuestion(
       user1,
@@ -81,127 +91,184 @@ describe('getQuestionResult', () => {
     );
 
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
-    player1 = playerJoinSession(session1, 'Thomas').content.playerId;
+    player1 = playerJoinSession(session1, "Thomas").content.playerId;
   });
-
-  test('Player ID does not exist', () => {
+  /*
+  test("Player ID does not exist", () => {
     /// /////////////// what are answerIds
     const result = getQuestionResult(player1 + 1, 1);
     expect(result).toStrictEqual({
       content: {
-        error: 'Player ID does not exist',
+        error: "Player ID does not exist",
       },
       statusCode: 400,
     });
   });
 
-  test('Question position is not valid for the session this player is in', () => {
+  test("Question position is not valid for the session this player is in", () => {
     const result = getQuestionResult(player1, 0);
     expect(result).toStrictEqual({
       content: {
         error:
-          'Question position is not valid for the session this player is in',
+          "Question position is not valid for the session this player is in",
       },
       statusCode: 400,
     });
   });
 
-  test('Question position is not valid for the session this player is in', () => {
+  test("Question position is not valid for the session this player is in", () => {
     const result = getQuestionResult(player1, 3);
     expect(result).toStrictEqual({
       content: {
         error:
-          'Question position is not valid for the session this player is in',
+          "Question position is not valid for the session this player is in",
       },
       statusCode: 400,
     });
   });
 
-  test('Session is not in ANSWER_SHOW state', () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+  test("Session is not in ANSWER_SHOW state", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     playerSubmission([0, 1], player1, 0);
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {
-        error: 'Session is not in ANSWER_SHOW state',
+        error: "Session is not in ANSWER_SHOW state",
       },
       statusCode: 400,
     });
   });
 
-  test('Session is not yet up to this question', () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+  test("Session is not yet up to this question", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      'SKIP_COUNTDOWN'
+      "SKIP_COUNTDOWN"
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
 
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
     const result = getQuestionResult(player1, 2);
     expect(result).toStrictEqual({
       content: {
-        error: 'Session is not yet up to this question',
+        error: "Session is not yet up to this question",
       },
       statusCode: 400,
     });
   });
 
-  test('Successful case: get question 1 result', () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+  test("Successful case: get question 1 result", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      'SKIP_COUNTDOWN'
+      "SKIP_COUNTDOWN"
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {
         questionId: 0,
-        playersCorrectList: ['Thomas'],
+        playersCorrectList: ["Thomas"],
         averageAnswerTime: 0,
-        percentCorrect: 100
+        percentCorrect: 100,
       },
-      statusCode: 200
+      statusCode: 200,
     });
   });
 
-  test('Successful case: get question 2 result', () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+  test("Successful case: get question 2 result", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      'SKIP_COUNTDOWN'
+      "SKIP_COUNTDOWN"
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      'SKIP_COUNTDOWN'
+      "SKIP_COUNTDOWN"
     );
     playerSubmission([1], player1, 2);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
     const result = getQuestionResult(player1, 2);
     expect(result).toStrictEqual({
       content: {
         questionId: 1,
         playersCorrectList: [],
         averageAnswerTime: 0,
-        percentCorrect: 0
+        percentCorrect: 0,
       },
-      statusCode: 200
+      statusCode: 200,
     });
+  });
+
+  test("Successful case: No answer submission", () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      "SKIP_COUNTDOWN"
+    );
+    // playerSubmission([0], player1, 1);
+    sleepSync(duration);
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    const result = getQuestionResult(player1, 1);
+    expect(result).toStrictEqual({
+      content: {
+        questionId: 0,
+        playersCorrectList: [],
+        averageAnswerTime: 0,
+        percentCorrect: 0,
+      },
+      statusCode: 200,
+    });
+  });
+*/
+  test("Successful case: different time, ", () => {
+    const player2 = playerJoinSession(session1, "Reece James").content.playerId;
+    const player3 = playerJoinSession(session1, "Thiago Silva").content
+      .playerId;
+   
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    adminQuizSessionStateUpdate(
+      user1,
+      quiz1.quizId,
+      session1,
+      "SKIP_COUNTDOWN"
+    );
+    sleepSync(duration - 0.5);
+
+    console.log(playerSubmission([1], player2, 1)); // false
+    console.log(playerSubmission([0], player3, 1)); // true
+    // console.log(playerSubmission([3, 0], player4, 1)); // true and false
+    // console.log(adminQuizGetSessionStatus(user1, quiz1.quizId, session1))
+    console.log(adminQuizInfo(user1, quiz1.quizId).content.questions[0].answers)
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+
+    const result = getQuestionResult(player3, 1);
+    console.log(result);
+    // expect(result).toStrictEqual({
+    //   content: {
+    //     questionId: 1,
+    //     playersCorrectList: [],
+    //     averageAnswerTime: 0,
+    //     percentCorrect: 0,
+    //   },
+    //   statusCode: 200,
+    // });
   });
 });

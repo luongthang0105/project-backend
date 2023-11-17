@@ -213,7 +213,6 @@ export const getQuestionResult = (
   const totalSubmissions = currSession.answerSubmitted.filter(
     (submission) => submission.questionId === currQuestion.questionId
   ).length;
-
   const numCorrectSubmission = playersCorrectList.length;
 
   const percentCorrect =

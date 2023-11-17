@@ -158,10 +158,53 @@ export const playerStatus = (
   };
 };
 
-export const getQuestionInfo = (
+export const getQuestionResult = (
   playerId: number,
   questionPosition: number
-) => {
+): {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // if question Position is not in an approriate range
+  if (
+    questionPosition < 1 ||
+    questionPosition > currSession.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      'Question position is not valid for the session this player is in'
+    );
+  }
+
+  if (currSession.state !== 'ANSWER_SHOW') {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
+  }
+  if (currSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, 'Session is not yet up to this question');
+  }
+
+  const currQuestion = currSession.metadata.questions[questionPosition - 1];
+
+  return questionResultHelper(currSession, currQuestion);
+};
+
+export const getQuestionInfo = (playerId: number, questionPosition: number) => {
   const data = getData();
 
   // Error: Player ID does not exist
@@ -249,7 +292,8 @@ export const playerSubmission = (
   }
 
   // Error: Answer IDs are not valid for this particular question
-  const currentQuestion = sessionJoined.metadata.questions[questionPosition - 1];
+  const currentQuestion =
+    sessionJoined.metadata.questions[questionPosition - 1];
   const allAnswers = currentQuestion.answers;
 
   if (
@@ -278,15 +322,19 @@ export const playerSubmission = (
   }
 
   const playerName = validPlayer.name;
-  const questionId = sessionJoined.metadata.questions[questionPosition - 1].questionId;
+  const questionId =
+    sessionJoined.metadata.questions[questionPosition - 1].questionId;
 
   // Check if this player has submitted an answer already
   const submittedAnswerFromPlayer = sessionJoined.answerSubmitted.find(
-    (answer) => answer.playerName === playerName && answer.questionId === questionId
+    (answer) =>
+      answer.playerName === playerName && answer.questionId === questionId
   );
   // If already submitted, delete that answer and submit this one instead
   if (submittedAnswerFromPlayer) {
-    const indexOfAnswer = sessionJoined.answerSubmitted.indexOf(submittedAnswerFromPlayer);
+    const indexOfAnswer = sessionJoined.answerSubmitted.indexOf(
+      submittedAnswerFromPlayer
+    );
     sessionJoined.answerSubmitted.splice(indexOfAnswer);
   }
 
@@ -300,12 +348,11 @@ export const playerSubmission = (
 
   // Check if the correctAnswers array is the same as player answerIds
   const correct = areAnswersTheSame(answerIds, correctAnswerIds);
-
   sessionJoined.answerSubmitted.push({
     questionId: questionId,
     playerName: playerName,
     answerTime: answerTime,
-    correct: correct
+    correct: correct,
   });
 
   setData(data);

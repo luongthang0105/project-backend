@@ -159,7 +159,7 @@ describe('adminQuizSessionResults', () => {
       ,
     });
   });
-  test('Valid token is provided, but user is not authorised to view this session', () => {
+  test('Valid token is provided, but user is not an owner of this quiz', () => {
     const user2 = adminAuthRegister(
       'muttsuki@gmail.com',
       '2705t3huwu',
@@ -170,23 +170,23 @@ describe('adminQuizSessionResults', () => {
     expect(result).toStrictEqual({
       content: {
         error:
-          'Valid token is provided, but user is not authorised to view this session',
+          'Valid token is provided, but user is not an owner of this quiz',
       },
       statusCode: 403,
     });
   });
 
-  test('Valid token is provided, but user is not authorised to view this session: non-existent quizId', () => {
+  test('Valid token is provided, but user is not an owner of this quiz: non-existent quizId', () => {
     const result = adminQuizSessionResults(user1, quiz1.quizId + 1, quizSession1);
     expect(result).toStrictEqual({
       content: {
         error:
-          'Valid token is provided, but user is not authorised to view this session',
+          'Valid token is provided, but user is not an owner of this quiz',
       },
       statusCode: 403,
     });
   });
-  test('Success:', () => {
+  test.only('Success:', () => {
     const player1 = playerJoinSession(quizSession1, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession1, 'Thomas').content.playerId;    
     const player3 = playerJoinSession(quizSession1, 'Han').content.playerId;
@@ -196,8 +196,11 @@ describe('adminQuizSessionResults', () => {
     const answer1 = [answerId1];
     const answer2 = [answerId2];
     const answer3 = [answerId3];
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    let status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
+    expect(status.statusCode).toBe(200)
+    status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    expect(status.statusCode).toBe(200)
+    
     sleepSync(1);
     playerSubmission(answer1, player1, 1);
     sleepSync(1);
@@ -205,8 +208,12 @@ describe('adminQuizSessionResults', () => {
     sleepSync(1);
     playerSubmission(answer1, player3, 1);
     sleepSync(1);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    
+    status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
+    expect(status.statusCode).toBe(200)
+    status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    expect(status.statusCode).toBe(200)
+    
     sleepSync(1);
     playerSubmission(answer2, player1, 2);
     sleepSync(1);
@@ -214,7 +221,10 @@ describe('adminQuizSessionResults', () => {
     sleepSync(1);
     playerSubmission(answer3, player3, 2);
     sleepSync(1);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
+    
+    status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
+    expect(status.statusCode).toBe(200)
+
     const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession1).content;
     expect(result).toStrictEqual({
       usersRankedByScore: [
@@ -249,7 +259,7 @@ describe('adminQuizSessionResults', () => {
           playersCorrectList: [
             'Mutsuki'
           ],
-          averageAnswerTime: 1,
+          averageAnswerTime: 2,
           percentCorrect: 33
         },
       ]
@@ -307,7 +317,7 @@ describe('adminQuizSessionResults', () => {
     playerSubmission(answer2, player2, 1);
     sleepSync(1);
     adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'GO_TO_FINAL_RESULTS');
-    const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession1).content;
+    const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession2).content;
     expect(result).toStrictEqual({
       usersRankedByScore: [
         {

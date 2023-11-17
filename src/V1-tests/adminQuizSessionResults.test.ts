@@ -196,6 +196,7 @@ describe('adminQuizSessionResults', () => {
     const answer1 = [answerId1];
     const answer2 = [answerId2];
     const answer3 = [answerId3];
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     sleepSync(1);
     playerSubmission(answer1, player1, 1);
@@ -219,15 +220,18 @@ describe('adminQuizSessionResults', () => {
       usersRankedByScore: [
         {
           name: 'Mutsuki',
+          // 5/1 + 4/1
           score: 9
         },
         {
           name: 'Thomas',
-          score: 5
+          // 5/2 + 0
+          score: 2.5
         },
         {
           name: 'Han',
-          score: 5
+          // 5/3 + 0
+          score: 1.7
         }
       ],
       questionResults: [
@@ -236,7 +240,8 @@ describe('adminQuizSessionResults', () => {
           playersCorrectList: [
             'Mutsuki', 'Thomas', 'Han'
           ],
-          averageAnswerTime: 1,
+          // (1 + 2 + 3) / 3
+          averageAnswerTime: 2,
           percentCorrect: 100
         },
         {
@@ -289,8 +294,8 @@ describe('adminQuizSessionResults', () => {
     const answerId2 = adminQuizInfo(user1, quiz2.quizId).content.questions[0].answers[1].answerId as number;
     const answerId3 = adminQuizInfo(user1, quiz2.quizId).content.questions[0].answers[2].answerId as number;
     const answerId4 = adminQuizInfo(user1, quiz2.quizId).content.questions[0].answers[3].answerId as number;
-    const answer1 = [answerId1, answerId3];
-    const answer2 = [answerId2, answerId4];
+    const answer1 = [answerId2, answerId3];
+    const answer2 = [answerId3, answerId4];
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 2).content.sessionId;
     const player1 = playerJoinSession(quizSession2, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession2, 'Thomas').content.playerId;
@@ -319,6 +324,7 @@ describe('adminQuizSessionResults', () => {
           playersCorrectList: [
             'Mutsuki'
           ],
+          // (2 + 3) / 2 = 2.5 -> 2
           averageAnswerTime: 2,
           percentCorrect: 50
         }

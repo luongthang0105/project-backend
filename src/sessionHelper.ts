@@ -254,7 +254,9 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
     percentCorrect = Math.round((numPlayersCorrect / totalPlayer) * 100);
   }
 
-  const answerTimeList = currSession.answerSubmitted.map(
+  const answerTimeList = currSession.answerSubmitted.filter(
+    answer => answer.questionId === currQuestion.questionId
+  ).map(
     (submission) => submission.answerTime
   );
 
@@ -269,7 +271,7 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
   ).length;
 
   if (playersWhoAttempted !== 0) {
-    averageAnswerTime = totalAnswerTime / playersWhoAttempted;
+    averageAnswerTime = Math.round(totalAnswerTime / playersWhoAttempted);
   }
 
   return {

@@ -15,6 +15,32 @@ import {
 
 const SERVER_URL = `${url}:${port}`;
 
+export const getCSVResult = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  sessionId: number
+): {
+  content: {
+    url: string
+    },
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId + '/results/csv',
+    {
+      headers: {
+        token: tokenObject.token
+      }
+    }
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const playerFinalResults = (
   playerId: number
 ): {

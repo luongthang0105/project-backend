@@ -7,6 +7,7 @@ import {
   handlesQCD,
   handlesQO,
   questionResultHelper,
+  userRankedByScoreHelper,
 } from './sessionHelper';
 import { QuizObject, QuizSession, AdminAction, EmptyObject, Message, Submission } from './types';
 import HTTPError from 'http-errors';
@@ -419,9 +420,14 @@ export const adminQuizSessionResults = (
     questionResults.push(questionResultHelper(validQuizSesssion, currQuestion));
   })
   
+  const usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }> = userRankedByScoreHelper(validQuizSesssion);
+
   return {
     questionResults: questionResults,
-    
+    usersRankedByScore: usersRankedByScore
   }
 };
 

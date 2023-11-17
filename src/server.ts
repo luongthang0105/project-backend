@@ -51,7 +51,16 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus, playerSubmission, getQuestionInfo, getQuestionResult } from './player';
+import {
+  playerJoinSession,
+  allChatMessages,
+  sendChatMessage,
+  playerStatus,
+  playerSubmission,
+  getQuestionInfo,
+  getCSVResult,
+  getQuestionResult, playerFinalResults
+} from './player';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -60,6 +69,9 @@ app.use(json());
 app.use(cors());
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
+
+app.use(express.static('public'));
+
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
@@ -70,7 +82,6 @@ app.use(
     swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' },
   })
 );
-
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
@@ -335,17 +346,44 @@ app.post(
 //  ========================= ITERATION 3 =============================
 // ====================================================================
 
-// playerSubmission
-app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const sessionId = parseInt(req.params.sessionid);
+// playerFinalResults
+app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
 
-  const token = req.headers.token as string;
-
-  const result = adminQuizSessionResults(token, quizId, sessionId);
+  const result = playerFinalResults(playerId);
 
   res.json(result);
 });
+
+// getCSVResult
+app.get(
+  '/v1/admin/quiz/:quizid/session/:sessionid/results/csv',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const sessionId = parseInt(req.params.sessionid);
+
+    const token = req.headers.token as string;
+
+    const result = getCSVResult(token, quizId, sessionId);
+
+    res.json(result);
+  }
+);
+
+// adminQuizSessionResults
+app.get(
+  '/v1/admin/quiz/:quizid/session/:sessionid/results',
+  (req: Request, res: Response) => {
+    const quizId = parseInt(req.params.quizid);
+    const sessionId = parseInt(req.params.sessionid);
+
+    const token = req.headers.token as string;
+
+    const result = adminQuizSessionResults(token, quizId, sessionId);
+
+    res.json(result);
+  }
+);
 
 // getQuestionResult
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
@@ -358,23 +396,29 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
 });
 
 // playerSubmission
-app.put('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const questionPosition = parseInt(req.params.questionposition);
-  const answerIds = req.body.answerIds;
+app.put(
+  '/v1/player/:playerid/question/:questionposition/answer',
+  (req: Request, res: Response) => {
+    const playerId = parseInt(req.params.playerid);
+    const questionPosition = parseInt(req.params.questionposition);
+    const answerIds = req.body.answerIds;
 
-  const result = playerSubmission(answerIds, playerId, questionPosition);
+    const result = playerSubmission(answerIds, playerId, questionPosition);
 
-  res.json(result);
-});
+    res.json(result);
+  }
+);
 
 // getCurrentQuestionInfo
-app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerid);
-  const questionPosition = parseInt(req.params.questionposition);
-  const result = getQuestionInfo(playerId, questionPosition);
-  res.json(result);
-});
+app.get(
+  '/v1/player/:playerid/question/:questionposition',
+  (req: Request, res: Response) => {
+    const playerId = parseInt(req.params.playerid);
+    const questionPosition = parseInt(req.params.questionposition);
+    const result = getQuestionInfo(playerId, questionPosition);
+    res.json(result);
+  }
+);
 // sendChatMessage
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
@@ -700,23 +744,16 @@ app.put(
 );
 
 // adminQuizThumbnail V1
-app.put(
-  '/v1/admin/quiz/:quizid/thumbnail',
-  (req: Request, res: Response) => {
-    const quizId = parseInt(req.params.quizid);
-    const token = req.headers.token as string;
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
 
-    const { imgUrl } = req.body;
+  const { imgUrl } = req.body;
 
-    const result = adminQuizThumbnail(
-      token,
-      quizId,
-      imgUrl
-    );
+  const result = adminQuizThumbnail(token, quizId, imgUrl);
 
-    res.json(result);
-  }
-);
+  res.json(result);
+});
 
 // playerJoinSession V1
 app.post('/v1/player/join', (req: Request, res: Response) => {
@@ -725,8 +762,7 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
   const result = playerJoinSession(sessionId, name);
 
   res.json(result);
-}
-);
+});
 
 // playerStatus V1
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
@@ -735,12 +771,12 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
   const result = playerStatus(playerId);
 
   res.json(result);
-}
-);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
+
 app.use((req: Request, res: Response) => {
   const error = `
     404 Not found - This could be because:
@@ -755,7 +791,6 @@ app.use((req: Request, res: Response) => {
   `;
   res.status(404).json({ error });
 });
-
 // For handling errors
 app.use(errorHandler());
 

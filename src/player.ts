@@ -1,9 +1,19 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { areAnswersTheSame, generateRandomName } from './playerHelper';
-import { Player, Message, EmptyObject } from './types';
-import { questionResultHelper, toQuestionCountDownState } from './sessionHelper';
+import {
+  Player,
+  Message,
+  EmptyObject,
+  QuizObject,
+  NameAndScore,
+} from './types';
+import { questionResultHelper, toQuestionCountDownState, userRankedByScoreHelper } from './sessionHelper';
 import { getCurrentTimestamp } from './quizHelper';
+import { port, url } from './config.json';
+
+const ObjectsToCsv = require('objects-to-csv');
+const SERVER_URL = `${url}:${port}`;
 
 export const playerJoinSession = (
   sessionId: number,
@@ -357,4 +367,193 @@ export const playerSubmission = (
 
   setData(data);
   return {};
+};
+
+export const getCSVResult = (
+  token: string,
+  quizId: number,
+  sessionId: number
+) => {
+  const data = getData();
+
+  const validUserSession = data.sessions.find(
+    (session) => session.identifier === token
+  );
+
+  if (token === '' || !validUserSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+  const authUserId = validUserSession.authUserId;
+
+  // Check if quizId is valid by searching for it in the list of quizzes
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // If quizId is not valid, return an error object
+  // Check if the quiz with the given quizId is owned by the authenticated user
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  const validQuizSession = data.quizSessions.find(
+    (session) => session.quizSessionId === sessionId
+  );
+
+  if (!validQuizSession || validQuizSession.metadata.quizId !== quizId) {
+    throw HTTPError(
+      403,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+
+  if (validQuizSession.state !== 'FINAL_RESULTS') {
+    throw HTTPError(403, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const csvArray: Array<Record<string, number | string>> = [];
+
+  let index = 1;
+  let scoreKey: string;
+  let rankKey: string;
+  let myObj: Record<string, number | string> = {};
+  const questions = validQuizSession.metadata.questions;
+
+  validQuizSession.players.forEach((playerName) => {
+    const playerKey = 'Player';
+    myObj = {};
+    myObj[playerKey] = playerName;
+    for (let qsIndex = 0; qsIndex < questions.length; qsIndex++) {
+      scoreKey = 'question' + `${qsIndex + 1}` + 'score';
+      rankKey = 'question' + `${qsIndex + 1}` + 'rank';
+      myObj[scoreKey] = 0;
+      myObj[rankKey] = 0;
+    }
+    csvArray.push(myObj);
+  });
+  console.log('before', csvArray);
+
+  // scoreObject is an object that store pairs of playerName : score
+  const scoreObject: Record<string, number> = {};
+  validQuizSession.players.forEach((playerName) => {
+    scoreObject[playerName] = 0;
+  });
+
+  for (const question of questions) {
+    const nameAndScore: NameAndScore[] = [];
+    const questionId = question.questionId;
+
+    const correctAnswersSubmittedTo = validQuizSession.answerSubmitted.filter(
+      (answer) => answer.questionId === questionId && answer.correct
+    );
+
+    const points = question.points;
+
+    let factor = 1;
+
+    correctAnswersSubmittedTo.forEach((answer) => {
+      // Round points to 1 decimal place
+      scoreObject[answer.playerName] += parseFloat(
+        Number(points * (1 / factor)).toFixed(1)
+      );
+      console.log('score', scoreObject[answer.playerName]);
+      factor += 1;
+    });
+
+    for (const playerName in scoreObject) {
+      nameAndScore.push({
+        name: playerName,
+        score: scoreObject[playerName],
+      });
+    }
+    console.log('nameandscore', nameAndScore);
+
+    nameAndScore.sort((a: NameAndScore, b: NameAndScore) => b.score - a.score);
+
+    for (const obj of nameAndScore) {
+      const csvObj = csvArray.find((csvObj) => csvObj.Player === obj.name);
+      const scoreKey = 'question' + index + 'score';
+      const rankKey = 'question' + index + 'rank';
+      csvObj[scoreKey] = obj.score;
+      csvObj[rankKey] = nameAndScore.indexOf(obj) + 1;
+    }
+    index++;
+  }
+
+  csvArray.sort((a, b) =>
+    (a.Player as string).localeCompare(b.Player as string)
+  );
+
+  const toCSV = async () => {
+    const csv = new ObjectsToCsv(csvArray);
+
+    // Save to file:
+    await csv.toDisk('public/result.csv');
+    console.log(await csv.toString());
+  };
+  toCSV();
+  return {
+    url: SERVER_URL + '/result.csv',
+  };
+};
+
+export const playerFinalResults = (
+  playerId: number
+): {
+  usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }>,
+  questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }>
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const sessionJoined = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // Error: Session is not in FINAL_RESULTS state
+  if (sessionJoined.state !== 'FINAL_RESULTS') {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }> = [];
+  sessionJoined.metadata.questions.forEach((currQuestion) => {
+    // const currQuestion = currSession.metadata.questions[questionPosition - 1];
+    questionResults.push(questionResultHelper(sessionJoined, currQuestion));
+  });
+
+  const usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }> = userRankedByScoreHelper(sessionJoined);
+
+  return {
+    questionResults: questionResults,
+    usersRankedByScore: usersRankedByScore
+  };
 };

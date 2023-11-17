@@ -200,7 +200,7 @@ export const getQuestionResult = (
   }
 
   const currQuestion = currSession.metadata.questions[questionPosition - 1];
-  
+
   return questionResultHelper(currSession, currQuestion);
 };
 

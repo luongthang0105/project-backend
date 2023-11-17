@@ -5,6 +5,8 @@ import {
   Player,
   Message,
   EmptyObject,
+  QuizObject,
+  NameAndScore,
 } from './types';
 import { questionResultHelper, toQuestionCountDownState, userRankedByScoreHelper } from './sessionHelper';
 import { getCurrentTimestamp } from './quizHelper';

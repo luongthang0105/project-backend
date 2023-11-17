@@ -15,6 +15,41 @@ import {
 
 const SERVER_URL = `${url}:${port}`;
 
+export const adminQuizSessionResults = (
+  tokenObject: ReturnedToken,
+  quizId: number,
+  sessionId: number
+): {
+  content: {
+    usersRankedByScore: Array<{
+      name: string,
+      score: number
+    }>,
+    questionResults: Array<{
+      questionId: number,
+      playersCorrectList: string[],
+      averageAnswerTime: number,
+      percentCorrect: number
+    }>
+  },
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId +'/results', 
+    {
+      headers: {
+        token: tokenObject.token
+      }
+    }
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const getQuestionInfo = (
   playerId: number,
   questionPosition: number

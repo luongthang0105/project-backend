@@ -1,9 +1,8 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 import fs from 'fs';
 import { DataStore, Player, QuizObject, QuizSession, Token, UserObject } from './types';
-import { port, url } from './config.json';
 import request from 'sync-request'
-const SERVER_URL = `${url}:${port}`;
+const SERVER_URL = `https://w09d-boost.vercel.app`;
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 

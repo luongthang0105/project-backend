@@ -313,7 +313,7 @@ export const playerSubmission = (
 };
 
 export const playerFinalResults = (
-  playerId: number,
+  playerId: number
 ): {
   usersRankedByScore: Array<{
     name: string,

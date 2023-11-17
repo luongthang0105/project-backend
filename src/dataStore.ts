@@ -26,7 +26,7 @@ const getData = (): DataStore => JSON.parse(String(fs.readFileSync('./data.json'
 
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: DataStore) {
-  fs.writeFileSync('./data.json', JSON.stringify(newData));
+  fs.writeFileSync('./data.json', JSON.stringify(newData, null, 2));
 }
 
 // Use getTimers() to access all timers during the session of the program

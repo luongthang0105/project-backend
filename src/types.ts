@@ -262,7 +262,10 @@ type QuizSession = {
   // Reset to a new timestamp when session enters QUESTION_OPEN state
   timeQuestionOpened?: number
 }
-
+type NameAndScore = {
+  name: string;
+  score: number;
+}
 export {
   EmptyObject,
   Token,
@@ -285,5 +288,6 @@ export {
   QuizSession,
   Player,
   Message,
-  Submission
+  Submission,
+  NameAndScore
 };

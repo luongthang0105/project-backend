@@ -1,9 +1,19 @@
-import { getData, setData } from "./dataStore";
-import HTTPError from "http-errors";
-import { areAnswersTheSame, generateRandomName } from "./playerHelper";
-import { QuizObject, Player, Message, EmptyObject } from "./types";
-import { toQuestionCountDownState } from "./sessionHelper";
-import { getCurrentTimestamp } from "./quizHelper";
+import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
+import { areAnswersTheSame, generateRandomName } from './playerHelper';
+import {
+  QuizObject,
+  Player,
+  Message,
+  EmptyObject,
+  NameAndScore,
+} from './types';
+import { toQuestionCountDownState } from './sessionHelper';
+import { getCurrentTimestamp } from './quizHelper';
+import { port, url } from './config.json';
+
+const ObjectsToCsv = require('objects-to-csv');
+const SERVER_URL = `${url}:${port}`;
 
 export const playerJoinSession = (
   sessionId: number,
@@ -19,18 +29,18 @@ export const playerJoinSession = (
   if (!validSession) {
     throw HTTPError(
       400,
-      "Session doesnt exist (this is undefined behaviour and wont be tested)"
+      'Session doesnt exist (this is undefined behaviour and wont be tested)'
     );
   }
 
   // Error: Session is not in LOBBY state
-  if (validSession.state !== "LOBBY") {
-    throw HTTPError(400, "Session is not in LOBBY state");
+  if (validSession.state !== 'LOBBY') {
+    throw HTTPError(400, 'Session is not in LOBBY state');
   }
 
   // If name is empty, randomly generate it according to the structure [5 letters][3 numbers],
   // where there are no repetitions of numbers or characters within the same name
-  if (name === "") {
+  if (name === '') {
     // generate the random name and make sure it's unique among the others name in the session
     while (true) {
       name = generateRandomName();
@@ -49,7 +59,7 @@ export const playerJoinSession = (
     if (playerWithSameName) {
       throw HTTPError(
         400,
-        "Name of user entered is not unique (compared to other users who have already joined)"
+        'Name of user entered is not unique (compared to other users who have already joined)'
       );
     }
   }
@@ -84,7 +94,7 @@ export const allChatMessages = (playerId: number) => {
   );
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, "PlayerId does not exist");
+    throw HTTPError(400, 'PlayerId does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -105,13 +115,13 @@ export const sendChatMessage = (playerId: number, message: string) => {
 
   // Error: playerId does not exist
   if (!validPlayer) {
-    throw HTTPError(400, "PlayerId does not exist");
+    throw HTTPError(400, 'PlayerId does not exist');
   }
 
   if (message.length < 1 || message.length > 100) {
     throw HTTPError(
       400,
-      "Message body is less than 1 character or more than 100 characters"
+      'Message body is less than 1 character or more than 100 characters'
     );
   }
 
@@ -144,7 +154,7 @@ export const playerStatus = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, "Player ID does not exist");
+    throw HTTPError(400, 'Player ID does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -166,7 +176,7 @@ export const getQuestionInfo = (playerId: number, questionPosition: number) => {
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, "Player ID does not exist");
+    throw HTTPError(400, 'Player ID does not exist');
   }
 
   const currSession = data.quizSessions.find(
@@ -180,16 +190,16 @@ export const getQuestionInfo = (playerId: number, questionPosition: number) => {
   ) {
     throw HTTPError(
       400,
-      "Question position is not valid for the session this player is in"
+      'Question position is not valid for the session this player is in'
     );
   }
 
-  if (currSession.state === "LOBBY" || currSession.state === "END") {
-    throw HTTPError(400, "Session is in LOBBY or END state");
+  if (currSession.state === 'LOBBY' || currSession.state === 'END') {
+    throw HTTPError(400, 'Session is in LOBBY or END state');
   }
 
   if (currSession.atQuestion !== questionPosition) {
-    throw HTTPError(400, "Session is not currently on this question");
+    throw HTTPError(400, 'Session is not currently on this question');
   }
 
   // since questionPostion starts at 1, we have to deduct one
@@ -217,7 +227,7 @@ export const playerSubmission = (
     (player) => player.playerId === playerId
   );
   if (!validPlayer) {
-    throw HTTPError(400, "Player ID does not exist");
+    throw HTTPError(400, 'Player ID does not exist');
   }
 
   const sessionJoined = data.quizSessions.find(
@@ -231,18 +241,18 @@ export const playerSubmission = (
   ) {
     throw HTTPError(
       400,
-      "Question position is not valid for the session this player is in"
+      'Question position is not valid for the session this player is in'
     );
   }
 
   // Error: Session is not in QUESTION_OPEN state
-  if (sessionJoined.state !== "QUESTION_OPEN") {
-    throw HTTPError(400, "Session is not in QUESTION_OPEN state");
+  if (sessionJoined.state !== 'QUESTION_OPEN') {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
   }
 
   // Error: If session is not yet up to this question
   if (questionPosition !== sessionJoined.atQuestion) {
-    throw HTTPError(400, "If session is not yet up to this question");
+    throw HTTPError(400, 'If session is not yet up to this question');
   }
 
   // Error: Answer IDs are not valid for this particular question
@@ -261,18 +271,18 @@ export const playerSubmission = (
   ) {
     throw HTTPError(
       400,
-      "Answer IDs are not valid for this particular question"
+      'Answer IDs are not valid for this particular question'
     );
   }
 
   // Error: There are duplicate answer IDs provided
   if (answerIds.length !== new Set(answerIds).size) {
-    throw HTTPError(400, "There are duplicate answer IDs provided");
+    throw HTTPError(400, 'There are duplicate answer IDs provided');
   }
 
   // Error: Less than 1 answer ID was submitted
   if (answerIds.length === 0) {
-    throw HTTPError(400, "Less than 1 answer ID was submitted");
+    throw HTTPError(400, 'Less than 1 answer ID was submitted');
   }
 
   const playerName = validPlayer.name;
@@ -325,10 +335,10 @@ export const getCSVResult = (
     (session) => session.identifier === token
   );
 
-  if (token === "" || !validUserSession) {
+  if (token === '' || !validUserSession) {
     throw HTTPError(
       401,
-      "Token is empty or invalid (does not refer to valid logged in user session)"
+      'Token is empty or invalid (does not refer to valid logged in user session)'
     );
   }
   const authUserId = validUserSession.authUserId;
@@ -343,26 +353,107 @@ export const getCSVResult = (
   if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
     throw HTTPError(
       403,
-      "Valid token is provided, but user is not an owner of this quiz"
+      'Valid token is provided, but user is not an owner of this quiz'
     );
   }
 
   const validQuizSession = data.quizSessions.find(
-    (session) => session.metadata.quizId === quizId
+    (session) => session.quizSessionId === sessionId
   );
 
-  if (!validQuizSession) {
+  if (!validQuizSession || validQuizSession.metadata.quizId !== quizId) {
     throw HTTPError(
       403,
-      "Session Id does not refer to a valid session within this quiz"
+      'Session Id does not refer to a valid session within this quiz'
     );
   }
 
-  if (validQuizSession.state !== "FINAL_RESULTS") {
-    throw HTTPError(403, "Session is not in FINAL_RESULTS state");
+  if (validQuizSession.state !== 'FINAL_RESULTS') {
+    throw HTTPError(403, 'Session is not in FINAL_RESULTS state');
   }
 
+  const csvArray: Array<Record<string, number | string>> = [];
 
-  
-  
+  let index = 1;
+  let scoreKey: string;
+  let rankKey: string;
+  let myObj: Record<string, number | string> = {};
+  const questions = validQuizSession.metadata.questions;
+
+  validQuizSession.players.forEach((playerName) => {
+    const playerKey = 'Player';
+    myObj = {};
+    myObj[playerKey] = playerName;
+    for (let qsIndex = 0; qsIndex < questions.length; qsIndex++) {
+      scoreKey = 'question' + `${qsIndex + 1}` + 'score';
+      rankKey = 'question' + `${qsIndex + 1}` + 'rank';
+      myObj[scoreKey] = 0;
+      myObj[rankKey] = 0;
+    }
+    csvArray.push(myObj);
+  });
+  console.log('before', csvArray);
+
+  // scoreObject is an object that store pairs of playerName : score
+  const scoreObject: Record<string, number> = {};
+  validQuizSession.players.forEach((playerName) => {
+    scoreObject[playerName] = 0;
+  });
+
+  for (const question of questions) {
+    const nameAndScore: NameAndScore[] = [];
+    const questionId = question.questionId;
+
+    const correctAnswersSubmittedTo = validQuizSession.answerSubmitted.filter(
+      (answer) => answer.questionId === questionId && answer.correct
+    );
+
+    const points = question.points;
+
+    let factor = 1;
+
+    correctAnswersSubmittedTo.forEach((answer) => {
+      // Round points to 1 decimal place
+      scoreObject[answer.playerName] += parseFloat(
+        Number(points * (1 / factor)).toFixed(1)
+      );
+      console.log('score', scoreObject[answer.playerName]);
+      factor += 1;
+    });
+
+    for (const playerName in scoreObject) {
+      nameAndScore.push({
+        name: playerName,
+        score: scoreObject[playerName],
+      });
+    }
+    console.log('nameandscore', nameAndScore);
+
+    nameAndScore.sort((a: NameAndScore, b: NameAndScore) => b.score - a.score);
+
+    for (const obj of nameAndScore) {
+      const csvObj = csvArray.find((csvObj) => csvObj.Player === obj.name);
+      const scoreKey = 'question' + index + 'score';
+      const rankKey = 'question' + index + 'rank';
+      csvObj[scoreKey] = obj.score;
+      csvObj[rankKey] = nameAndScore.indexOf(obj) + 1;
+    }
+    index++;
+  }
+
+  csvArray.sort((a, b) =>
+    (a.Player as string).localeCompare(b.Player as string)
+  );
+
+  const toCSV = async () => {
+    const csv = new ObjectsToCsv(csvArray);
+
+    // Save to file:
+    await csv.toDisk('public/result.csv');
+    console.log(await csv.toString());
+  };
+  toCSV();
+  return {
+    url: SERVER_URL + '/result.csv',
+  };
 };

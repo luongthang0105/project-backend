@@ -1,6 +1,6 @@
 import { getData, getTimers, setData } from './dataStore';
 import { getCurrentTimestamp } from './quizHelper';
-import { AdminAction, DataStore, QuizSession } from './types';
+import { AdminAction, DataStore, Question, QuizSession } from './types';
 import HTTPError from 'http-errors';
 // /**
 //  * Auomatiacally transfer session states after fix amount of time
@@ -230,3 +230,47 @@ export const handlesFR = (quizSession: QuizSession, action: AdminAction) => {
     toEndState(quizSession);
   }
 };
+
+export const questionResultHelper = (currSession: QuizSession, currQuestion: Question) => {
+  const correctSubmission = currSession.answerSubmitted.filter(
+    (submission) =>
+      submission.correct === true &&
+      submission.questionId === currQuestion.questionId
+  );
+  const playersCorrectList = correctSubmission.map(
+    (submission) => submission.playerName
+  );
+
+  const totalSubmission = currSession.players.length;
+  const numPlayersCorrect = playersCorrectList.length;
+
+  let percentCorrect = 0;
+  if (totalSubmission !== 0) {
+    percentCorrect = Math.round((numPlayersCorrect / totalSubmission) * 100);
+  }
+
+  const answerTimeList = currSession.answerSubmitted.map(
+    (submission) => submission.answerTime
+  );
+
+  const totalAnswerTime = answerTimeList.reduce(
+    (accumulator, currValue) => accumulator + currValue,
+    0
+  );
+
+  let averageAnswerTime = 0;
+  let playersWhoAttempted = currSession.answerSubmitted.filter(
+    (submission) => submission.questionId === currQuestion.questionId
+  ).length;
+
+  if (playersWhoAttempted !== 0) {
+    averageAnswerTime = totalAnswerTime / playersWhoAttempted;
+  }
+
+  return {
+    questionId: currQuestion.questionId,
+    playersCorrectList: playersCorrectList,
+    averageAnswerTime: averageAnswerTime,
+    percentCorrect: percentCorrect,
+  };
+}

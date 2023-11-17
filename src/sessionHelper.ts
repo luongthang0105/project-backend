@@ -264,8 +264,12 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
   );
 
   let averageAnswerTime = 0;
-  if (totalPlayer !== 0) {
-    averageAnswerTime = totalAnswerTime / totalPlayer;
+  let playersWhoAttempted = currSession.answerSubmitted.filter(
+    (submission) => submission.questionId === currQuestion.questionId
+  ).length;
+
+  if (playersWhoAttempted !== 0) {
+    averageAnswerTime = totalAnswerTime / playersWhoAttempted;
   }
 
   return {

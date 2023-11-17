@@ -6,6 +6,7 @@ import {
   handlesQC,
   handlesQCD,
   handlesQO,
+  questionResultHelper,
 } from './sessionHelper';
 import { QuizObject, QuizSession, AdminAction, EmptyObject, Message, Submission } from './types';
 import HTTPError from 'http-errors';
@@ -344,6 +345,86 @@ const adminQuizViewSessions = (token: string, quizId: number) => {
     inactiveSessions: inactiveSessionIds,
   };
 };
+
+export const adminQuizSessionResults = (
+  token: string,
+  quizId: number,
+  sessionId: number
+): {
+  usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }>,
+  questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }>
+} => {
+  const data = getData();
+
+  // Error: Token is empty or invalid (does not refer to valid logged in user session)
+  const validSession = data.sessions.find(
+    (currToken) => currToken.identifier === token
+  );
+
+  if (token === '' || !validSession) {
+    throw HTTPError(
+      401,
+      'Token is empty or invalid (does not refer to valid logged in user session)'
+    );
+  }
+
+  const authUserId = validSession.authUserId;
+
+  // Find the quiz with the specified quizId and check if it exists
+  const validQuiz = data.quizzes.find(
+    (quiz: QuizObject) => quiz.quizId === quizId
+  );
+
+  // Return an error message if the quiz with the given quizId does not exist
+  // Error: Valid token is provided, but user is not an owner of this quiz
+  if (!validQuiz || validQuiz.quizAuthorId !== authUserId) {
+    throw HTTPError(
+      403,
+      'Valid token is provided, but user is not an owner of this quiz'
+    );
+  }
+
+  // Error: Session Id does not refer to a valid session within this quiz
+  const validQuizSesssion = data.quizSessions.find(
+    (session) => session.quizSessionId === sessionId
+  );
+  if (!validQuizSesssion || validQuizSesssion.metadata.quizId !== quizId) {
+    throw HTTPError(
+      400,
+      'Session Id does not refer to a valid session within this quiz'
+    );
+  }
+
+  // Error: Session is not in FINAL_RESULTS state
+  if (validQuizSesssion.state !== 'FINAL_RESULTS') {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state')
+  }
+
+  const questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }> = []
+  validQuizSesssion.metadata.questions.forEach( (currQuestion) => {
+    // const currQuestion = currSession.metadata.questions[questionPosition - 1];
+    questionResults.push(questionResultHelper(validQuizSesssion, currQuestion));
+  })
+  
+  return {
+    questionResults: questionResults,
+    
+  }
+};
+
 export {
   adminQuizSessionStart,
   adminQuizGetSessionStatus,

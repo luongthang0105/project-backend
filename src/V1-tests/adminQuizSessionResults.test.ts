@@ -186,7 +186,7 @@ describe('adminQuizSessionResults', () => {
       statusCode: 403,
     });
   });
-  test.only('Success:', () => {
+  test('Success:', () => {
     const player1 = playerJoinSession(quizSession1, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession1, 'Thomas').content.playerId;    
     const player3 = playerJoinSession(quizSession1, 'Han').content.playerId;
@@ -196,9 +196,8 @@ describe('adminQuizSessionResults', () => {
     const answer1 = [answerId1];
     const answer2 = [answerId2];
     const answer3 = [answerId3];
-    let status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    expect(status.statusCode).toBe(200)
-    status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
+    
+    let status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
     expect(status.statusCode).toBe(200)
     
     sleepSync(1);
@@ -309,15 +308,20 @@ describe('adminQuizSessionResults', () => {
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 2).content.sessionId;
     const player1 = playerJoinSession(quizSession2, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession2, 'Thomas').content.playerId;
-    adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'NEXT_QUESTION');
-    adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'SKIP_COUNTDOWN');
+    
+    let status = adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'SKIP_COUNTDOWN');
+    expect(status.statusCode).toBe(200);
+
     sleepSync(2);
     playerSubmission(answer1, player1, 1);
     sleepSync(1);
     playerSubmission(answer2, player2, 1);
     sleepSync(1);
-    adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'GO_TO_FINAL_RESULTS');
-    const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession2).content;
+    
+    status = adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'GO_TO_FINAL_RESULTS');
+    expect(status.statusCode).toBe(200);
+    
+    const result = adminQuizSessionResults(user1, quiz2.quizId, quizSession2).content;
     expect(result).toStrictEqual({
       usersRankedByScore: [
         {
@@ -335,8 +339,8 @@ describe('adminQuizSessionResults', () => {
           playersCorrectList: [
             'Mutsuki'
           ],
-          // (2 + 3) / 2 = 2.5 -> 2
-          averageAnswerTime: 2,
+          // (2 + 3) / 2 = 2.5 -> Round to "3"
+          averageAnswerTime: 3,
           percentCorrect: 50
         }
       ]

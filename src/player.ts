@@ -2,13 +2,13 @@ import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { areAnswersTheSame, generateRandomName } from './playerHelper';
 import {
-  QuizObject,
   Player,
   Message,
   EmptyObject,
+  QuizObject,
   NameAndScore,
 } from './types';
-import { questionResultHelper, toQuestionCountDownState } from './sessionHelper';
+import { questionResultHelper, toQuestionCountDownState, userRankedByScoreHelper } from './sessionHelper';
 import { getCurrentTimestamp } from './quizHelper';
 import { port, url } from './config.json';
 
@@ -500,5 +500,60 @@ export const getCSVResult = (
   toCSV();
   return {
     url: SERVER_URL + '/result.csv',
+  };
+};
+
+export const playerFinalResults = (
+  playerId: number
+): {
+  usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }>,
+  questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }>
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const sessionJoined = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // Error: Session is not in FINAL_RESULTS state
+  if (sessionJoined.state !== 'FINAL_RESULTS') {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+
+  const questionResults: Array<{
+    questionId: number,
+    playersCorrectList: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+  }> = [];
+  sessionJoined.metadata.questions.forEach((currQuestion) => {
+    // const currQuestion = currSession.metadata.questions[questionPosition - 1];
+    questionResults.push(questionResultHelper(sessionJoined, currQuestion));
+  });
+
+  const usersRankedByScore: Array<{
+    name: string,
+    score: number
+  }> = userRankedByScoreHelper(sessionJoined);
+
+  return {
+    questionResults: questionResults,
+    usersRankedByScore: usersRankedByScore
   };
 };

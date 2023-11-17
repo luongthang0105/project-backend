@@ -41,6 +41,31 @@ export const getCSVResult = (
   };
 };
 
+export const playerFinalResults = (
+  playerId: number
+): {
+  content: {
+    usersRankedByScore: Array<{
+      name: string,
+      score: number
+    }>,
+    questionResults: Array<{
+      questionId: number,
+      playersCorrectList: string[],
+      averageAnswerTime: number,
+      percentCorrect: number
+    }>
+  },
+  statusCode: number;
+} => {
+  const res = request('GET', SERVER_URL + '/v1/player/' + playerId + '/results');
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const adminQuizSessionResults = (
   tokenObject: ReturnedToken,
   quizId: number,

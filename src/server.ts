@@ -59,7 +59,7 @@ import {
   playerSubmission,
   getQuestionInfo,
   getCSVResult,
-  getQuestionResult
+  getQuestionResult, playerFinalResults
 } from './player';
 // Set up web app
 const app = express();
@@ -345,6 +345,15 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+
+// playerFinalResults
+app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+
+  const result = playerFinalResults(playerId);
+
+  res.json(result);
+});
 
 // getCSVResult
 app.get(

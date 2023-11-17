@@ -92,9 +92,8 @@ describe('getQuestionResult', () => {
     player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(String));
   });
-  /*
+  
   test("Player ID does not exist", () => {
-    /// /////////////// what are answerIds
     const result = getQuestionResult(player1 + 1, 1);
     expect(result).toStrictEqual({
       content: {
@@ -222,7 +221,6 @@ describe('getQuestionResult', () => {
       session1,
       "SKIP_COUNTDOWN"
     );
-    // playerSubmission([0], player1, 1);
     sleepSync(duration);
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
     const result = getQuestionResult(player1, 1);
@@ -236,7 +234,7 @@ describe('getQuestionResult', () => {
       statusCode: 200,
     });
   });
-*/
+
   test('Successful case: different time, ', () => {
     const player2 = playerJoinSession(session1, 'Reece James').content.playerId;
     const player3 = playerJoinSession(session1, 'Thiago Silva').content

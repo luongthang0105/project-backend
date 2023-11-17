@@ -92,88 +92,88 @@ describe('getQuestionResult', () => {
     player1 = playerJoinSession(session1, 'Thomas').content.playerId;
     expect(player1).toStrictEqual(expect.any(String));
   });
-  
-  test("Player ID does not exist", () => {
+
+  test('Player ID does not exist', () => {
     const result = getQuestionResult(player1 + 1, 1);
     expect(result).toStrictEqual({
       content: {
-        error: "Player ID does not exist",
+        error: 'Player ID does not exist',
       },
       statusCode: 400,
     });
   });
 
-  test("Question position is not valid for the session this player is in", () => {
+  test('Question position is not valid for the session this player is in', () => {
     const result = getQuestionResult(player1, 0);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Question position is not valid for the session this player is in",
+          'Question position is not valid for the session this player is in',
       },
       statusCode: 400,
     });
   });
 
-  test("Question position is not valid for the session this player is in", () => {
+  test('Question position is not valid for the session this player is in', () => {
     const result = getQuestionResult(player1, 3);
     expect(result).toStrictEqual({
       content: {
         error:
-          "Question position is not valid for the session this player is in",
+          'Question position is not valid for the session this player is in',
       },
       statusCode: 400,
     });
   });
 
-  test("Session is not in ANSWER_SHOW state", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Session is not in ANSWER_SHOW state', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     playerSubmission([0, 1], player1, 0);
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {
-        error: "Session is not in ANSWER_SHOW state",
+        error: 'Session is not in ANSWER_SHOW state',
       },
       statusCode: 400,
     });
   });
 
-  test("Session is not yet up to this question", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Session is not yet up to this question', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
 
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 2);
     expect(result).toStrictEqual({
       content: {
-        error: "Session is not yet up to this question",
+        error: 'Session is not yet up to this question',
       },
       statusCode: 400,
     });
   });
 
-  test("Successful case: get question 1 result", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Successful case: get question 1 result', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {
         questionId: 0,
-        playersCorrectList: ["Thomas"],
+        playersCorrectList: ['Thomas'],
         averageAnswerTime: 0,
         percentCorrect: 100,
       },
@@ -181,26 +181,26 @@ describe('getQuestionResult', () => {
     });
   });
 
-  test("Successful case: get question 2 result", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Successful case: get question 2 result', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     playerSubmission([0], player1, 1);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     playerSubmission([1], player1, 2);
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 2);
     expect(result).toStrictEqual({
       content: {
@@ -213,16 +213,16 @@ describe('getQuestionResult', () => {
     });
   });
 
-  test("Successful case: No answer submission", () => {
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+  test('Successful case: No answer submission', () => {
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     sleepSync(duration);
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 1);
     expect(result).toStrictEqual({
       content: {

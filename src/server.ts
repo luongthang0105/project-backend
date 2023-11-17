@@ -40,6 +40,7 @@ import {
   adminQuizGetSessionStatus,
   adminQuizViewSessions,
   adminQuizSessionStateUpdate,
+  adminQuizSessionResults,
 } from './session';
 import { clear } from './other';
 import {
@@ -333,6 +334,18 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+
+// playerSubmission
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+
+  const token = req.headers.token as string;
+
+  const result = adminQuizSessionResults(token, quizId, sessionId);
+
+  res.json(result);
+});
 
 // getQuestionResult
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {

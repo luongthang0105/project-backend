@@ -1,6 +1,6 @@
 import { getData, getTimers, setData } from './dataStore';
 import { getCurrentTimestamp } from './quizHelper';
-import { AdminAction, DataStore, QuizSession } from './types';
+import { AdminAction, DataStore, Question, QuizSession } from './types';
 import HTTPError from 'http-errors';
 // /**
 //  * Auomatiacally transfer session states after fix amount of time
@@ -229,4 +229,92 @@ export const handlesFR = (quizSession: QuizSession, action: AdminAction) => {
   if (action === 'END') {
     toEndState(quizSession);
   }
+};
+
+export const questionResultHelper = (currSession: QuizSession, currQuestion: Question): {
+  questionId: number,
+  playersCorrectList: string[],
+  averageAnswerTime: number,
+  percentCorrect: number
+} => {
+  const correctSubmission = currSession.answerSubmitted.filter(
+    (submission) =>
+      submission.correct === true &&
+      submission.questionId === currQuestion.questionId
+  );
+  const playersCorrectList = correctSubmission.map(
+    (submission) => submission.playerName
+  );
+
+  const totalPlayer = currSession.players.length;
+  const numPlayersCorrect = playersCorrectList.length;
+
+  let percentCorrect = 0;
+  if (totalPlayer !== 0) {
+    percentCorrect = Math.round((numPlayersCorrect / totalPlayer) * 100);
+  }
+
+  const answerTimeList = currSession.answerSubmitted.filter(
+    answer => answer.questionId === currQuestion.questionId
+  ).map(
+    (submission) => submission.answerTime
+  );
+
+  const totalAnswerTime = answerTimeList.reduce(
+    (accumulator, currValue) => accumulator + currValue,
+    0
+  );
+
+  let averageAnswerTime = 0;
+  const playersWhoAttempted = currSession.answerSubmitted.filter(
+    (submission) => submission.questionId === currQuestion.questionId
+  ).length;
+
+  if (playersWhoAttempted !== 0) {
+    averageAnswerTime = Math.round(totalAnswerTime / playersWhoAttempted);
+  }
+
+  return {
+    questionId: currQuestion.questionId,
+    playersCorrectList: playersCorrectList,
+    averageAnswerTime: averageAnswerTime,
+    percentCorrect: percentCorrect,
+  };
+};
+
+export const userRankedByScoreHelper = (quizSession: QuizSession): Array<{
+  name: string,
+  score: number
+}> => {
+  const quizQuestions = quizSession.metadata.questions;
+
+  // scoreObject is an object that store pairs of playerName : score
+  const scoreObject: Record<string, number> = {};
+  quizSession.players.forEach((playerName) => {
+    scoreObject[playerName] = 0;
+  });
+
+  quizQuestions.forEach((quizQuestion) => {
+    const questionId = quizQuestion.questionId;
+    const correctAnswersSubmittedTo = quizSession.answerSubmitted.filter(
+      (answer) => answer.questionId === questionId && answer.correct
+    );
+    const points = quizQuestion.points;
+    let rank = 1;
+    correctAnswersSubmittedTo.forEach((answer) => {
+      // Round points to 1 decimal place
+      scoreObject[answer.playerName] += parseFloat(Number(points * (1 / rank)).toFixed(1));
+      rank += 1;
+    });
+  });
+
+  const scoreList = [];
+  for (const playerName in scoreObject) {
+    scoreList.push({
+      name: playerName,
+      score: scoreObject[playerName]
+    });
+  }
+
+  return scoreList.sort((a, b) => b.score - a.score);
 };

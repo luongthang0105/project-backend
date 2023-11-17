@@ -10,7 +10,7 @@ import {
   UserDetails,
 } from './types';
 
-const SERVER_URL = 'w09d-boost.vercel.app';
+const SERVER_URL = 'https://w09d-boost.vercel.app';
 
 /**
  * Logs out a user by sending a POST request to the server's logout endpoint.

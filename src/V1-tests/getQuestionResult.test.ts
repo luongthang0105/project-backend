@@ -1,4 +1,4 @@
-import { adminQuizCreate, adminQuizCreateQuestion } from "../testWrappersV2";
+import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
 
 import {
   adminAuthRegister,
@@ -8,15 +8,13 @@ import {
   playerJoinSession,
   getQuestionResult,
   playerSubmission,
-  adminQuizGetSessionStatus,
-  adminQuizInfo
-} from "../testWrappersV1";
-import { Question, Quiz, ReturnedToken } from "../types";
+} from '../testWrappersV1';
+import { Question, Quiz, ReturnedToken } from '../types';
 
-import { expect, test } from "@jest/globals";
-import { sleepSync } from "./sleepSync";
+import { expect, test } from '@jest/globals';
+import { sleepSync } from './sleepSync';
 
-describe("getQuestionResult", () => {
+describe('getQuestionResult', () => {
   const duration = 3;
   let user1: ReturnedToken;
   let quiz1: Quiz;
@@ -25,33 +23,33 @@ describe("getQuestionResult", () => {
   let player1: number;
   beforeEach(() => {
     clear();
-    user1 = adminAuthRegister("han@gmai.com", "2705uwuwuwu", "Han", "Hanh")
+    user1 = adminAuthRegister('han@gmai.com', '2705uwuwuwu', 'Han', 'Hanh')
       .content as ReturnedToken;
-    quiz1 = adminQuizCreate(user1, "Quiz 1", "Description").content as Quiz;
+    quiz1 = adminQuizCreate(user1, 'Quiz 1', 'Description').content as Quiz;
     questInfo1 = {
-      question: "What is that pokemon",
+      question: 'What is that pokemon',
       duration: duration,
       points: 5,
       answers: [
         {
-          answer: "Pikachu",
+          answer: 'Pikachu',
           correct: true,
         },
         {
-          answer: "Doraemon",
+          answer: 'Doraemon',
           correct: false,
         },
         {
-          answer: "Sakura",
+          answer: 'Sakura',
           correct: true,
         },
         {
-          answer: "Sasuke",
+          answer: 'Sasuke',
           correct: false,
         },
       ],
       thumbnailUrl:
-        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
     };
     adminQuizCreateQuestion(
       user1,
@@ -64,21 +62,21 @@ describe("getQuestionResult", () => {
     ).content as Question;
 
     const questInfo2 = {
-      question: "What is that football player",
+      question: 'What is that football player',
       duration: duration,
       points: 10,
       answers: [
         {
-          answer: "Eden Hazard",
+          answer: 'Eden Hazard',
           correct: true,
         },
         {
-          answer: "Cole Palmer",
+          answer: 'Cole Palmer',
           correct: false,
         },
       ],
       thumbnailUrl:
-        "https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png",
+        'https://png.pngtree.com/png-clipart/20230511/ourmid/pngtree-isolated-cat-on-white-background-png-image_7094927.png',
     };
     adminQuizCreateQuestion(
       user1,
@@ -91,7 +89,8 @@ describe("getQuestionResult", () => {
     );
 
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
-    player1 = playerJoinSession(session1, "Thomas").content.playerId;
+    player1 = playerJoinSession(session1, 'Thomas').content.playerId;
+    expect(player1).toStrictEqual(expect.any(String));
   });
   /*
   test("Player ID does not exist", () => {
@@ -238,37 +237,34 @@ describe("getQuestionResult", () => {
     });
   });
 */
-  test("Successful case: different time, ", () => {
-    const player2 = playerJoinSession(session1, "Reece James").content.playerId;
-    const player3 = playerJoinSession(session1, "Thiago Silva").content
+  test('Successful case: different time, ', () => {
+    const player2 = playerJoinSession(session1, 'Reece James').content.playerId;
+    const player3 = playerJoinSession(session1, 'Thiago Silva').content
       .playerId;
-   
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "NEXT_QUESTION");
+
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(
       user1,
       quiz1.quizId,
       session1,
-      "SKIP_COUNTDOWN"
+      'SKIP_COUNTDOWN'
     );
     sleepSync(duration - 0.5);
 
-    console.log(playerSubmission([1], player2, 1)); // false
-    console.log(playerSubmission([0], player3, 1)); // true
-    // console.log(playerSubmission([3, 0], player4, 1)); // true and false
-    // console.log(adminQuizGetSessionStatus(user1, quiz1.quizId, session1))
-    console.log(adminQuizInfo(user1, quiz1.quizId).content.questions[0].answers)
-    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, "GO_TO_ANSWER");
+    playerSubmission([1], player2, 1); // false
+    playerSubmission([0, 2], player3, 1); // true
+
+    adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
 
     const result = getQuestionResult(player3, 1);
-    console.log(result);
-    // expect(result).toStrictEqual({
-    //   content: {
-    //     questionId: 1,
-    //     playersCorrectList: [],
-    //     averageAnswerTime: 0,
-    //     percentCorrect: 0,
-    //   },
-    //   statusCode: 200,
-    // });
+    expect(result).toStrictEqual({
+      content: {
+        questionId: 0,
+        playersCorrectList: ['Thiago Silva'],
+        averageAnswerTime: 3,
+        percentCorrect: 33,
+      },
+      statusCode: 200,
+    });
   });
 });

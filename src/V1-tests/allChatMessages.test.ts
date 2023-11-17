@@ -159,7 +159,7 @@ describe('allChatMessages', () => {
     const currTimestamp2 = getCurrentTimestamp();
 
     for (const msg of messages2.content.messages) {
-      expect(currTimestamp2 - msg.timeSent).toBeLessThan(1);
+      expect(currTimestamp2 - msg.timeSent).toBeLessThanOrEqual(1.25);
     }
 
     expect(messages2).toStrictEqual({

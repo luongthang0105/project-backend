@@ -14,7 +14,7 @@ import './toHaveValidRandomPlayerName';
 import { expect, test } from '@jest/globals';
 import { sleepSync } from './sleepSync';
 
-describe('playerJoinSession', () => {
+describe('playerSubmission', () => {
   let user1: ReturnedToken;
   let quiz1: Quiz;
   let questInfo1;

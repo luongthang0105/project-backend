@@ -91,23 +91,48 @@ export const playerSubmission = (
   };
 };
 
+export const getQuestionResult = (
+  playerId: number,
+  questionPosition: number
+): {
+  content: {
+    questionId: number;
+    playersCorrectList: string[];
+    averageAnswerTime: number;
+    percentCorrect: number;
+  };
+  statusCode: number;
+} => {
+  const res = request(
+    'GET',
+    SERVER_URL +
+      '/v1/player/' +
+      playerId +
+      '/question/' +
+      questionPosition +
+      '/results'
+  );
+
+  return {
+    content: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  };
+};
+
 export const sendChatMessage = (
   playerId: number,
   message: string
 ): {
-  content: EmptyObject,
+  content: EmptyObject;
   statusCode: number;
 } => {
-  const res = request(
-    'POST',
-    SERVER_URL + '/v1/player/' + playerId + '/chat', {
-      json: {
-        message: {
-          messageBody: message
-        },
+  const res = request('POST', SERVER_URL + '/v1/player/' + playerId + '/chat', {
+    json: {
+      message: {
+        messageBody: message,
       },
-    }
-  );
+    },
+  });
 
   return {
     content: JSON.parse(res.body.toString()),
@@ -119,14 +144,11 @@ export const allChatMessages = (
   playerId: number
 ): {
   content: {
-    messages: Message[]
-  },
+    messages: Message[];
+  };
   statusCode: number;
 } => {
-  const res = request(
-    'GET',
-    SERVER_URL + '/v1/player/' + playerId + '/chat'
-  );
+  const res = request('GET', SERVER_URL + '/v1/player/' + playerId + '/chat');
 
   return {
     content: JSON.parse(res.body.toString()),
@@ -142,13 +164,13 @@ export const allChatMessages = (
  * @param {number} quizId - ID of the quiz for which sessions are to be retrieved.
  *
  * @returns {{
-*   content: {
-  *     activeSessions: Number[];
-  *     inactiveSessions: Number[];
-  *   };
-  *   statusCode: number;
-  * }} - An object containing the content (active and inactive sessions) and the HTTP status code.
-  */
+ *   content: {
+ *     activeSessions: Number[];
+ *     inactiveSessions: Number[];
+ *   };
+ *   statusCode: number;
+ * }} - An object containing the content (active and inactive sessions) and the HTTP status code.
+ */
 export const adminQuizViewSessions = (
   tokenObject: ReturnedToken,
   quizId: number
@@ -190,14 +212,18 @@ export const adminQuizSessionStateUpdate = (
   sessionId: number,
   action: string
 ): { content: EmptyObject; statusCode: number } => {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId, {
-    headers: {
-      token: tokenObject.token,
-    },
-    json: {
-      action: action,
-    },
-  });
+  const res = request(
+    'PUT',
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId,
+    {
+      headers: {
+        token: tokenObject.token,
+      },
+      json: {
+        action: action,
+      },
+    }
+  );
   return {
     content: JSON.parse(res.body.toString()),
     statusCode: res.statusCode,
@@ -327,7 +353,7 @@ export const adminAuthLogin = (
  * @returns An object containing the response content (UserDetails or ErrorObject) and the HTTP status code of the user details request.
  */
 export const adminUserDetails = (tokenObject: {
-  token: string
+  token: string;
 }): { content: UserDetails; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
     qs: {
@@ -350,7 +376,7 @@ export const adminUserDetails = (tokenObject: {
  * @returns An object containing the response content (QuizList or ErrorObject) and the HTTP status code of the quiz list request.
  */
 export const adminQuizList = (tokenObject: {
-  token: string
+  token: string;
 }): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
     qs: {
@@ -376,7 +402,7 @@ export const adminQuizList = (tokenObject: {
  */
 export const adminQuizCreate = (
   tokenObject: {
-    token: string
+    token: string;
   },
   name: string,
   description: string
@@ -464,8 +490,8 @@ export const adminQuizInfo = (
   tokenObject: ReturnedToken,
   quizId: number
 ): {
-  content: QuizObject
-  statusCode: number
+  content: QuizObject;
+  statusCode: number;
 } => {
   const route = '/v1/admin/quiz/' + quizId;
 
@@ -574,7 +600,8 @@ export const adminQuizMoveQuestion = (
   questionId: number,
   newPosition: number
 ): { content: EmptyObject; statusCode: number } => {
-  const route = '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
+  const route =
+    '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move';
   const res = request('PUT', SERVER_URL + route, {
     json: {
       token: tokenObject.token,
@@ -597,7 +624,7 @@ export const adminQuizMoveQuestion = (
  * @returns An object containing the response content (QuizList or ErrorObject) and the HTTP status code of the trash quiz list request.
  */
 export const adminQuizViewTrash = (tokenObject: {
-  token: string
+  token: string;
 }): { content: QuizList; statusCode: number } => {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
     qs: {
@@ -693,8 +720,8 @@ export const adminQuizDuplicateQuestion = (
 export const adminAuthLogout = (
   tokenObject: ReturnedToken
 ): {
-  content: EmptyObject
-  statusCode: number
+  content: EmptyObject;
+  statusCode: number;
 } => {
   const route = '/v1/admin/auth/logout';
 
@@ -970,11 +997,11 @@ export const playerStatus = (
   playerId: number
 ): {
   content: {
-    state: string,
-    numQuestions: number,
-    atQuestion: number
-  },
-  statusCode: number
+    state: string;
+    numQuestions: number;
+    atQuestion: number;
+  };
+  statusCode: number;
 } => {
   const res = request('GET', SERVER_URL + '/v1/player/' + playerId);
 

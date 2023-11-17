@@ -28,8 +28,15 @@ const getData = (): DataStore => {
   // JSON.parse(String(fs.readFileSync('./data.json')))
   try {
     const res = request('GET', SERVER_URL + '/data', {});
-    // console.log(res)
-    return JSON.parse(res.body.toString());
+    // console.log(res.body.toString())
+    const returnedData = JSON.parse(res.body.toString())
+    
+    for (const key in returnedData) {
+      if (key.startsWith('next')) {
+        returnedData[key] = parseInt(returnedData[key]);
+      }
+    }
+    return returnedData;
   } catch (e) {
     return {
       users: [] as UserObject[],
@@ -51,6 +58,7 @@ const getData = (): DataStore => {
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: DataStore) {
   // fs.writeFileSync('./data.json', JSON.stringify(newData, null, 2));
+  // console.log(newData)
   request('PUT', SERVER_URL + '/data', {
     json: {
       data: newData

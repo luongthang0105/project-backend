@@ -8,7 +8,7 @@ import {
   EmptyObject,
   NameAndScore,
 } from './types';
-import { toQuestionCountDownState } from './sessionHelper';
+import { questionResultHelper, toQuestionCountDownState } from './sessionHelper';
 import { getCurrentTimestamp } from './quizHelper';
 import { port, url } from './config.json';
 
@@ -168,6 +168,52 @@ export const playerStatus = (
   };
 };
 
+export const getQuestionResult = (
+  playerId: number,
+  questionPosition: number
+): {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+} => {
+  const data = getData();
+
+  // Error: Player ID does not exist
+  const validPlayer = data.players.find(
+    (player) => player.playerId === playerId
+  );
+  if (!validPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const currSession = data.quizSessions.find(
+    (quizSession) => quizSession.quizSessionId === validPlayer.sessionJoined
+  );
+
+  // if question Position is not in an approriate range
+  if (
+    questionPosition < 1 ||
+    questionPosition > currSession.metadata.numQuestions
+  ) {
+    throw HTTPError(
+      400,
+      'Question position is not valid for the session this player is in'
+    );
+  }
+
+  if (currSession.state !== 'ANSWER_SHOW') {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
+  }
+  if (currSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, 'Session is not yet up to this question');
+  }
+
+  const currQuestion = currSession.metadata.questions[questionPosition - 1];
+
+  return questionResultHelper(currSession, currQuestion);
+};
+
 export const getQuestionInfo = (playerId: number, questionPosition: number) => {
   const data = getData();
 
@@ -312,7 +358,6 @@ export const playerSubmission = (
 
   // Check if the correctAnswers array is the same as player answerIds
   const correct = areAnswersTheSame(answerIds, correctAnswerIds);
-
   sessionJoined.answerSubmitted.push({
     questionId: questionId,
     playerName: playerName,

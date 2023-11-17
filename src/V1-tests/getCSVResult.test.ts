@@ -133,7 +133,7 @@ describe('getQuestionResult', () => {
     });
   });
 
-  test.only('Successful case', () => {
+  test('Successful case', () => {
     const player1 = playerJoinSession(session1, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(session1, 'Thomas').content.playerId;
     const player3 = playerJoinSession(session1, 'Han').content.playerId;
@@ -198,7 +198,8 @@ describe('getQuestionResult', () => {
     expect(result).toStrictEqual({
       content: {
         url: expect.any(String)
-      }
+      },
+      statusCode: 200
     });
   });
 });

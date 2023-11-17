@@ -59,6 +59,7 @@ import {
   playerSubmission,
   getQuestionInfo,
   getCSVResult,
+  getQuestionResult
 } from './player';
 // Set up web app
 const app = express();
@@ -360,7 +361,7 @@ app.get(
   }
 );
 
-// playerSubmission
+// adminQuizSessionResults
 app.get(
   '/v1/admin/quiz/:quizid/session/:sessionid/results',
   (req: Request, res: Response) => {
@@ -375,19 +376,15 @@ app.get(
   }
 );
 
-// playerSubmission
-app.put(
-  '/v1/player/:playerid/question/:questionposition/answer',
-  (req: Request, res: Response) => {
-    const playerId = parseInt(req.params.playerid);
-    const questionPosition = parseInt(req.params.questionposition);
-    const answerIds = req.body.answerIds;
+// getQuestionResult
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
 
-    const result = playerSubmission(answerIds, playerId, questionPosition);
+  const result = getQuestionResult(playerId, questionPosition);
 
-    res.json(result);
-  }
-);
+  res.json(result);
+});
 
 // playerSubmission
 app.put(

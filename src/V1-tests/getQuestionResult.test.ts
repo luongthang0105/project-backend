@@ -314,6 +314,8 @@ describe('Longer test', () => {
 
   playerSubmission([0, 2], player3, 1); // true
 
+  sleepSync(1);
+
   adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
 
   const result = getQuestionResult(player3, 1);

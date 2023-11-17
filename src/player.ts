@@ -2,7 +2,7 @@ import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { areAnswersTheSame, generateRandomName } from './playerHelper';
 import { Player, Message, EmptyObject } from './types';
-import { toQuestionCountDownState } from './sessionHelper';
+import { questionResultHelper, toQuestionCountDownState } from './sessionHelper';
 import { getCurrentTimestamp } from './quizHelper';
 
 export const playerJoinSession = (
@@ -200,47 +200,8 @@ export const getQuestionResult = (
   }
 
   const currQuestion = currSession.metadata.questions[questionPosition - 1];
-
-  const correctSubmission = currSession.answerSubmitted.filter(
-    (submission) =>
-      submission.correct === true &&
-      submission.questionId === currQuestion.questionId
-  );
-
-  const playersCorrectList = correctSubmission.map(
-    (submission) => submission.playerName
-  );
-
-  const totalSubmissions = currSession.answerSubmitted.filter(
-    (submission) => submission.questionId === currQuestion.questionId
-  ).length;
-
-  const numCorrectSubmission = playersCorrectList.length;
-
-  const totalPlayers = currSession.players.length;
-  const percentCorrect =
-    totalPlayers !== 0
-      ? Math.round((numCorrectSubmission / totalPlayers) * 100)
-      : 0;
-
-  const answerTimeList = currSession.answerSubmitted
-    .filter((submission) => submission.questionId === currQuestion.questionId)
-    .map((submission) => submission.answerTime);
-
-  const totalAnswerTime = answerTimeList.reduce(
-    (accumulator, currValue) => accumulator + currValue,
-    0
-  );
-
-  const averageAnswerTime =
-    totalSubmissions !== 0 ? Math.round(totalAnswerTime / totalSubmissions) : 0;
-  // console.log(averageAnswerTime, "    ", totalSubmissions);
-  return {
-    questionId: currQuestion.questionId,
-    playersCorrectList: playersCorrectList,
-    averageAnswerTime: averageAnswerTime,
-    percentCorrect: percentCorrect,
-  };
+  
+  return questionResultHelper(currSession, currQuestion);
 };
 
 export const getQuestionInfo = (playerId: number, questionPosition: number) => {

@@ -295,10 +295,11 @@ describe('adminQuizSessionResults', () => {
     const answerId3 = adminQuizInfo(user1, quiz2.quizId).content.questions[0].answers[2].answerId as number;
     const answerId4 = adminQuizInfo(user1, quiz2.quizId).content.questions[0].answers[3].answerId as number;
     const answer1 = [answerId2, answerId3];
-    const answer2 = [answerId3, answerId4];
+    const answer2 = [answerId1, answerId4];
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 2).content.sessionId;
     const player1 = playerJoinSession(quizSession2, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession2, 'Thomas').content.playerId;
+    adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'NEXT_QUESTION');
     adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'SKIP_COUNTDOWN');
     sleepSync(2);
     playerSubmission(answer1, player1, 1);

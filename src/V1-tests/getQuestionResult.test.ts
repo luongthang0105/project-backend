@@ -90,7 +90,7 @@ describe('getQuestionResult', () => {
 
     session1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
     player1 = playerJoinSession(session1, 'Thomas').content.playerId;
-    expect(player1).toStrictEqual(expect.any(String));
+    expect(player1).toStrictEqual(expect.any(Number));
   });
 
   test('Player ID does not exist', () => {
@@ -166,7 +166,7 @@ describe('getQuestionResult', () => {
       session1,
       'SKIP_COUNTDOWN'
     );
-    playerSubmission([0], player1, 1);
+    playerSubmission([0, 2], player1, 1);
     sleepSync(duration);
     adminQuizSessionStateUpdate(user1, quiz1.quizId, session1, 'GO_TO_ANSWER');
     const result = getQuestionResult(player1, 1);
@@ -235,7 +235,7 @@ describe('getQuestionResult', () => {
     });
   });
 
-  test('Successful case: different time, ', () => {
+  test('Successful case: different percentCorrect ', () => {
     const player2 = playerJoinSession(session1, 'Reece James').content.playerId;
     const player3 = playerJoinSession(session1, 'Thiago Silva').content
       .playerId;

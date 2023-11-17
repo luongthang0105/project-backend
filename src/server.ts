@@ -61,6 +61,8 @@ import {
   getCSVResult,
   getQuestionResult, playerFinalResults
 } from './player';
+import { createClient } from '@vercel/kv';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -71,6 +73,13 @@ app.use(cors());
 app.use(morgan('dev'));
 
 app.use(express.static('public'));
+
+const KV_REST_API_URL="https://good-kingfish-38504.kv.vercel-storage.com"
+const KV_REST_API_TOKEN="AZZoASQgYTY1ODA0YjktZDA5ZS00MmY5LWJlMGMtOTg0YWQ2NWI1NWQ1MDkyM2IzMzAxOWQ1NDVjOTgwNjhhMWNlNjQ1NzhiMTE="
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
 
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
@@ -88,6 +97,7 @@ const HOST: string = process.env.IP || 'localhost';
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
+
 
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
@@ -771,6 +781,17 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
   const result = playerStatus(playerId);
 
   res.json(result);
+});
+
+app.get('/data', async (req: Request, res: Response) => {
+  const data = await database.hgetall('data:it3');
+  res.status(200).json(data);
+});
+
+app.put('/data', async (req: Request, res: Response) => {
+  const { data } = req.body;
+  await database.hset("data:it3", data);
+  return res.status(200).json({});
 });
 
 // ====================================================================

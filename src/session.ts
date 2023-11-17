@@ -406,7 +406,7 @@ export const adminQuizSessionResults = (
 
   // Error: Session is not in FINAL_RESULTS state
   if (validQuizSesssion.state !== 'FINAL_RESULTS') {
-    throw HTTPError(400, 'Session is not in FINAL_RESULTS state')
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
   }
 
   const questionResults: Array<{
@@ -414,12 +414,12 @@ export const adminQuizSessionResults = (
     playersCorrectList: string[],
     averageAnswerTime: number,
     percentCorrect: number
-  }> = []
-  validQuizSesssion.metadata.questions.forEach( (currQuestion) => {
+  }> = [];
+  validQuizSesssion.metadata.questions.forEach((currQuestion) => {
     // const currQuestion = currSession.metadata.questions[questionPosition - 1];
     questionResults.push(questionResultHelper(validQuizSesssion, currQuestion));
-  })
-  
+  });
+
   const usersRankedByScore: Array<{
     name: string,
     score: number
@@ -428,7 +428,7 @@ export const adminQuizSessionResults = (
   return {
     questionResults: questionResults,
     usersRankedByScore: usersRankedByScore
-  }
+  };
 };
 
 export {

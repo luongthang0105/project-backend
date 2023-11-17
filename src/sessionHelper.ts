@@ -266,7 +266,7 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
   );
 
   let averageAnswerTime = 0;
-  let playersWhoAttempted = currSession.answerSubmitted.filter(
+  const playersWhoAttempted = currSession.answerSubmitted.filter(
     (submission) => submission.questionId === currQuestion.questionId
   ).length;
 
@@ -280,41 +280,41 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
     averageAnswerTime: averageAnswerTime,
     percentCorrect: percentCorrect,
   };
-}
+};
 
 export const userRankedByScoreHelper = (quizSession: QuizSession): Array<{
   name: string,
   score: number
 }> => {
   const quizQuestions = quizSession.metadata.questions;
-  
-  // scoreObject is an object that store pairs of playerName : score
-  const scoreObject: Record<string, number> = {}
-  quizSession.players.forEach( (playerName) => {
-    scoreObject[playerName] = 0;
-  })
 
-  quizQuestions.forEach( (quizQuestion) => {
+  // scoreObject is an object that store pairs of playerName : score
+  const scoreObject: Record<string, number> = {};
+  quizSession.players.forEach((playerName) => {
+    scoreObject[playerName] = 0;
+  });
+
+  quizQuestions.forEach((quizQuestion) => {
     const questionId = quizQuestion.questionId;
-    const correctAnswersSubmittedTo = quizSession.answerSubmitted.filter( 
+    const correctAnswersSubmittedTo = quizSession.answerSubmitted.filter(
       (answer) => answer.questionId === questionId && answer.correct
     );
     const points = quizQuestion.points;
     let rank = 1;
-    correctAnswersSubmittedTo.forEach( (answer) => {
+    correctAnswersSubmittedTo.forEach((answer) => {
       // Round points to 1 decimal place
-      scoreObject[answer.playerName] += parseFloat(Number(points * (1 / rank)).toFixed(1))
+      scoreObject[answer.playerName] += parseFloat(Number(points * (1 / rank)).toFixed(1));
       rank += 1;
-    })
-  })
+    });
+  });
 
-  let scoreList = [];
+  const scoreList = [];
   for (const playerName in scoreObject) {
     scoreList.push({
       name: playerName,
       score: scoreObject[playerName]
-    })
+    });
   }
 
   return scoreList.sort((a, b) => b.score - a.score);
-}
+};

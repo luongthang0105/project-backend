@@ -3,7 +3,6 @@ import {
   clear,
   adminAuthLogout,
   adminQuizSessionStart,
-  adminQuizGetSessionStatus,
   adminQuizSessionStateUpdate,
   adminQuizSessionResults,
   playerJoinSession,
@@ -11,7 +10,7 @@ import {
   playerSubmission
 } from '../testWrappersV1';
 import { adminQuizCreate, adminQuizCreateQuestion } from '../testWrappersV2';
-import { Question, Quiz, ReturnedToken } from '../types'
+import { Question, Quiz, ReturnedToken } from '../types';
 import { sleepSync } from './sleepSync';
 
 let user1: ReturnedToken;
@@ -83,10 +82,9 @@ beforeEach(() => {
     questInfo2.thumbnailUrl
   ).content.questionId;
   quizSession1 = adminQuizSessionStart(user1, quiz1.quizId, 3).content.sessionId;
-
 });
 
-describe('adminQuizSessionResults', () => { 
+describe('adminQuizSessionResults', () => {
   test('Token is empty or invalid (does not refer to valid logged in user session): Logged out session', () => {
     adminAuthLogout(user1);
     const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession1);
@@ -139,7 +137,7 @@ describe('adminQuizSessionResults', () => {
     const result2 = adminQuizSessionResults(
       user1,
       quiz2.quizId,
-      quizSession1,
+      quizSession1
     );
     expect(result2).toStrictEqual({
       content: {
@@ -148,7 +146,7 @@ describe('adminQuizSessionResults', () => {
       statusCode: 400,
     });
   });
-  test('Session is not in FINAL_RESULTS state', () => { 
+  test('Session is not in FINAL_RESULTS state', () => {
     const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession1);
     expect(result).toStrictEqual({
       content: {
@@ -188,7 +186,7 @@ describe('adminQuizSessionResults', () => {
   });
   test('Success:', () => {
     const player1 = playerJoinSession(quizSession1, 'Mutsuki').content.playerId;
-    const player2 = playerJoinSession(quizSession1, 'Thomas').content.playerId;    
+    const player2 = playerJoinSession(quizSession1, 'Thomas').content.playerId;
     const player3 = playerJoinSession(quizSession1, 'Han').content.playerId;
     const answerId1 = adminQuizInfo(user1, quiz1.quizId).content.questions[0].answers[0].answerId as number;
     const answerId2 = adminQuizInfo(user1, quiz1.quizId).content.questions[1].answers[0].answerId as number;
@@ -196,10 +194,10 @@ describe('adminQuizSessionResults', () => {
     const answer1 = [answerId1];
     const answer2 = [answerId2];
     const answer3 = [answerId3];
-    
+
     let status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    expect(status.statusCode).toBe(200)
-    
+    expect(status.statusCode).toBe(200);
+
     sleepSync(1);
     playerSubmission(answer1, player1, 1);
     sleepSync(1);
@@ -207,12 +205,12 @@ describe('adminQuizSessionResults', () => {
     sleepSync(1);
     playerSubmission(answer1, player3, 1);
     sleepSync(1);
-    
+
     status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'NEXT_QUESTION');
-    expect(status.statusCode).toBe(200)
+    expect(status.statusCode).toBe(200);
     status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'SKIP_COUNTDOWN');
-    expect(status.statusCode).toBe(200)
-    
+    expect(status.statusCode).toBe(200);
+
     sleepSync(1);
     playerSubmission(answer2, player1, 2);
     sleepSync(1);
@@ -220,9 +218,9 @@ describe('adminQuizSessionResults', () => {
     sleepSync(1);
     playerSubmission(answer3, player3, 2);
     sleepSync(1);
-    
+
     status = adminQuizSessionStateUpdate(user1, quiz1.quizId, quizSession1, 'GO_TO_FINAL_RESULTS');
-    expect(status.statusCode).toBe(200)
+    expect(status.statusCode).toBe(200);
 
     const result = adminQuizSessionResults(user1, quiz1.quizId, quizSession1).content;
     expect(result).toStrictEqual({
@@ -262,7 +260,7 @@ describe('adminQuizSessionResults', () => {
           percentCorrect: 33
         },
       ]
-    })
+    });
   });
   test('Success multiple answers', () => {
     const quiz2 = adminQuizCreate(user1, 'QuizNew', 'Great Quiz').content as Quiz;
@@ -308,7 +306,7 @@ describe('adminQuizSessionResults', () => {
     const quizSession2 = adminQuizSessionStart(user1, quiz2.quizId, 2).content.sessionId;
     const player1 = playerJoinSession(quizSession2, 'Mutsuki').content.playerId;
     const player2 = playerJoinSession(quizSession2, 'Thomas').content.playerId;
-    
+
     let status = adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'SKIP_COUNTDOWN');
     expect(status.statusCode).toBe(200);
 
@@ -317,10 +315,10 @@ describe('adminQuizSessionResults', () => {
     sleepSync(1);
     playerSubmission(answer2, player2, 1);
     sleepSync(1);
-    
+
     status = adminQuizSessionStateUpdate(user1, quiz2.quizId, quizSession2, 'GO_TO_FINAL_RESULTS');
     expect(status.statusCode).toBe(200);
-    
+
     const result = adminQuizSessionResults(user1, quiz2.quizId, quizSession2).content;
     expect(result).toStrictEqual({
       usersRankedByScore: [
@@ -344,7 +342,6 @@ describe('adminQuizSessionResults', () => {
           percentCorrect: 50
         }
       ]
-    })
+    });
   });
 });
-

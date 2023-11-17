@@ -36,7 +36,7 @@ export const adminQuizSessionResults = (
 } => {
   const res = request(
     'GET',
-    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId +'/results', 
+    SERVER_URL + '/v1/admin/quiz/' + quizId + '/session/' + sessionId + '/results',
     {
       headers: {
         token: tokenObject.token

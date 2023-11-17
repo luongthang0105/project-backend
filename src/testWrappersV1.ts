@@ -13,7 +13,7 @@ import {
   Question
 } from './types';
 
-const SERVER_URL = `${url}:${port}`;
+const SERVER_URL = 'w09d-boost.vercel.app';
 
 export const getCSVResult = (
   tokenObject: ReturnedToken,

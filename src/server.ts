@@ -51,7 +51,7 @@ import {
   adminAuthLogout,
   adminUserDetailsUpdate,
 } from './auth';
-import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus, playerSubmission, getQuestionInfo } from './player';
+import { playerJoinSession, allChatMessages, sendChatMessage, playerStatus, playerSubmission, getQuestionInfo, playerFinalResults } from './player';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -334,6 +334,15 @@ app.post(
 // ====================================================================
 //  ========================= ITERATION 3 =============================
 // ====================================================================
+
+// playerFinalResults
+app.get('/v1/player/:playerid/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+
+  const result = playerFinalResults(playerId);
+
+  res.json(result);
+});
 
 // playerSubmission
 app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {

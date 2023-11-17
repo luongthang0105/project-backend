@@ -246,12 +246,12 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
     (submission) => submission.playerName
   );
 
-  const totalSubmission = currSession.players.length;
+  const totalPlayer = currSession.players.length;
   const numPlayersCorrect = playersCorrectList.length;
 
   let percentCorrect = 0;
-  if (totalSubmission !== 0) {
-    percentCorrect = Math.round((numPlayersCorrect / totalSubmission) * 100);
+  if (totalPlayer !== 0) {
+    percentCorrect = Math.round((numPlayersCorrect / totalPlayer) * 100);
   }
 
   const answerTimeList = currSession.answerSubmitted.map(
@@ -264,12 +264,8 @@ export const questionResultHelper = (currSession: QuizSession, currQuestion: Que
   );
 
   let averageAnswerTime = 0;
-  let playersWhoAttempted = currSession.answerSubmitted.filter(
-    (submission) => submission.questionId === currQuestion.questionId
-  ).length;
-
-  if (playersWhoAttempted !== 0) {
-    averageAnswerTime = totalAnswerTime / playersWhoAttempted;
+  if (totalPlayer !== 0) {
+    averageAnswerTime = totalAnswerTime / totalPlayer;
   }
 
   return {
@@ -289,7 +285,7 @@ export const userRankedByScoreHelper = (quizSession: QuizSession): Array<{
   // scoreObject is an object that store pairs of playerName : score
   const scoreObject: Record<string, number> = {}
   quizSession.players.forEach( (playerName) => {
-    scoreObject.playerName = 0;
+    scoreObject[playerName] = 0;
   })
 
   quizQuestions.forEach( (quizQuestion) => {
